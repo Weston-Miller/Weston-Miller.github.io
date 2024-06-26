@@ -1,4 +1,3 @@
-
 "Williams":
   - lastname: ["Williams"]
   - firstname: ["Nathan", "N."]
@@ -6,16 +5,16 @@
 
 "Banaian":
   - lastname: ["Banaian"]
-  https://sites.google.com/umn.edu/estherbanaian/
+    url: https://sites.google.com/umn.edu/estherbanaian/
 
 "Hoang":
   - lastname: ["Hoang"]
-  https://sites.google.com/view/htna/
+    url: https://sites.google.com/view/htna/
 
 "Kelley":
   - lastname: ["Kelley"]
-  https://sites.google.com/view/elizabeth-kelley/
+    url: https://sites.google.com/view/elizabeth-kelley/
 
 "Stack":
   - lastname: ["Stack"]
-  https://www.linkedin.com/in/jason-c-stack
+    url: https://www.linkedin.com/in/jason-c-stack
