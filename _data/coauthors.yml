@@ -1,20 +1,19 @@
 "Williams":
-  - lastname: ["Williams"]
   - firstname: ["Nathan", "N."]
     url: https://personal.utdallas.edu/~nxw170830/
 
 "Banaian":
-  - lastname: ["Banaian"]
+  - firstname: ["Esther"]
     url: https://sites.google.com/umn.edu/estherbanaian/
 
 "Hoang":
-  - lastname: ["Hoang"]
+  - firstname: ["Anh Trong Nam"]
     url: https://sites.google.com/view/htna/
 
 "Kelley":
-  - lastname: ["Kelley"]
+  - firstname: ["Elizabeth"]
     url: https://sites.google.com/view/elizabeth-kelley/
 
 "Stack":
-  - lastname: ["Stack"]
+  - firstname: ["Jason"]
     url: https://www.linkedin.com/in/jason-c-stack
