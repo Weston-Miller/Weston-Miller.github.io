@@ -19,4 +19,4 @@ I will be pursuing a PhD in mathematics at the University of California, San Die
 
 Research interests: I am mostly interested in the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
 
-When I'm not doing math, I enjoy [reading](https://www.goodreads.com/user/show/109451240-weston), cooking, and playing [chess](https://www.chess.com/member/atropos7).
+When I'm not doing math, I enjoy [reading](https://www.goodreads.com/user/show/109451240-weston), cooking, playing [chess](https://www.chess.com/member/atropos7), and playing piano.
