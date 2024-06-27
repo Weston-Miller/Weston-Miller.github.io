@@ -13,8 +13,9 @@
     - title: Undergraduate
       institution: The University of Texas, Dallas
       year: 2024
-      GPA: 3.99
       description:
+        - BS in Mathematics
+        - GPA - 3.99
         - Physics Minor
         - Summa Cum Laude
         - Major Honors with Distinction
