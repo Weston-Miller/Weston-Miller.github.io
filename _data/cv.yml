@@ -13,8 +13,8 @@
     - title: Undergraduate
       institution: The University of Texas, Dallas
       year: 2024
+      GPA: 3.99
       description:
-        - GPA: 3.99
         - Physics Minor
         - Summa Cum Laude
         - Major Honors with Distinction
@@ -40,4 +40,3 @@
     - title: <a href="https://calendar.utdallas.edu/event/algebra_and_combinatorics_seminar_8749">UTD Algebra and Combinatorics Seminar</a>
       year: 2023.09
       description: Rational Catalan Numbers for Complex Reflection Groups
-
