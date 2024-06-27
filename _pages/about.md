@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: This page is under construction.
+subtitle:
 
 profile:
   align: right
