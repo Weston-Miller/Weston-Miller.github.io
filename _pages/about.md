@@ -1,6 +1,6 @@
 ---
 layout: about
-title: Weston Miller
+title: about
 permalink: /
 subtitle:
 
