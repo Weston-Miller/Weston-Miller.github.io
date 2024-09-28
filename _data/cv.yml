@@ -23,6 +23,9 @@
 - title: Presentations
   type: time_table
   contents:
+    - title: <a href="https://fpsac2024.rub.de/">FPSAC 2024</a>
+      year: 2024.07
+      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://www.math.tamu.edu/conferences/combinatexas/">CombinaTexas</a>
       year: 2024.03
       description: Rational Catalan Numbers for Complex Reflection Groups
