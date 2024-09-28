@@ -17,7 +17,7 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I will be pursuing a PhD in mathematics at the University of California, San Diego, starting in the Fall of 2024.
+I am a first year PhD student in mathematics at the University of California, San Diego.
 
 Research interests: I am mostly interested in the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
 
