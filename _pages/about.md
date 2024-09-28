@@ -9,8 +9,8 @@ profile:
   image: profile2.jpg
   image_circular: false # crops the image to make it circular
   more_info: > 
-  <p>Email: w3miller@ucsd.edu</p>
-  <p>Office: HSS 4084</p>
+  <p> Email: w3miller@ucsd.edu </p>
+  <p> Office: HSS 4084 </p>
 
 news: false # includes a list of news items
 selected_papers: false # includes a list of papers marked as "selected={true}"
