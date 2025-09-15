@@ -17,7 +17,7 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am a first year PhD student in mathematics at the University of California, San Diego.
+I am a second year PhD student in mathematics at the University of California, San Diego.
 
 Research interests: I am mostly interested in the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
 
