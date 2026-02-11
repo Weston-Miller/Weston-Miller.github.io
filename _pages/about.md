@@ -19,6 +19,6 @@ social: true # includes social icons at the bottom of the page
 
 I am a second year PhD student in mathematics at the University of California, San Diego.
 
-Research interests: I am mostly interested in the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+My advisor is [Brendon Rhoades](https://mathweb.ucsd.edu/~bprhoades/).
 
 When I'm not doing math, I enjoy [reading](https://www.goodreads.com/user/show/109451240-weston), cooking, playing [chess](https://www.chess.com/member/atropos7), and playing piano.
