@@ -393,7 +393,10 @@ def factor_report(edges, l, m, n):
         return json.dumps({"ok": False, "error": msg})
 
 # ==================================================================== Ehrhart
+_CUBE = {}
 def _cube_coeffs(m, n):
+    key = (m, n); cached = _CUBE.get(key)
+    if cached is not None: return cached
     cur = [1]; base = [1]*(m+1)
     for _ in range(n):
         new = [0]*(len(cur)+len(base)-1)
@@ -401,6 +404,7 @@ def _cube_coeffs(m, n):
             if a:
                 for j, b in enumerate(base): new[i+j] += a*b
         cur = new
+    _CUBE[key] = cur
     return cur
 def _c(d, m, n):
     if d < 0 or m < 0: return 0
@@ -566,7 +570,7 @@ def _eval(num, l, n, t0, q0):
 
 def ehrhart_report(l, n):
     try:
-        t0 = time.time()
+        _wall0 = time.time()
         numE = _num_tlist(l, n, False)
         numB = _num_tlist(l, n, True)
         # reciprocity spot-check: q^{n-1} Ebar(t,q) == (-1)^n E(1/t,1/q)
@@ -585,7 +589,7 @@ def ehrhart_report(l, n):
             cb = _qp_tex(rB[k]) if k < len(rB) and any(rB[k]) else ""
             if ce or cb: rows.append([k, ce, cb])
         return json.dumps({"ok": True, "l": l, "n": n, "den_tex": _den_tex_factors(rfac),
-            "reduced": bool(reduced), "half": (2*l == n), "rows": rows, "time": time.time() - t0,
+            "reduced": bool(reduced), "half": (2*l == n), "rows": rows, "time": time.time() - _wall0,
             "recip": bool(rec_ok), "lattice": latt})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
