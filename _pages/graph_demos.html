@@ -9,12 +9,12 @@ nav: false
 <style>
 #gd{--ink:var(--global-text-color,#000); --muted:var(--global-text-color-light,#828282);
          --line:var(--global-divider-color,rgba(0,0,0,0.1)); --bg:var(--global-bg-color,#fff);
-         --panel:rgba(127,127,127,0.07);
+         --panel:rgba(127,127,127,0.11); --surface:var(--global-card-bg-color,#fff);
          --accent:var(--global-theme-color,#009f06); --accentbg:rgba(0,159,6,0.08);
          --ok:var(--global-theme-color,#009f06); --bad:var(--global-highlight-color,#b71c1c);
          --green:var(--global-theme-color,#009f06); --greenbg:rgba(0,159,6,0.10);
          --blue:var(--global-theme-color,#009f06); --bluebg:rgba(0,159,6,0.08);
-         --edge:#8a8a84; --vfill:rgba(127,127,127,0.14); --radius:6px;}
+         --edge:#8a8a84; --vfill:var(--bg); --radius:6px;}
 #gd *{box-sizing:border-box;}
 #gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
         color:var(--ink); background:var(--bg); line-height:1.55; margin:0;}
@@ -69,14 +69,14 @@ nav: false
 #gd .sign{color:var(--muted);}
 #gd .tgrid{display:inline-flex; gap:2px; vertical-align:middle; margin:0 2px;}
 #gd .tcol{display:flex; flex-direction:column; gap:2px;}
-#gd .tcell{width:21px; height:21px; border:1px solid #b9b9b3; background:var(--bg); border-radius:3px;
+#gd .tcell{width:21px; height:21px; border:1px solid var(--global-text-color-light,#9a9a94); background:var(--surface); border-radius:3px;
           display:flex; align-items:center; justify-content:center; font-size:11px;
           font-family:ui-monospace,Menlo,monospace;}
 #gd .expr{line-height:2.4; font-size:.85rem;}
 #gd .expr .cf{color:var(--muted); margin:0 3px;}
 #gd .badge{display:inline-block; font-size:.78rem; padding:2px 8px; border-radius:20px; margin-right:6px;}
-#gd .badge.g{background:var(--greenbg); color:var(--green);}
-#gd .badge.r{background:rgba(199,0,0,0.09); color:var(--bad);}
+#gd .badge.g{background:var(--green); color:#fff;}
+#gd .badge.r{background:var(--bad); color:#fff;}
 #gd .badge.b{background:var(--bluebg); color:var(--blue);}
 #gd .anim-ctl{display:flex; gap:8px; align-items:center; margin:.6rem 0;}
 #gd .caption{font-size:.82rem; color:var(--muted); margin:.4rem 0;}
