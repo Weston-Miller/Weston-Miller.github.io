@@ -14,7 +14,7 @@ nav: false
          --ok:var(--global-theme-color,#009f06); --bad:var(--global-highlight-color,#b71c1c);
          --green:var(--global-theme-color,#009f06); --greenbg:rgba(0,159,6,0.10);
          --blue:var(--global-theme-color,#009f06); --bluebg:rgba(0,159,6,0.08);
-         --edge:#8a8a84; --vfill:var(--bg); --radius:6px;}
+         --edge:#8a8a84; --vfill:color-mix(in srgb, var(--accent) 18%, var(--bg)); --radius:6px;}
 #gd *{box-sizing:border-box;}
 #gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
         color:var(--ink); background:var(--bg); line-height:1.55; margin:0;}
@@ -38,9 +38,9 @@ nav: false
 #gd svg#cv{width:100%; max-width:560px; aspect-ratio:3/2; height:auto; border:1px solid var(--line); border-radius:12px;
           background:var(--panel); touch-action:none; cursor:crosshair; display:block; margin:0 auto;}
 #gd svg#cv .edge{fill:none; stroke:var(--edge); stroke-width:1.7;}
-#gd svg#cv .vtx{fill:var(--vfill); stroke:var(--accent); stroke-width:1.6;}
-#gd svg#cv .vtx.sel{stroke-width:3;}
-#gd svg#cv text{fill:var(--accent); font-family:inherit;}
+#gd svg#cv .vtx{fill:var(--bg); fill:var(--vfill); stroke:var(--accent); stroke-width:2.4;}
+#gd svg#cv .vtx.sel{stroke-width:4;}
+#gd svg#cv text{fill:var(--accent); font-family:inherit; font-weight:700;}
 #gd .row{display:flex; gap:14px; align-items:flex-start; margin-top:10px; flex-wrap:wrap;}
 #gd .row .col{flex:1; min-width:200px;}
 #gd .k{font-size:.78rem; color:var(--muted); margin-bottom:3px;}
@@ -738,6 +738,7 @@ def _eval(num, l, n, t0, q0):
 
 def ehrhart_report(l, n):
     try:
+        t0 = time.time()
         numE = _num_tlist(l, n, False)
         numB = _num_tlist(l, n, True)
         # reciprocity spot-check: q^{n-1} Ebar(t,q) == (-1)^n E(1/t,1/q)
@@ -756,7 +757,7 @@ def ehrhart_report(l, n):
             cb = _qp_tex(rB[k]) if k < len(rB) and any(rB[k]) else ""
             if ce or cb: rows.append([k, ce, cb])
         return json.dumps({"ok": True, "l": l, "n": n, "den_tex": _den_tex_factors(rfac),
-            "reduced": bool(reduced), "half": (2*l == n), "rows": rows,
+            "reduced": bool(reduced), "half": (2*l == n), "rows": rows, "time": time.time() - t0,
             "recip": bool(rec_ok), "lattice": latt})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
@@ -945,6 +946,7 @@ def maximal_basis(G, l, m, n):
 def basis_view(edges, l, m, n):
     try:
         E = [(min(a, b), max(a, b)) for a, b in edges]
+        t0 = time.time()
         M = maximal_basis(list(E), l, m, n)
         # verify: sum reproduces delta_G, and every output tableau is genuinely maximal
         import random
@@ -955,9 +957,10 @@ def basis_view(edges, l, m, n):
             rhs = sum(c * _dval(T, pt) for T, c in M.items())
             if lhs != rhs: good = False
         maximal_ok = all(_raise_to_max(T, m, n) is None for T in M)
+        dt = time.time() - t0
         tabs = [{"c": c, "tab": [list(e) for e in T]} for T, c in sorted(M.items())]
         d = len(E)
-        return json.dumps({"ok": True, "tabs": tabs, "count": len(M), "edges": d,
+        return json.dumps({"ok": True, "tabs": tabs, "count": len(M), "edges": d, "time": dt,
             "graded_dim": _delta(d, m, n), "verified": bool(good and maximal_ok)})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
@@ -1125,8 +1128,8 @@ def basis_view(edges, l, m, n):
       const res=JSON.parse(py.runPython(`demos.factor_report(json.loads(EJ), ${l}, ${m}, ${n})`));
       if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
       let h=`<div class="head">&delta;<sub>G</sub> = sum of <strong>${res.count}</strong> product${res.count===1?'':'s'} of ${m} degree-1 tableau${m===1?'':'x'} `
-        +`<span class="${res.verified?'ok':'bad'}">${res.verified?'&#10003; verified':'&#10007; FAILED'}</span> `
-        +`<span style="color:#999">(${res.time<0.001?'<0.001':res.time.toFixed(3)} s)</span></div>`;
+        +`<span class="badge ${res.verified?'g':'r'}">${res.verified?'verified':'check failed'}</span> `
+        +`<span style="color:var(--muted)">(${res.time<0.001?'<0.001':res.time.toFixed(3)} s)</span></div>`;
       o.innerHTML=h;
       const rows=res.terms.map(t=>{ const sg=t.c>0?'+':'−'; const mg=Math.abs(t.c)===1?'':Math.abs(t.c);
         return `<div class="brow"><span class="bc">${sg}${mg?' '+mg:''}</span>`
@@ -1144,7 +1147,8 @@ def basis_view(edges, l, m, n):
       if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
       let h=`<div class="head">δ<sub>G</sub> reduces onto <strong>${res.count}</strong> of the ${res.graded_dim} basis `
         +`element${res.graded_dim===1?'':'s'} of S<sub>max</sub>(${l},${m},${n}) `
-        +`<span class="badge ${res.verified?'g':'r'}">${res.verified?'✓ verified &amp; maximal':'✗ check failed'}</span></div>`;
+        +`<span class="badge ${res.verified?'g':'r'}">${res.verified?'verified':'check failed'}</span> `
+        +`<span style="color:var(--muted)">(${res.time<0.001?'<0.001':res.time.toFixed(3)} s)</span></div>`;
       h+=`<p class="caption">δ<sub>G</sub> has degree d = ${res.edges} (edges); the degree-d graded piece of `
         +`V<sub>m&Delta;&#8467;</sub> is ${res.graded_dim}-dimensional, so this is the unique coordinate vector of δ<sub>G</sub> in that basis.</p>`;
       o.innerHTML=h;
@@ -1167,7 +1171,8 @@ def basis_view(edges, l, m, n):
     o.innerHTML='<div class="head">computing…</div>';
     try{ const res=await call(`demos.ehrhart_report(${l}, ${n})`);
       if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
-      let h=`<div class="head">&Delta;<sub>${l}</sub> &sub; &#8477;<sup>${n}</sup></div>`;
+      let h=`<div class="head">&Delta;<sub>${l}</sub> &sub; &#8477;<sup>${n}</sup> `
+        +`<span style="color:var(--muted)">(${res.time<0.001?'<0.001':res.time.toFixed(3)} s)</span></div>`;
       const denNote = res.reduced
         ? 'sharing the <strong>reduced</strong> denominator — the Theorem 4.2 form simplifies here because ℓ = n/2'
         : 'sharing the Theorem 4.2 denominator';
