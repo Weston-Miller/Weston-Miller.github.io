@@ -1,0 +1,1191 @@
+---
+layout: default
+title: Interactive graph demos
+permalink: /graph-demos/
+nav: false
+---
+
+<style>
+#gd{--ink:var(--global-text-color,#000); --muted:var(--global-text-color-light,#828282);
+         --line:var(--global-divider-color,rgba(0,0,0,0.1)); --bg:var(--global-bg-color,#fff);
+         --panel:rgba(127,127,127,0.07);
+         --accent:var(--global-theme-color,#009f06); --accentbg:rgba(0,159,6,0.08);
+         --ok:var(--global-theme-color,#009f06); --bad:var(--global-highlight-color,#b71c1c);
+         --green:var(--global-theme-color,#009f06); --greenbg:rgba(0,159,6,0.10);
+         --blue:var(--global-theme-color,#009f06); --bluebg:rgba(0,159,6,0.08);
+         --edge:#8a8a84; --vfill:rgba(127,127,127,0.14); --radius:6px;}
+#gd *{box-sizing:border-box;}
+#gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        color:var(--ink); background:var(--bg); line-height:1.55; margin:0;}
+#gd .wrap{max-width:900px; margin:0 auto; padding:1.5rem 1.25rem 4rem;}
+#gd h1{font-size:2rem; font-weight:700; margin:.2rem 0 .5rem; line-height:1.2;}
+#gd p.lede{color:var(--muted); margin:.2rem 0 1.2rem; font-size:.95rem;}
+#gd a{text-decoration:none;}
+#gd a:hover{text-decoration:underline;}
+#gd button{font:inherit; font-size:.9rem; padding:6px 12px; border:1px solid var(--line);
+          background:var(--bg); border-radius:var(--radius); cursor:pointer; color:var(--ink);}
+#gd button:hover{color:var(--accent); border-color:var(--accent);}
+#gd button:active{transform:scale(.98);}
+#gd button:disabled{opacity:.5; cursor:default;}
+#gd button:disabled:hover{color:var(--ink); border-color:var(--line);}
+#gd button.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600;}
+#gd button.primary:hover{color:#fff; opacity:.88;}
+#gd label{font-size:.85rem; color:var(--muted);}
+#gd input[type=number]{width:54px; font:inherit; padding:5px 6px; border:1px solid var(--line); border-radius:var(--radius);}
+#gd .toolbar{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px;}
+#gd .spacer{flex:1;}
+#gd svg#cv{width:100%; max-width:560px; aspect-ratio:3/2; height:auto; border:1px solid var(--line); border-radius:12px;
+          background:var(--panel); touch-action:none; cursor:crosshair; display:block; margin:0 auto;}
+#gd svg#cv .edge{fill:none; stroke:var(--edge); stroke-width:1.7;}
+#gd svg#cv .vtx{fill:var(--vfill); stroke:var(--accent); stroke-width:1.6;}
+#gd svg#cv .vtx.sel{stroke-width:3;}
+#gd svg#cv text{fill:var(--accent); font-family:inherit;}
+#gd .row{display:flex; gap:14px; align-items:flex-start; margin-top:10px; flex-wrap:wrap;}
+#gd .row .col{flex:1; min-width:200px;}
+#gd .k{font-size:.78rem; color:var(--muted); margin-bottom:3px;}
+#gd #edges{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.8rem; word-break:break-all; min-height:18px;}
+#gd #stats{font-size:.83rem; color:var(--muted); line-height:1.6;}
+#gd #valid{font-size:.83rem; margin-top:2px;}
+#gd .ok{color:var(--ok);}
+#gd .bad{color:var(--bad);}
+#gd .tabs{display:flex; gap:4px; flex-wrap:wrap; margin:1.3rem 0 0; border-bottom:1px solid var(--line);}
+#gd .tab-btn{border:1px solid var(--line); border-bottom:none; border-radius:8px 8px 0 0; padding:7px 13px;
+            background:var(--panel); color:var(--muted); position:relative; top:1px;}
+#gd .tab-btn.active{background:var(--bg); color:var(--ink); font-weight:600; border-bottom:1px solid var(--bg); border-top:2px solid var(--accent); padding-top:6px;}
+#gd .panel{border:1px solid var(--line); border-top:none; border-radius:0 0 10px 10px; padding:1rem 1.1rem 1.3rem;}
+#gd .panel.hidden{display:none;}
+#gd .panel .desc{font-size:.86rem; color:var(--muted); margin:0 0 .8rem;}
+#gd .run{padding:8px 16px;}
+#gd .tabout{margin-top:1rem;}
+#gd #engine{font-size:.8rem; color:var(--muted); margin-top:12px; text-align:center;}
+#gd .head{font-size:.92rem; margin-bottom:.5rem;}
+#gd ol.terms{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.8rem; padding-left:2.1rem;
+            margin:.3rem 0; max-height:380px; overflow:auto; border:1px solid var(--line);
+            border-radius:var(--radius); background:var(--panel);}
+#gd ol.terms li{padding:2px 8px 2px 0;}
+#gd ol.terms li:nth-child(odd){background:var(--bg);}
+#gd .tabmono{color:var(--accent);}
+#gd .sign{color:var(--muted);}
+#gd .tgrid{display:inline-flex; gap:2px; vertical-align:middle; margin:0 2px;}
+#gd .tcol{display:flex; flex-direction:column; gap:2px;}
+#gd .tcell{width:21px; height:21px; border:1px solid #b9b9b3; background:var(--bg); border-radius:3px;
+          display:flex; align-items:center; justify-content:center; font-size:11px;
+          font-family:ui-monospace,Menlo,monospace;}
+#gd .expr{line-height:2.4; font-size:.85rem;}
+#gd .expr .cf{color:var(--muted); margin:0 3px;}
+#gd .badge{display:inline-block; font-size:.78rem; padding:2px 8px; border-radius:20px; margin-right:6px;}
+#gd .badge.g{background:var(--greenbg); color:var(--green);}
+#gd .badge.r{background:rgba(199,0,0,0.09); color:var(--bad);}
+#gd .badge.b{background:var(--bluebg); color:var(--blue);}
+#gd .anim-ctl{display:flex; gap:8px; align-items:center; margin:.6rem 0;}
+#gd .caption{font-size:.82rem; color:var(--muted); margin:.4rem 0;}
+#gd .eq{font-size:1rem; margin:.5rem 0; overflow-x:auto;}
+#gd .eq .num{display:inline-block;}
+#gd .frac{display:inline-flex; flex-direction:column; text-align:center; vertical-align:middle; margin:0 .2rem;}
+#gd .frac .n{border-bottom:1px solid var(--ink); padding:0 .3rem;}
+#gd .frac .d{padding:0 .3rem;}
+#gd table.hs{border-collapse:collapse; font-size:.85rem; margin:.4rem 0;}
+#gd table.hs td{border:1px solid var(--line); padding:3px 10px; text-align:center;}
+#gd table.hs td.lab{color:var(--muted); background:var(--panel);}
+#gd code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85em; background:var(--panel); padding:1px 4px; border-radius:4px;}
+#gd sub, #gd sup{font-size:.72em;}
+#gd a{color:var(--accent);}
+#gd .tab-btn{transition:background .15s ease, color .15s ease;}
+#gd #out-ehrhart mjx-container{max-width:100%; overflow-x:auto; overflow-y:hidden;}
+#gd #out-ehrhart mjx-container[display="true"]{margin:.7rem 0;}
+#gd .toolbar button{transition:background .12s ease;}
+#gd .lmn{display:inline-flex; align-items:center; gap:7px; flex:0 0 auto; white-space:nowrap;}
+#gd .blist{max-height:440px; overflow:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); margin-top:.3rem;}
+#gd .brow{display:flex; align-items:center; gap:12px; padding:5px 12px;}
+#gd .brow:nth-child(odd){background:var(--bg);}
+#gd .bc{min-width:36px; text-align:right; color:var(--muted); font-family:ui-monospace,Menlo,monospace; font-size:.82rem;}
+#gd .brow{flex-wrap:wrap;}
+#gd .prod{color:var(--muted); margin:0 2px;}
+#gd .listfoot{margin-top:.55rem; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+#gd .showmore{font-size:.85rem;}
+#gd .etbl{max-height:470px; overflow:auto; margin-top:.2rem;}
+#gd .etbl table{border-collapse:collapse; font-size:.9rem; width:100%;}
+#gd .etbl td{border:1px solid var(--line); padding:5px 12px; vertical-align:middle;}
+#gd .etbl td.lab{color:var(--muted); background:var(--panel); font-size:.82rem; white-space:nowrap;}
+#gd .etbl td.kcol{text-align:center; color:var(--muted); white-space:nowrap; width:1%;}
+#gd .wrap{ max-width:100%; padding:0.4rem 0 2.5rem; }
+</style>
+
+<div id="gd">
+<div class="wrap">
+  <h1>Hypersimplex harmonics — interactive demos</h1>
+  <p class="lede">
+    Companion to <em>Graded Ehrhart Theory for Hypersimplices</em>. Draw a loopless multigraph
+    <em>G</em> once below; each tab runs a different construction from the paper on it. Click empty
+    space to add a vertex, click two vertices to connect (click a pair again for a parallel edge),
+    or hit <em>Load example</em>. The Ehrhart tab uses only &#8467; and n.
+  </p>
+
+  <div class="toolbar">
+    <button id="mode">Mode: add / connect</button>
+    <button id="undo">Undo</button>
+    <button id="clear">Clear</button>
+    <button id="example">Load example</button>
+    <button id="random">Random for ℓ,m,n</button>
+    <span class="spacer"></span>
+    <span class="lmn">
+      <label>&#8467;</label><input id="lval" type="number" min="1" value="4">
+      <label>m</label><input id="mval" type="number" min="1" value="3">
+      <label>n</label><input id="nval" type="number" min="1" value="8">
+    </span>
+  </div>
+  <svg id="cv" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet"></svg>
+  <div class="row">
+    <div class="col"><div class="k">edges</div><div id="edges"></div></div>
+    <div class="col" style="max-width:210px"><div id="stats"></div><div id="valid"></div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="factor">Factor</button>
+    <button class="tab-btn" data-tab="basis">Maximal basis</button>
+    <button class="tab-btn" data-tab="ehrhart">Ehrhart series</button>
+  </div>
+
+  <div class="panel" id="panel-factor">
+    <p class="desc">Corollary 5.19: express &delta;<sub>G</sub> as an exact integer combination of
+      products of m degree-1 (matching) tableaux, and verify it.</p>
+    <button class="run primary" data-run="factor">Run factorization</button>
+    <div class="tabout" id="out-factor"></div>
+  </div>
+  <div class="panel hidden" id="panel-basis">
+    <p class="desc">Section 5.2: reduce &delta;<sub>G</sub> onto the maximal-tableau basis
+      S<sub>max</sub>(&#8467;,m,n) of V<sub>m&Delta;&#8467;</sub>.</p>
+    <button class="run primary" data-run="basis">Reduce to basis</button>
+    <div class="tabout" id="out-basis"></div>
+  </div>
+  <div class="panel hidden" id="panel-ehrhart">
+    <p class="desc">Section 4: the graded q-Ehrhart series in closed rational form (Theorem 4.2
+      denominator), its interior series, and the q-reciprocity check. Uses &#8467; and n.</p>
+    <button class="run primary" data-run="ehrhart">Compute series</button>
+    <div class="tabout" id="out-ehrhart"></div>
+  </div>
+
+  <div id="engine">math engine: loads on first run (~a few seconds)</div>
+</div>
+
+<script type="text/x-python" id="straighten-src">
+"""
+Exact straightening of  delta_G = prod_{(i,j) in G, i<j}(x_i - x_j)  via the quadratic
+relation of Section 5.3:   (a-c)(b-d) = (a-b)(c-d) + (a-d)(b-c)   for a<b<c<d,
+i.e. the 'crossing' pair (a,d),(b,c) is rewritten
+        δ_{(a,d)(b,c)}  =  δ_{(a,c)(b,d)}  -  δ_{(a,b)(c,d)} .
+Repeatedly uncrossing reduces delta_G to a combination of NON-CROSSING (two-row semistandard)
+tableaux.  Everything is exact integer arithmetic -- no linear system, no conditioning.
+"""
+from collections import defaultdict
+
+def _canon(cols): return tuple(sorted(cols))
+
+def _violation(cols):
+    # cols is sorted by (a,b); non-crossing <=> bottoms weakly increasing.  Return the first
+    # adjacent descent (i,i+1): there a_i<a_{i+1} and b_i>b_{i+1}, a genuine crossing.  O(d).
+    for i in range(len(cols) - 1):
+        if cols[i][1] > cols[i + 1][1]:
+            return (i, i + 1)
+    return None
+
+_STRAIGHTEN_CACHE = {}
+def straighten(G_edges, max_steps=10**7):
+    G = _canon((min(i, j), max(i, j)) for i, j in G_edges)
+    return _straighten_core(G, max_steps)
+def _straighten_core(G, max_steps=10**7):
+    """Straighten an already-canonical sorted tuple of (a,b) columns (a<b).  Callers that already
+       hold such a tuple skip the per-edge min/max + full re-sort in straighten()."""
+    cached = _STRAIGHTEN_CACHE.get(G)
+    if cached is not None:
+        return dict(cached), 0
+    combo = defaultdict(int); combo[G] = 1
+    stack = [G]                                # worklist of tableaux that may still cross
+    steps = 0
+    while stack:
+        T = stack.pop()
+        c = combo.get(T, 0)
+        if c == 0: continue
+        v = _violation(T)
+        if v is None: continue                 # already non-crossing
+        i, j = v                               # j == i+1 (adjacent descent)
+        del combo[T]
+        p, q = T[i]; r, s = T[j]
+        rest = T[:i] + T[i+2:]                  # tuple splice (both crossing cols are adjacent)
+        T1 = _canon(rest + ((p, s), (r, q)))   #  + (a-c)(b-d)
+        T2 = _canon(rest + ((p, r), (s, q)))   #  - (a-b)(c-d)
+        combo[T1] += c; combo[T2] -= c
+        stack.append(T1); stack.append(T2)
+        steps += 1
+        if steps > max_steps: raise RuntimeError("did not terminate")
+    res = {T: c for T, c in combo.items() if c != 0}
+    _STRAIGHTEN_CACHE[G] = res
+    return dict(res), steps
+
+# ---- verification helper (exact, evaluates delta at integer points) ----
+def _dval(cols, pt):
+    v = 1
+    for (a, b) in cols: v *= (pt[a-1] - pt[b-1])
+    return v
+def verify(G_edges, result, n, trials=8, seed=0):
+    import random
+    rng = random.Random(seed)
+    G = [(min(i,j),max(i,j)) for i,j in G_edges]
+    for _ in range(trials):
+        pt = rng.sample(range(1, 5*n), n)
+        lhs = _dval(G, pt)
+        rhs = sum(c * _dval(T, pt) for T, c in result.items())
+        if lhs != rhs: return False
+    return True
+
+if __name__ == "__main__":
+    import time
+    # sanity checks
+    tests = [
+        ([(1,2),(2,3),(3,4),(1,4)], 4, "4-cycle"),
+        ([(1,2),(2,3),(1,3)], 5, "triangle"),
+        ([(1,3),(2,4)], 4, "already standard {(1,3),(2,4)}"),
+        ([(1,4),(2,3)], 4, "crossing {(1,4),(2,3)}"),
+    ]
+    for e, n, name in tests:
+        res, st = straighten(e)
+        ok = verify(e, res, n)
+        print(f"{name:28s}: {len(res)} std tableaux, {st} steps, verified={ok}")
+        for T, c in sorted(res.items()):
+            print(f"     {c:+d} * {list(T)}")
+        print()
+
+</script>
+<script type="text/x-python" id="factor-src">
+"""
+Factor delta_G (G in G(l,m,n)) into products of degree-1 (dilate-1) standard tableaux,
+using the paper's constructive proof + Section 5.3 relations.  Exact, output-sensitive.
+
+  m=1 : straighten the matching -> standard degree-1 tableaux.
+  m=2 : Theorem 5.18.  If bipartite (no odd cycle) proper 2-edge-color -> product of two
+        matchings.  Else break an odd cycle with the linear relation
+             (x_a-x_b) = (x_a-x_w) - (x_b-x_w)   (w a spare vertex),
+        turning the odd cycle into two paths; recurse.
+  m>=3 : Theorem 5.7/5.17.  Split edges T = A(deg<=2) . B(deg<=m-2); recurse.
+"""
+from collections import defaultdict
+from straighten import straighten, _canon
+
+def _canon_edge(u, v):           # (x_u - x_v) as (edge, sign)
+    return ((u, v), 1) if u < v else ((v, u), -1)
+
+def two_color(edges):
+    """proper 2-edge-coloring of a degree<=2 graph; returns (M0,M1) or raises on odd cycle."""
+    adj = defaultdict(list)
+    for idx, (a, b) in enumerate(edges):
+        adj[a].append(idx); adj[b].append(idx)
+    color = [-1]*len(edges)
+    for start in range(len(edges)):
+        if color[start] != -1: continue
+        color[start] = 0; stack = [start]
+        while stack:
+            ei = stack.pop()
+            for v in edges[ei]:
+                for ej in adj[v]:
+                    if ej == ei: continue
+                    if color[ej] == -1:
+                        color[ej] = 1-color[ei]; stack.append(ej)
+                    elif color[ej] == color[ei]:
+                        raise ValueError("odd cycle")
+    return ([edges[i] for i in range(len(edges)) if color[i] == 0],
+            [edges[i] for i in range(len(edges)) if color[i] == 1])
+
+def _odd_cycle(edges):
+    deg = defaultdict(int); adj = defaultdict(list)
+    for idx, (a, b) in enumerate(edges):
+        deg[a] += 1; deg[b] += 1; adj[a].append(idx); adj[b].append(idx)
+    seen = [False]*len(edges)
+    for s in range(len(edges)):
+        if seen[s]: continue
+        comp = []; verts = set(); stack = [s]; seen[s] = True
+        while stack:
+            ei = stack.pop(); comp.append(ei)
+            for v in edges[ei]:
+                verts.add(v)
+                for ej in adj[v]:
+                    if not seen[ej]: seen[ej] = True; stack.append(ej)
+        if len(comp) % 2 == 1 and all(deg[v] == 2 for v in verts):
+            return [edges[i] for i in comp]
+    return None
+
+def _odd_cycles(edges):
+    deg = defaultdict(int); adj = defaultdict(list)
+    for idx,(a,b) in enumerate(edges): deg[a]+=1; deg[b]+=1; adj[a].append(idx); adj[b].append(idx)
+    seen=[False]*len(edges); cycles=[]
+    for s in range(len(edges)):
+        if seen[s]: continue
+        comp=[]; verts=set(); stack=[s]; seen[s]=True
+        while stack:
+            ei=stack.pop(); comp.append(ei)
+            for v in edges[ei]:
+                verts.add(v)
+                for ej in adj[v]:
+                    if not seen[ej]: seen[ej]=True; stack.append(ej)
+        if len(comp)%2==1 and all(deg[v]==2 for v in verts):
+            cycles.append([edges[i] for i in comp])
+    return cycles
+
+def _spare(H, cycle_verts, n):
+    deg = defaultdict(int)
+    for a,b in H: deg[a]+=1; deg[b]+=1
+    for v in range(1,n+1):                       # prefer isolated vertex not in the cycle
+        if v not in cycle_verts and deg[v]==0: return v
+    for v in range(1,n+1):                       # else any degree<=1 vertex not in the cycle
+        if v not in cycle_verts and deg[v]<=1: return v
+    raise RuntimeError("no spare in 1..n (unexpected for l<=n/2)")
+
+def _quad_rewrite(e1, e2):
+    """(x_p-x_q)(x_r-x_s) with 4 distinct verts -> the other two pairings.  Returns [(coeff,[eA,eB]),...]."""
+    w,x,y,z = sorted(set(e1)|set(e2))
+    nested=[(w,z),(x,y)]; cross=[(w,y),(x,z)]; side=[(w,x),(y,z)]
+    key=lambda cols: frozenset(frozenset(c) for c in cols)
+    cur=key([tuple(e1),tuple(e2)])
+    if cur==key(nested): return [(1,cross),(-1,side)]   # nested = cross - side
+    if cur==key(side):   return [(1,cross),(-1,nested)] # side   = cross - nested
+    return [(1,side),(1,nested)]                        # cross  = side + nested
+
+def factor_deg2(A, l, n):
+    """A: degree<=2 edges. Returns {(M0_std,M1_std): coeff}.  Stays within vertices 1..n."""
+    result = defaultdict(int)
+    stack = [(tuple(A), 1)]
+    while stack:
+        H, c = stack.pop()
+        ocs = _odd_cycles(list(H))
+        if len(ocs) >= 2:
+            e1 = ocs[0][0]; e2 = ocs[1][0]          # merge two odd cycles (odd+odd -> even)
+            rest = list(H); rest.remove(e1); rest.remove(e2)
+            for coef, pair in _quad_rewrite(e1, e2):
+                stack.append((tuple(rest + [tuple(sorted(pair[0])), tuple(sorted(pair[1]))]), c*coef))
+        elif len(ocs) == 1:
+            cyc = ocs[0]; cv = set(v for e in cyc for v in e)
+            a,b = cyc[0]; w = _spare(list(H), cv, n)
+            e_aw,s_aw=_canon_edge(a,w); e_bw,s_bw=_canon_edge(b,w)
+            rest=list(H); rest.remove((a,b))
+            stack.append((tuple(rest+[e_aw]), c*s_aw))
+            stack.append((tuple(rest+[e_bw]), -c*s_bw))
+        else:
+            M0,M1 = two_color(list(H))
+            s0=straighten(M0)[0]; s1=straighten(M1)[0]
+            for T0,aa in s0.items():
+                for T1,bb in s1.items():
+                    result[tuple(sorted((T0,T1)))] += c*aa*bb
+    return {k:v for k,v in result.items() if v!=0}
+
+# ---- verification ----
+def _dval(cols, pt):
+    v = 1
+    for (a, b) in cols: v *= (pt[a-1] - pt[b-1])
+    return v
+def verify2(A, result, n, seed=0):
+    import random; rng = random.Random(seed)
+    for _ in range(8):
+        pt = rng.sample(range(1, 5*n), n)
+        lhs = _dval(A, pt)
+        rhs = sum(c*_dval(M0, pt)*_dval(M1, pt) for (M0, M1), c in result.items())
+        if lhs != rhs: return False
+    return True
+
+if __name__ == "__main__":
+    tests = [
+        ([(1,2),(3,4)], "two disjoint edges (even)"),
+        ([(1,2),(2,3),(3,4),(1,4)], "4-cycle (even)"),
+        ([(1,2),(2,3),(1,3)], "triangle (odd)"),
+        ([(1,2),(2,3),(3,4),(4,5),(1,5)], "5-cycle (odd)"),
+        ([(1,2),(2,3),(1,3),(4,5),(5,6),(4,6)], "two triangles"),
+    ]
+    for A, name in tests:
+        n = max(max(e) for e in A) + 2       # room for spare vertices
+        r = factor_deg2(A, 99, n)
+        print(f"{name:26s}: {len(r)} products, verified={verify2(A, r, n)}")
+        for (M0, M1), c in sorted(r.items()):
+            print(f"     {c:+d} * δ{list(M0)} · δ{list(M1)}")
+        print()
+
+# ================= m >= 3 : split T = A(deg<=2) . B(deg<=m-2), recurse =================
+def _extract_AB(T, l, m):
+    """assign edges to A (deg<=2, <=2l edges) or B (deg<=m-2, <=(m-2)l edges). Return (A,B) or None.
+       Lower-bound pruning: each v needs at least deg(v)-(m-2) of its edges in A, so a B-assignment
+       that puts that out of reach is pruned at once -> failure is detected fast (no 2^E blow-up)."""
+    edges = list(T)
+    deg = defaultdict(int)
+    for a, b in edges: deg[a] += 1; deg[b] += 1
+    lo = {v: max(0, deg[v] - (m-2)) for v in deg}    # min # of v's edges that must be in A
+    rem = dict(deg)                                  # v's still-undecided incident edges
+    A = []; B = []; dA = defaultdict(int); dB = defaultdict(int)
+    order = sorted(range(len(edges)),
+                   key=lambda e: -(deg[edges[e][0]] + deg[edges[e][1]]))  # tight vertices first
+    def bt(k):
+        if k == len(edges): return True
+        a, b = edges[order[k]]
+        rem[a] -= 1; rem[b] -= 1
+        # try A
+        if dA[a] < 2 and dA[b] < 2 and len(A) < 2*l:
+            A.append((a, b)); dA[a] += 1; dA[b] += 1
+            if bt(k+1): rem[a] += 1; rem[b] += 1; return True
+            A.pop(); dA[a] -= 1; dA[b] -= 1
+        # try B, but only if both endpoints can still reach their A lower bound
+        if (dB[a] < m-2 and dB[b] < m-2 and len(B) < (m-2)*l
+                and dA[a] + rem[a] >= lo[a] and dA[b] + rem[b] >= lo[b]):
+            B.append((a, b)); dB[a] += 1; dB[b] += 1
+            if bt(k+1): rem[a] += 1; rem[b] += 1; return True
+            B.pop(); dB[a] -= 1; dB[b] -= 1
+        rem[a] += 1; rem[b] += 1
+        return False
+    return (A, B) if bt(0) else None
+
+def _deg(edges):
+    d = defaultdict(int)
+    for a, b in edges: d[a] += 1; d[b] += 1
+    return d
+
+def _W(T):
+    return sum(a + b for a, b in T)                          # total endpoint sum; raise increases it
+
+def _find_raise(T, m, n):
+    """T non-crossing but unsplittable => non-maximal (Thm 5.17).  Find an edge (a,b) whose
+       bottom can be raised: smallest c with b < c <= n and deg_T(c) < m (room for c).  Return
+       (edge_index, c), else None if T is maximal."""
+    d = _deg(T)
+    for i, (a, b) in enumerate(T):
+        for c in range(b + 1, n + 1):                        # smallest raise -> compact output
+            if d[c] < m:                                     # a<b<c so c!=a; multigraph edges ok
+                return (i, c)
+    return None
+
+def maximalize(G, l, m, n):
+    """Reduce delta_G to a combination of SPLITTABLE (maximal) non-crossing tableaux, using the
+       linear relation  delta_{(a,b)+H} = delta_{(a,c)+H} - delta_{(b,c)+H}  to raise non-maximal
+       tableaux.  Worklist collects like terms; raises strictly increase W and straightening
+       preserves W, so the state graph is acyclic (terminates, bounded by #reachable tableaux)."""
+    import heapq
+    expr = defaultdict(int)
+    heap = []
+    for t, c in straighten(G)[0].items():
+        expr[t] += c
+        heapq.heappush(heap, (_W(t), t))
+    final = defaultdict(int)
+    seen = set()
+    while heap:
+        _, T = heapq.heappop(heap)                           # lowest W first (O(log) not O(|expr|))
+        if T in seen:
+            continue
+        seen.add(T)
+        c = expr.pop(T, 0)
+        if c == 0:
+            continue
+        if _extract_AB(T, l, m) is not None:                 # maximal enough to split
+            final[T] += c
+            continue
+        r = _find_raise(T, m, n)
+        if r is None:
+            raise ValueError(f"tableau {list(T)} maximal yet unsplittable (contradicts Thm 5.17)")
+        i, cc = r
+        a, b = T[i]
+        rest = [T[k] for k in range(len(T)) if k != i]
+        for coeff, ne in ((c, (a, cc)), (-c, (b, cc))):      # + (a,c)H   - (b,c)H
+            for t2, c2 in straighten(rest + [tuple(sorted(ne))])[0].items():
+                if t2 not in seen:                           # children have strictly larger W
+                    if t2 not in expr:
+                        heapq.heappush(heap, (_W(t2), t2))
+                    expr[t2] += coeff * c2
+    return {k: v for k, v in final.items() if v != 0}
+
+_MEMO = {}
+def factor_deg1(T, l, m, n):
+    """Return dict { (tab_1,...,tab_m) : coeff } expressing delta_T as a sum of products of m
+       standard degree-1 tableaux.  m>=3: reduce to maximal tableaux, split each via Thm 5.17."""
+    T = _canon((min(i, j), max(i, j)) for i, j in T)
+    if m == 1:
+        return {(M,): c for M, c in straighten(list(T))[0].items()}
+    if m == 2:
+        return {tuple(sorted(k)): v for k, v in factor_deg2(list(T), l, n).items()}
+    key = (T, l, m, n)
+    if key in _MEMO:
+        return _MEMO[key]
+    out = defaultdict(int)
+    for Tmax, cT in maximalize(list(T), l, m, n).items():
+        A, B = _extract_AB(Tmax, l, m)                       # guaranteed to succeed
+        fa = factor_deg2(A, l, n)                            # {(M0,M1): c}
+        fb = factor_deg1(B, l, m-2, n)                       # {(m-2)-tuple: c}
+        for (M0, M1), ca in fa.items():
+            for tb, cb in fb.items():
+                out[tuple(sorted((M0, M1) + tb))] += cT*ca*cb
+    res = {k: v for k, v in out.items() if v != 0}
+    _MEMO[key] = res
+    return res
+
+def express_deg1(G_edges, l, m, n):
+    """Full pipeline: straighten G, then factor each tableau to degree-1 products."""
+    return factor_deg1(list((min(i, j), max(i, j)) for i, j in G_edges), l, m, n)
+
+def verify_prod(G_edges, result, n, seed=0):
+    import random; rng = random.Random(seed)
+    G = [(min(i, j), max(i, j)) for i, j in G_edges]
+    for _ in range(8):
+        pt = rng.sample(range(1, 5*n), n)
+        lhs = _dval(G, pt)
+        rhs = 0
+        for prod, c in result.items():
+            v = c
+            for tab in prod: v *= _dval(tab, pt)
+            rhs += v
+        if lhs != rhs: return False
+    return True
+
+</script>
+<script type="text/x-python" id="demos-src">
+"""Supporting routines for the interactive demo tabs.  Pure-Python (no sympy), reuses
+   straighten.py / factor.py.  Every function returns a JSON string for the browser."""
+import json
+from fractions import Fraction
+from collections import defaultdict
+import time, heapq, bisect
+from straighten import straighten, _straighten_core, _canon, _violation, _dval
+from factor import express_deg1, verify_prod, _extract_AB, maximalize, _W, _deg
+
+def factor_report(edges, l, m, n):
+    try:
+        edges = [tuple(e) for e in edges]
+        t0 = time.time(); r = express_deg1(edges, l, m, n); dt = time.time() - t0
+        ok = verify_prod(edges, r, n)
+        terms = [{"c": c, "tabs": [[list(e) for e in tab] for tab in prod]}
+                 for prod, c in sorted(r.items())]
+        return json.dumps({"ok": True, "verified": bool(ok), "count": len(r), "time": dt, "terms": terms})
+    except Exception as ex:
+        msg = str(ex)
+        if "did not terminate" in msg:
+            msg = ("This graph is too dense for the in-browser engine: its straightened form is "
+                   "exponentially large. Try fewer edges or a smaller n.")
+        return json.dumps({"ok": False, "error": msg})
+
+# ==================================================================== Ehrhart
+def _cube_coeffs(m, n):
+    cur = [1]; base = [1]*(m+1)
+    for _ in range(n):
+        new = [0]*(len(cur)+len(base)-1)
+        for i, a in enumerate(cur):
+            if a:
+                for j, b in enumerate(base): new[i+j] += a*b
+        cur = new
+    return cur
+def _c(d, m, n):
+    if d < 0 or m < 0: return 0
+    cc = _cube_coeffs(m, n)
+    return cc[d] if 0 <= d < len(cc) else 0
+def _delta(d, m, n): return _c(d, m, n) - _c(d-1, m, n)
+
+def _qadd(a, b):
+    L = max(len(a), len(b)); r = [0]*L
+    for i, x in enumerate(a): r[i] += x
+    for i, y in enumerate(b): r[i] += y
+    return r
+def _qmul(a, b):
+    if not a or not b: return []
+    r = [0]*(len(a)+len(b)-1)
+    for i, x in enumerate(a):
+        if x:
+            for j, y in enumerate(b): r[i+j] += x*y
+    return r
+def _den_tlist(l, n):
+    factors = [l]*(n-1) + list(range(l))
+    D = [[1]]
+    for a in factors:
+        new = [[] for _ in range(len(D)+1)]
+        for k in range(len(D)):
+            new[k] = _qadd(new[k], D[k])
+            new[k+1] = _qadd(new[k+1], [0]*a + [-x for x in D[k]])
+        D = new
+    return D
+def _series_tlist(l, n, M, interior=False):
+    A = []
+    for m in range(M+1):
+        top = (l*m - n) if interior else (l*m)
+        mm = (m-2) if interior else m
+        A.append([_delta(d, mm, n) for d in range(0, top+1)] if top >= 0 else [])
+    return A
+def _num_tlist(l, n, interior=False, margin=6):
+    D = _den_tlist(l, n); degD = len(D)-1; M = degD+margin
+    A = _series_tlist(l, n, M, interior=interior)
+    def prod_coeff(k):
+        acc = []
+        for j in range(len(D)):
+            i = k-j
+            if 0 <= i <= M: acc = _qadd(acc, _qmul(D[j], A[i]))
+        return acc
+    num = [prod_coeff(k) for k in range(degD+1)]
+    for k in range(degD+1, M+1):
+        if any(x != 0 for x in prod_coeff(k)):
+            raise ValueError("series/denominator mismatch")
+    return num
+
+def _sup(e):
+    return "" if e == 0 else ("" if e == 1 else "<sup>%d</sup>" % e)
+def _qpoly_html(qp, var="q"):
+    terms = []
+    for e, c in enumerate(qp):
+        if c == 0: continue
+        if e == 0: terms.append(("+" if c > 0 else "-", str(abs(c))))
+        else:
+            co = "" if abs(c) == 1 else str(abs(c))
+            terms.append(("+" if c > 0 else "-", co + var + _sup(e)))
+    if not terms: return "0"
+    out = ""
+    for i, (s, body) in enumerate(terms):
+        if i == 0: out += ("-" if s == "-" else "") + body
+        else: out += " " + s + " " + body
+    return out
+def _num_html(num):
+    parts = []
+    for k, qp in enumerate(num):
+        if all(x == 0 for x in qp): continue
+        s = _qpoly_html(qp)
+        if k == 0: parts.append("(" + s + ")" if s not in ("0",) else "")
+        else:
+            wrap = ("(" + s + ")") if (sum(1 for x in qp if x) > 1 or any(x < 0 for x in qp)) else s
+            parts.append(wrap + " t" + _sup(k))
+    parts = [p for p in parts if p]
+    out = parts[0]
+    for p in parts[1:]:
+        out += (" − " + p[1:]) if p.startswith("-") else (" + " + p)
+    return out
+def _den_html(l, n):
+    a = "(1 − q" + (_sup(l) if l != 1 else "") + "t)" + (_sup(n-1) if n-1 != 1 else "")
+    b = ""
+    for j in range(l):
+        b += "(1 − " + ("q" + _sup(j) if j >= 1 else "") + ("" if j >= 1 else "") + "t)" if j >= 1 else "(1 − t)"
+    return a + b
+def _texp(e): return '' if e == 1 else ('^{%d}' % e)     # q^e / t^e in LaTeX (caller: e>=1)
+def _num_tex(num):
+    terms = []
+    for k, qp in enumerate(num):
+        for e, c in enumerate(qp):
+            if c: terms.append((c, e, k))
+    if not terms: return '0'
+    terms.sort(key=lambda z: (z[2], z[1]))
+    out = ''
+    for i, (c, e, k) in enumerate(terms):
+        mono = ''
+        if abs(c) != 1 or (e == 0 and k == 0): mono += str(abs(c))
+        if e > 0: mono += 'q' + _texp(e)
+        if k > 0: mono += 't' + _texp(k)
+        out += (('-' if c < 0 else '') + mono) if i == 0 else ((' - ' if c < 0 else ' + ') + mono)
+    return out
+def _den_tex(l, n):
+    out = '(1-q' + _texp(l) + 't)' + (('^{%d}' % (n-1)) if n-1 != 1 else '')
+    for j in range(l):
+        out += '(1-t)' if j == 0 else '(1-q' + _texp(j) + 't)'
+    return out
+def _qp_tex(qp):
+    terms = [(c, e) for e, c in enumerate(qp) if c]
+    if not terms: return '0'
+    out = ''
+    for i, (c, e) in enumerate(terms):
+        mono = '' if (abs(c) == 1 and e > 0) else str(abs(c))
+        if e > 0: mono += 'q' + _texp(e)
+        out += (('-' if c < 0 else '') + mono) if i == 0 else ((' - ' if c < 0 else ' + ') + mono)
+    return out
+
+def _qshift(p, a): return [0]*a + list(p)
+def _divide_factor(N, a):
+    """Divide numerator N (tlist) by (1 - q^a t); return the quotient tlist, or None if it does
+       not divide evenly.  Synthetic division: c_k = b_k - q^a b_{k-1}, so b_k = c_k + q^a b_{k-1}."""
+    d = len(N) - 1
+    if d < 0: return None
+    if d == 0: return [] if not any(N[0]) else None
+    Q = []; prev = []
+    for k in range(d):                                # b_0 .. b_{d-1}
+        ck = N[k] if k < len(N) else []
+        bk = _qadd(ck, _qshift(prev, a))
+        Q.append(bk); prev = bk
+    cd = N[d] if d < len(N) else []                   # remainder: c_d + q^a b_{d-1} must vanish
+    if any(x != 0 for x in _qadd(cd, _qshift(Q[-1], a))): return None
+    while len(Q) > 1 and not any(Q[-1]): Q.pop()
+    return Q
+def _reduce_denominator(numE, numB, l, n):
+    """Cancel any denominator factor (1 - q^a t) dividing BOTH numerators (keeps the shared
+       denominator).  Reduces exactly when l = n/2; leaves the minimal cases untouched."""
+    factors = [l]*(n-1) + list(range(l))              # a means the factor (1 - q^a t)
+    changed = True
+    while changed:
+        changed = False
+        for idx, a in enumerate(factors):
+            qE = _divide_factor(numE, a); qB = _divide_factor(numB, a)
+            if qE is not None and qB is not None:
+                numE, numB = qE, qB; factors.pop(idx); changed = True; break
+    return numE, numB, factors
+def _den_tex_factors(factors):
+    from collections import Counter
+    cnt = Counter(factors); out = ''
+    for a in sorted(cnt):
+        base = '(1-t)' if a == 0 else '(1-q' + _texp(a) + 't)'
+        out += base + (('^{%d}' % cnt[a]) if cnt[a] > 1 else '')
+    return out
+
+def _eval(num, l, n, t0, q0):
+    val = Fraction(0)
+    for k, qp in enumerate(num):
+        for e, c in enumerate(qp):
+            if c: val += c * (t0**k) * (q0**e)
+    den = (1 - q0**l * t0)**(n-1)
+    for j in range(l): den *= (1 - q0**j * t0)
+    return val/den
+
+def ehrhart_report(l, n):
+    try:
+        numE = _num_tlist(l, n, False)
+        numB = _num_tlist(l, n, True)
+        # reciprocity spot-check: q^{n-1} Ebar(t,q) == (-1)^n E(1/t,1/q)
+        rec_ok = True
+        for (t0, q0) in [(Fraction(1,7), Fraction(1,3)), (Fraction(1,11), Fraction(2,5))]:
+            lhs = q0**(n-1) * _eval(numB, l, n, t0, q0)
+            rhs = (-1)**n * _eval(numE, l, n, 1/t0, 1/q0)
+            if lhs != rhs: rec_ok = False
+        latt = [_c(l*m, m, n) for m in range(min(6, 2*l+2))]     # #lattice points of m*Delta_l
+        rE, rB, rfac = _reduce_denominator(numE, numB, l, n)     # minimal (reduced) form
+        reduced = len(rfac) < (n - 1 + l)
+        degN = max(len(rE), len(rB))
+        rows = []                                                # per t-power: [k, coeff of E, coeff of Ebar]
+        for k in range(degN):
+            ce = _qp_tex(rE[k]) if k < len(rE) and any(rE[k]) else ""
+            cb = _qp_tex(rB[k]) if k < len(rB) and any(rB[k]) else ""
+            if ce or cb: rows.append([k, ce, cb])
+        return json.dumps({"ok": True, "l": l, "n": n, "den_tex": _den_tex_factors(rfac),
+            "reduced": bool(reduced), "half": (2*l == n), "rows": rows,
+            "recip": bool(rec_ok), "lattice": latt})
+    except Exception as ex:
+        return json.dumps({"ok": False, "error": str(ex)})
+
+# ==================================================================== straightening frames
+def straighten_record(edges, cap=500):
+    try:
+        G = _canon((min(i, j), max(i, j)) for i, j in edges)
+        combo = defaultdict(int); combo[G] = 1
+        stack = [G]; frames = []
+        def snap(cr):
+            return {"terms": [{"c": c, "tab": [list(e) for e in T]} for T, c in combo.items() if c != 0],
+                    "cross": cr}
+        frames.append(snap(None))
+        steps = 0
+        while stack and steps < cap:
+            T = stack.pop(); c = combo.get(T, 0)
+            if c == 0: continue
+            v = _violation(T)
+            if v is None: continue
+            i, j = v; p, q = T[i]; r, s = T[j]
+            cr = {"cols": [i, j], "e1": [p, q], "e2": [r, s]}
+            del combo[T]
+            rest = T[:i] + T[i+2:]
+            T1 = _canon(rest + ((p, s), (r, q))); T2 = _canon(rest + ((p, r), (s, q)))
+            combo[T1] += c; combo[T2] -= c
+            stack.append(T1); stack.append(T2); steps += 1
+            frames.append(snap(cr))
+        done = all(_violation(T) is None for T, c in combo.items() if c != 0)
+        return json.dumps({"ok": True, "frames": frames, "done": bool(done), "n": len(frames)})
+    except Exception as ex:
+        return json.dumps({"ok": False, "error": str(ex)})
+
+# ==================================================================== obstruction analysis
+def _bridges_and_cuts(nv, edges):
+    adj = defaultdict(list)                       # vertex -> list of (nbr, edge_id)
+    for idx, (a, b) in enumerate(edges):
+        adj[a].append((b, idx)); adj[b].append((a, idx))
+    disc = {}; low = {}; timer = [0]; bridges = []; arts = set()
+    def dfs(u, pe):
+        disc[u] = low[u] = timer[0]; timer[0] += 1; kids = 0
+        for w, eid in adj[u]:
+            if eid == pe: continue
+            if w not in disc:
+                kids += 1; dfs(w, eid)
+                low[u] = min(low[u], low[w])
+                if low[w] > disc[u]: bridges.append(eid)
+                if pe != -1 and low[w] >= disc[u]: arts.add(u)
+            else:
+                low[u] = min(low[u], disc[w])
+        if pe == -1 and kids > 1: arts.add(u)
+    import sys as _s; _s.setrecursionlimit(10000)
+    for v in list(adj.keys()):
+        if v not in disc: dfs(v, -1)
+    return bridges, sorted(arts)
+
+def _edge_colorable(edges, m):
+    """can the edges be properly colored with m colors (i.e. split into m matchings)?
+       delta_G is a single product of m degree-1 tableaux  <=>  chi'(G) <= m."""
+    E = list(edges); nE = len(E)
+    vtoE = defaultdict(list)
+    for i, (a, b) in enumerate(E): vtoE[a].append(i); vtoE[b].append(i)
+    order = sorted(range(nE), key=lambda i: -(len(vtoE[E[i][0]]) + len(vtoE[E[i][1]])))
+    color = [-1]*nE
+    def bt(k):
+        if k == nE: return True
+        ei = order[k]; a, b = E[ei]; used = set()
+        for ej in vtoE[a]:
+            if color[ej] >= 0: used.add(color[ej])
+        for ej in vtoE[b]:
+            if color[ej] >= 0: used.add(color[ej])
+        for cc in range(m):
+            if cc not in used:
+                color[ei] = cc
+                if bt(k+1): return True
+                color[ei] = -1
+        return False
+    return bt(0)
+
+def _bipartite(edges):
+    adj = defaultdict(list)
+    for a, b in edges: adj[a].append(b); adj[b].append(a)
+    col = {}
+    for s in list(adj):
+        if s in col: continue
+        col[s] = 0; st = [s]
+        while st:
+            u = st.pop()
+            for w in adj[u]:
+                if w not in col: col[w] = 1-col[u]; st.append(w)
+                elif col[w] == col[u]: return False
+    return True
+
+def obstruction_analysis(edges, l, m, n):
+    try:
+        E = [(min(a, b), max(a, b)) for a, b in edges]
+        nv = max((max(e) for e in E), default=0)
+        bridges, arts = _bridges_and_cuts(nv, E)
+        nprod = len(express_deg1(E, l, m, n))
+        colorable = _edge_colorable(E, m)
+        bip = _bipartite(E)
+        strict = m < (2*l + 2) / 3
+        if colorable:
+            cls = "δ<sub>G</sub> is a single product of m matchings (χ&prime;(G) ≤ m) — no obstruction."
+            if nprod > 1:
+                cls += (" In the standard non-crossing basis it still expands to %d terms, "
+                        "because those matchings are not individually non-crossing." % nprod)
+        else:
+            feats = []
+            if not bip:
+                feats.append("an odd cycle (broken by the linear relation using a spare vertex — "
+                             "Thm 5.18, which needs ℓ ≤ n/2)")
+            if bridges:
+                feats.append("%d cut-edge(s), a structural / bridge-forest obstruction "
+                             "(Figure 2, Remark 5.5)" % len(bridges))
+            if strict:
+                feats.append("m in the strict regime m &lt; (2ℓ+2)/3 = %.2f (Theorem 5.9)" % ((2*l+2)/3))
+            if not feats:
+                feats.append("an ℓ-too-tight configuration (Example 5.13)")
+            cls = ("Obstructed: δ<sub>G</sub> is <em>not</em> a single product of m matchings "
+                   "(χ&prime;(G) &gt; m). Contributing structure: " + "; ".join(feats) + ".")
+        return json.dumps({"ok": True, "bridges": bridges, "arts": arts, "nprod": nprod,
+            "colorable": bool(colorable), "bipartite": bool(bip), "strict": bool(strict),
+            "threshold": round((2*l+2)/3, 2), "cls": cls})
+    except Exception as ex:
+        return json.dumps({"ok": False, "error": str(ex)})
+
+# ==================================================================== 2-factor split
+def split_view(edges, l, m, n):
+    try:
+        E = [(min(a, b), max(a, b)) for a, b in edges]
+        if m < 2:
+            return json.dumps({"ok": False, "error": "the A·B split needs m ≥ 2."})
+        M = maximalize(list(E), l, m, n)
+        # choose the maximal tableau closest to the drawn graph if present, else the first
+        key = _canon(E)
+        chosen = key if key in M else next(iter(M))
+        A, B = _extract_AB(chosen, l, m)
+        used = sorted({v for e in chosen for v in e})
+        return json.dumps({"ok": True,
+            "maximal": [list(e) for e in chosen],
+            "A": [list(e) for e in A], "B": [list(e) for e in B],
+            "same_as_drawn": chosen == key, "nmax": len(M),
+            "verts": used})
+    except Exception as ex:
+        return json.dumps({"ok": False, "error": str(ex)})
+
+# ==================================================================== maximal basis
+def _raise_to_max(T, m, n):
+    """Greedy-maximal raise.  Scan edges RIGHT-TO-LEFT (greedy fills b_d first, then b_{d-1}, ...);
+       raise the first raisable edge's bottom to the largest legal v.  This order visits ~6x fewer
+       intermediate tableaux than left-to-right.  None <=> T is already in S_max."""
+    d = _deg(T)
+    for k in range(len(T)-1, -1, -1):
+        a, b = T[k]
+        upper = T[k+1][1] if k+1 < len(T) else n
+        for v in range(upper, b, -1):             # largest legal v, early return
+            if v != a and d[v] < m: return (k, v)
+    return None
+
+def maximal_basis(G, l, m, n):
+    """Express delta_G in the maximal-tableau basis S_max(l,m,n): raise EVERY tableau all the way
+       to greedy-maximal (not merely splittable), via the linear relation."""
+    expr = defaultdict(int); heap = []
+    for t, c in straighten(G)[0].items():
+        expr[t] += c; heapq.heappush(heap, (_W(t), t))
+    final = defaultdict(int); seen = set()
+    while heap:
+        _, T = heapq.heappop(heap)
+        if T in seen: continue
+        seen.add(T); c = expr.pop(T, 0)
+        if c == 0: continue
+        r = _raise_to_max(T, m, n)
+        if r is None:
+            final[T] += c; continue
+        k, v = r; a, b = T[k]
+        rest = [T[i] for i in range(len(T)) if i != k]      # still sorted; a<v and b<v are canonical
+        for coeff, ne in ((c, (a, v)), (-c, (b, v))):
+            child = list(rest); bisect.insort(child, ne)     # O(d) insert, no re-canonicalization
+            for t2, c2 in _straighten_core(tuple(child))[0].items():
+                if t2 not in seen:
+                    if t2 not in expr: heapq.heappush(heap, (_W(t2), t2))
+                    expr[t2] += coeff * c2
+    return {kk: vv for kk, vv in final.items() if vv != 0}
+
+def basis_view(edges, l, m, n):
+    try:
+        E = [(min(a, b), max(a, b)) for a, b in edges]
+        M = maximal_basis(list(E), l, m, n)
+        # verify: sum reproduces delta_G, and every output tableau is genuinely maximal
+        import random
+        rng = random.Random(0); good = True
+        for _ in range(6):
+            pt = rng.sample(range(1, 5*n), n)
+            lhs = _dval([tuple(e) for e in E], pt)
+            rhs = sum(c * _dval(T, pt) for T, c in M.items())
+            if lhs != rhs: good = False
+        maximal_ok = all(_raise_to_max(T, m, n) is None for T in M)
+        tabs = [{"c": c, "tab": [list(e) for e in T]} for T, c in sorted(M.items())]
+        d = len(E)
+        return json.dumps({"ok": True, "tabs": tabs, "count": len(M), "edges": d,
+            "graded_dim": _delta(d, m, n), "verified": bool(good and maximal_ok)})
+    except Exception as ex:
+        return json.dumps({"ok": False, "error": str(ex)})
+
+</script>
+
+<script>
+(function(){
+  "use strict";
+  const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js";
+  const svg = document.getElementById('cv'), R = 16, VB = {w:600, h:400};
+  function ellipse(k){                     // k vertices evenly on an ellipse (shared by example + random)
+    const cx=VB.w/2, cy=VB.h/2, rx=VB.w*0.40, ry=VB.h*0.40, out=[];
+    for(let i=0;i<k;i++){ const a=-Math.PI/2 + 2*Math.PI*i/k; out.push([cx+rx*Math.cos(a), cy+ry*Math.sin(a)]); }
+    return out;
+  }
+  let V = [], E = [], sel = -1, del = false, hist = [];
+  const $ = id => document.getElementById(id);
+
+  // ---------- Pyodide ----------
+  let pyPromise = null;
+  function loadScript(src){
+    return new Promise((res, rej)=>{ const s=document.createElement('script'); s.src=src; s.async=true;
+      s.onload=()=>res(); s.onerror=()=>rej(new Error('could not load Pyodide from '+src+' (network / ad-blocker?)'));
+      document.head.appendChild(s); });
+  }
+  function loadEngine(){
+    if(pyPromise) return pyPromise;
+    $('engine').textContent = 'loading math engine… (first time ~a few seconds)';
+    pyPromise = (async ()=>{
+      if(typeof loadPyodide === 'undefined') await loadScript(PYODIDE_URL);
+      if(typeof loadPyodide === 'undefined') throw new Error('Pyodide loaded but loadPyodide missing');
+      const py = await loadPyodide();
+      py.FS.writeFile('/home/pyodide/straighten.py', $('straighten-src').textContent);
+      py.FS.writeFile('/home/pyodide/factor.py', $('factor-src').textContent);
+      py.FS.writeFile('/home/pyodide/demos.py', $('demos-src').textContent);
+      py.runPython("import sys\nif '/home/pyodide' not in sys.path: sys.path.insert(0,'/home/pyodide')\nimport json, demos");
+      $('engine').textContent = 'math engine ready';
+      return py;
+    })();
+    pyPromise.catch(err=>{ $('engine').innerHTML='<span class="bad">'+(err&&err.message?err.message:err)+'</span>'; pyPromise=null; });
+    return pyPromise;
+  }
+  async function call(fnCall){ const py = await loadEngine(); return JSON.parse(py.runPython(fnCall)); }
+
+  // ---------- drawing ----------
+  function push(){ hist.push(JSON.stringify([V,E])); if(hist.length>300) hist.shift(); }
+  function labelEdges(){ return E.map(e=>[Math.min(e[0],e[1])+1, Math.max(e[0],e[1])+1]); }
+  function deg(){ const d=V.map(_=>0); E.forEach(e=>{d[e[0]]++; d[e[1]]++;}); return d; }
+  function pos(ev){                        // map click to viewBox coords via the SVG's own CTM
+    const p=ev.touches?ev.touches[0]:ev;
+    const ctm=svg.getScreenCTM();
+    if(ctm){ const pt=svg.createSVGPoint(); pt.x=p.clientX; pt.y=p.clientY;
+             const s=pt.matrixTransform(ctm.inverse()); return [s.x,s.y]; }
+    const r=svg.getBoundingClientRect();     // fallback
+    return [ (p.clientX-r.left)/r.width*VB.w, (p.clientY-r.top)/r.height*VB.h ]; }
+  function nearV(x,y){ let b=-1,bd=R*R*3; V.forEach((v,i)=>{const dx=v[0]-x,dy=v[1]-y,dd=dx*dx+dy*dy; if(dd<bd){bd=dd;b=i;}}); return b; }
+  function nearE(x,y){ let b=-1,bd=90; E.forEach((e,i)=>{const a=V[e[0]],c=V[e[1]];const mx=(a[0]+c[0])/2,my=(a[1]+c[1])/2;const dd=(mx-x)**2+(my-y)**2; if(dd<bd){bd=dd;b=i;}}); return b; }
+  function tap(ev){
+    ev.preventDefault(); const [x,y]=pos(ev); const vi=nearV(x,y);
+    if(del){ if(vi>=0){ push(); E=E.filter(e=>e[0]!==vi&&e[1]!==vi).map(e=>[e[0]-(e[0]>vi?1:0),e[1]-(e[1]>vi?1:0)]); V.splice(vi,1); sel=-1; }
+             else{ const ei=nearE(x,y); if(ei>=0){ push(); E.splice(ei,1);} } render(); return; }
+    if(vi>=0){ if(sel<0) sel=vi; else if(sel!==vi){ push(); E.push([sel,vi]); sel=-1; } else sel=-1; }
+    else { push(); V.push([x,y]); sel=-1; }
+    render();
+  }
+  svg.addEventListener('mousedown', tap); svg.addEventListener('touchstart', tap, {passive:false});
+  $('mode').onclick=()=>{ del=!del; sel=-1; $('mode').textContent=del?'Mode: delete':'Mode: add / connect'; svg.style.cursor=del?'not-allowed':'crosshair'; render(); };
+  $('undo').onclick=()=>{ if(hist.length){ [V,E]=JSON.parse(hist.pop()); sel=-1; render(); } };
+  $('clear').onclick=()=>{ push(); V=[]; E=[]; sel=-1; clearOuts(); render(); };
+  $('example').onclick=()=>{ push();
+    V=ellipse(7);
+    E=[[0,1],[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[4,6],[5,6],[5,6]];
+    sel=-1; $('lval').value=4; $('mval').value=3; $('nval').value=8; clearOuts(); render(); };
+  $('random').onclick=()=>{ push();
+    const l=Math.max(1,parseInt($('lval').value)||1), m=Math.max(1,parseInt($('mval').value)||1);
+    const n=Math.max(2*l, parseInt($('nval').value)||2*l);
+    V=ellipse(n);
+    E=[]; const dg=new Array(n).fill(0), cap=l*m;
+    const target=Math.min(cap, Math.max(n-1, Math.floor(cap*(0.55+Math.random()*0.45))));
+    let tries=0;
+    while(E.length<target && tries<4000){ tries++;
+      const a=Math.floor(Math.random()*n), b=Math.floor(Math.random()*n);
+      if(a!==b && dg[a]<m && dg[b]<m){ E.push([a,b]); dg[a]++; dg[b]++; } }
+    sel=-1; clearOuts(); render(); };
+  function clearOuts(){ ['factor','basis'].forEach(t=>$('out-'+t).innerHTML=''); }
+
+  function edgeArcs(){
+    const seen={}; let s='';
+    E.forEach((e)=>{ const lo=Math.min(e[0],e[1]),hi=Math.max(e[0],e[1]),k=lo+'-'+hi;
+      const tot=E.filter(f=>Math.min(f[0],f[1])===lo&&Math.max(f[0],f[1])===hi).length;
+      const idx=(seen[k]=(seen[k]||0)+1)-1; const a=V[lo],b=V[hi]; const off=(idx-(tot-1)/2)*15;
+      const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2; let dx=b[0]-a[0],dy=b[1]-a[1]; const L=Math.hypot(dx,dy)||1;
+      const px=-dy/L,py=dx/L; const cx=mx+px*off*1.4,cy=my+py*off*1.4;
+      s+=`<path class="edge" d="M${a[0]},${a[1]} Q${cx},${cy} ${b[0]},${b[1]}"/>`; });
+    return s;
+  }
+  function vertexDots(){
+    let s='';
+    V.forEach((v,i)=>{ s+=`<circle class="vtx${i===sel?' sel':''}" cx="${v[0]}" cy="${v[1]}" r="${R}"/>`
+        +`<text x="${v[0]}" y="${v[1]+4}" text-anchor="middle" font-size="12">${i+1}</text>`; });
+    return s;
+  }
+  function autoGrow(){                       // drawing only ever raises ℓ, m, n to stay valid
+    const d=deg(), md=d.length?Math.max(...d):0;
+    const m=Math.max(parseInt($('mval').value)||1, md, 1);
+    const l=Math.max(parseInt($('lval').value)||1, Math.ceil(E.length/Math.max(m,1)), 1);
+    const n=Math.max(parseInt($('nval').value)||1, V.length, 2*l);
+    $('mval').value=m; $('lval').value=l; $('nval').value=n;
+  }
+  function validate(){
+    $('edges').textContent = E.length ? JSON.stringify(labelEdges()) : '(none — click empty space for a vertex, then two vertices to connect)';
+    const d=deg(), md=d.length?Math.max(...d):0;
+    const l=+$('lval').value, m=+$('mval').value, n=+$('nval').value;
+    $('stats').innerHTML=`vertices: ${V.length}<br>edges: ${E.length}<br>max degree: ${md}`;
+    const ok = md<=m && E.length<=l*m && l<=n/2 && V.length>0;
+    $('valid').innerHTML = ok ? `<span class="ok">&#10003; valid in G(${l}, ${m}, ${n})</span>`
+      : `<span class="bad">&#9650; ${md>m?'a vertex has degree > m':E.length>l*m?'more than ℓm edges':l>n/2?'need ℓ ≤ n/2':'draw a graph'}</span>`;
+    document.querySelectorAll('.run').forEach(b=>{ if(b.dataset.run!=='ehrhart') b.disabled=!ok; });
+  }
+  function render(){ svg.innerHTML = edgeArcs(null) + vertexDots(null); autoGrow(); validate(); }
+  ['lval','mval','nval'].forEach(id=>$(id).addEventListener('input', ()=>{ svg.innerHTML=edgeArcs(null)+vertexDots(null); validate(); }));
+
+  // ---------- tabs ----------
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
+      btn.classList.add('active'); $('panel-'+btn.dataset.tab).classList.remove('hidden');
+    };
+  });
+
+  // ---------- render helpers ----------
+  function tableauHTML(cols, colFn){       // cols: [[a,b],...]; colFn: idx->color or null
+    let h='<span class="tgrid">';
+    cols.forEach((c,i)=>{ const col=colFn?colFn(i):null; const bg=col?`background:${col};`:'';
+      h+=`<span class="tcol"><span class="tcell" style="${bg}">${c[0]}</span><span class="tcell" style="${bg}">${c[1]}</span></span>`; });
+    return h+'</span>';
+  }
+  function tabInline(cols){ return '(' + cols.map(e=>e[0]+''+e[1]).join(')(') + ')'; }
+  function renderRows(o, rows, chunk){        // scrollable list that reveals more terms on demand
+    const list=document.createElement('div'); list.className='blist';
+    const foot=document.createElement('div'); foot.className='listfoot';
+    o.appendChild(list); o.appendChild(foot);
+    let shown=0;
+    function step(){
+      list.insertAdjacentHTML('beforeend', rows.slice(shown, shown+chunk).join(''));
+      shown=Math.min(shown+chunk, rows.length);
+      if(shown>=rows.length){
+        foot.innerHTML = rows.length>chunk ? `<span class="caption">showing all ${rows.length} terms</span>` : '';
+      } else {
+        const b=Math.min(chunk, rows.length-shown);
+        foot.innerHTML=`<button class="showmore">Show ${b} more</button><span class="caption">showing ${shown} of ${rows.length}</span>`;
+        foot.querySelector('.showmore').onclick=step;
+      }
+    }
+    step();
+  }
+
+  // ---------- FACTOR ----------
+  document.querySelector('[data-run=factor]').onclick=async()=>{
+    const l=+$('lval').value,m=+$('mval').value,n=+$('nval').value, o=$('out-factor');
+    o.innerHTML='<div class="head">computing…</div>';
+    try{ const py=await loadEngine(); py.globals.set('EJ', JSON.stringify(labelEdges()));
+      const res=JSON.parse(py.runPython(`demos.factor_report(json.loads(EJ), ${l}, ${m}, ${n})`));
+      if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
+      let h=`<div class="head">&delta;<sub>G</sub> = sum of <strong>${res.count}</strong> product${res.count===1?'':'s'} of ${m} degree-1 tableau${m===1?'':'x'} `
+        +`<span class="${res.verified?'ok':'bad'}">${res.verified?'&#10003; verified':'&#10007; FAILED'}</span> `
+        +`<span style="color:#999">(${res.time<0.001?'<0.001':res.time.toFixed(3)} s)</span></div>`;
+      o.innerHTML=h;
+      const rows=res.terms.map(t=>{ const sg=t.c>0?'+':'−'; const mg=Math.abs(t.c)===1?'':Math.abs(t.c);
+        return `<div class="brow"><span class="bc">${sg}${mg?' '+mg:''}</span>`
+          + t.tabs.map(tab=>tableauHTML(tab,null)).join('<span class="prod">&middot;</span>') + '</div>'; });
+      renderRows(o, rows, 150);
+    }catch(e){ o.innerHTML=`<div class="head bad">Error: ${e.message||e}</div>`; }
+  };
+
+  // ---------- MAXIMAL BASIS ----------
+  document.querySelector('[data-run=basis]').onclick=async()=>{
+    const l=+$('lval').value,m=+$('mval').value,n=+$('nval').value, o=$('out-basis');
+    o.innerHTML='<div class="head">computing…</div>';
+    try{ const py=await loadEngine(); py.globals.set('EJ', JSON.stringify(labelEdges()));
+      const res=JSON.parse(py.runPython(`demos.basis_view(json.loads(EJ), ${l}, ${m}, ${n})`));
+      if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
+      let h=`<div class="head">δ<sub>G</sub> reduces onto <strong>${res.count}</strong> of the ${res.graded_dim} basis `
+        +`element${res.graded_dim===1?'':'s'} of S<sub>max</sub>(${l},${m},${n}) `
+        +`<span class="badge ${res.verified?'g':'r'}">${res.verified?'✓ verified &amp; maximal':'✗ check failed'}</span></div>`;
+      h+=`<p class="caption">δ<sub>G</sub> has degree d = ${res.edges} (edges); the degree-d graded piece of `
+        +`V<sub>m&Delta;&#8467;</sub> is ${res.graded_dim}-dimensional, so this is the unique coordinate vector of δ<sub>G</sub> in that basis.</p>`;
+      o.innerHTML=h;
+      const rows=res.tabs.map(t=>{ const sg=t.c>0?'+':'−'; const mg=Math.abs(t.c)===1?'':Math.abs(t.c);
+        return `<div class="brow"><span class="bc">${sg}${mg?' '+mg:''}</span>${tableauHTML(t.tab,null)}</div>`; });
+      renderRows(o, rows, 150);
+    }catch(e){ o.innerHTML=`<div class="head bad">Error: ${e.message||e}</div>`; }
+  };
+
+  // ---------- EHRHART ----------
+  let mjPromise=null;
+  function loadMathJax(){
+    if(mjPromise) return mjPromise;
+    window.MathJax={ tex:{displayMath:[['\\[','\\]']], inlineMath:[['\\(','\\)'],['$','$']]}, options:{enableMenu:false} };
+    mjPromise=loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js');
+    return mjPromise;
+  }
+  document.querySelector('[data-run=ehrhart]').onclick=async()=>{
+    const l=+$('lval').value,n=+$('nval').value, o=$('out-ehrhart');
+    o.innerHTML='<div class="head">computing…</div>';
+    try{ const res=await call(`demos.ehrhart_report(${l}, ${n})`);
+      if(!res.ok){ o.innerHTML=`<div class="head bad">${res.error}</div>`; return; }
+      let h=`<div class="head">&Delta;<sub>${l}</sub> &sub; &#8477;<sup>${n}</sup></div>`;
+      const denNote = res.reduced
+        ? 'sharing the <strong>reduced</strong> denominator — the Theorem 4.2 form simplifies here because ℓ = n/2'
+        : 'sharing the Theorem 4.2 denominator';
+      h+=`<p style="font-size:.88rem;margin:.1rem 0 .7rem">Closed rational form \\(E=N(t,q)/D\\), interior `
+        +`\\(\\overline{E}=\\overline{N}(t,q)/D\\), ${denNote} `
+        +`\\(D(t,q)=${res.den_tex}\\). Numerators, coefficient of each power of \\(t\\):</p>`;
+      h+='<div class="etbl"><table><tr><td class="lab">power of t</td><td class="lab">numerator of E</td><td class="lab">numerator of interior E&#772;</td></tr>';
+      res.rows.forEach(r=>{ const tp = r[0]===0?'1':(r[0]===1?'t':'t^{'+r[0]+'}');
+        h+=`<tr><td class="kcol">\\(${tp}\\)</td><td>${r[1]?'\\('+r[1]+'\\)':'—'}</td><td>${r[2]?'\\('+r[2]+'\\)':'—'}</td></tr>`; });
+      h+='</table></div>';
+      h+=`<p class="caption"><span class="badge ${res.recip?'g':'r'}">q-reciprocity ${res.recip?'holds':'fails'}</span>`
+        +`lattice points L(m&Delta;<sub>${l}</sub>) = ${res.lattice.join(', ')}, …</p>`;
+      o.innerHTML=h;
+      await loadMathJax();
+      if(window.MathJax && MathJax.typesetPromise) await MathJax.typesetPromise([o]);
+    }catch(e){ o.innerHTML=`<div class="head bad">Error: ${e.message||e}</div>`; }
+  };
+
+  render();
+})();
+</script>
+</div>
