@@ -1,12 +1,16 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta name="google-site-verification" content="zxcdn83snss3_cV4SWMvKMc8x8v-TqUO-g2wFCLBymQ"> <meta name="msvalidate.01" content="29D2DDDEBD65D99AD51D5B1535BA634A"> <meta http-equiv="Permissions-Policy" content="interest-cohort=()"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Interactive graph demos | Weston Miller </title> <meta name="author" content="Weston A. Miller"> <meta name="description" content="I am a first year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology). "> <meta name="keywords" content="weston, miller, math, mathematics, ucsd"> <link rel="stylesheet" href="/assets/css/bootstrap.min.css?a4b3f509e79c54a512b890d73235ef04"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="/assets/css/academicons.min.css?f0b7046b84e425c55f3463ac249818f5"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/pi.svg?dc478491a1c0509830705bb2a0df45fe"> <link rel="stylesheet" href="/assets/css/main.css?d41d8cd98f00b204e9800998ecf8427e"> <link rel="canonical" href="https://weston-miller.github.io/graph-demos/"> <script src="/assets/js/theme.js?9a0c749ec5240d9cda97bc72359a72c0"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>initTheme();</script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> Weston Miller </a> <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse text-right" id="navbarNav"> <ul class="navbar-nav ml-auto flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">cv </a> </li> <li class="toggle-container"> <button id="light-toggle" title="Change theme"> <i class="ti ti-sun-moon" id="light-toggle-system"></i> <i class="ti ti-moon-filled" id="light-toggle-dark"></i> <i class="ti ti-sun-filled" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <style>#gd{--ink:var(--global-text-color,#000);--muted:var(--global-text-color-light,#828282);--line:var(--global-divider-color,rgba(0,0,0,0.1));--bg:var(--global-bg-color,#fff);--panel:rgba(127,127,127,0.11);--surface:var(--global-card-bg-color,#fff);--accent:var(--global-theme-color,#009f06);--accentbg:rgba(0,159,6,0.08);--ok:var(--global-theme-color,#009f06);--bad:var(--global-highlight-color,#b71c1c);--green:var(--global-theme-color,#009f06);--greenbg:rgba(0,159,6,0.10);--blue:var(--global-theme-color,#009f06);--bluebg:rgba(0,159,6,0.08);--edge:#8a8a84;--vfill:color-mix(in srgb,var(--accent) 18%,var(--bg));--radius:6px}#gd *{box-sizing:border-box}#gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;margin:0}#gd .wrap{max-width:900px;margin:0 auto;padding:1.5rem 1.25rem 4rem}#gd h1{font-size:2rem;font-weight:700;margin:.2rem 0 .5rem;line-height:1.2}#gd p.lede{color:var(--muted);margin:.2rem 0 1.2rem;font-size:.95rem}#gd a{text-decoration:none}#gd a:hover{text-decoration:underline}#gd button{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--line);background:var(--bg);border-radius:var(--radius);cursor:pointer;color:var(--ink)}#gd button:hover{color:var(--accent);border-color:var(--accent)}#gd button:active{transform:scale(.98)}#gd button:disabled{opacity:.5;cursor:default}#gd button:disabled:hover{color:var(--ink);border-color:var(--line)}#gd button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}#gd button.primary:hover{color:#fff;opacity:.88}#gd label{font-size:.85rem;color:var(--muted)}#gd input[type=number]{width:54px;font:inherit;padding:5px 6px;border:1px solid var(--line);border-radius:var(--radius)}#gd .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}#gd .spacer{flex:1}#gd svg#cv{width:100%;max-width:560px;aspect-ratio:3/2;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);touch-action:none;cursor:crosshair;display:block;margin:0 auto}#gd svg#cv .edge{fill:none;stroke:var(--edge);stroke-width:1.7}#gd svg#cv .vtx{fill:var(--bg);fill:var(--vfill);stroke:var(--accent);stroke-width:2.4}#gd svg#cv .vtx.sel{stroke-width:4}#gd svg#cv text{fill:var(--accent);font-family:inherit;font-weight:700}#gd .row{display:flex;gap:14px;align-items:flex-start;margin-top:10px;flex-wrap:wrap}#gd .row .col{flex:1;min-width:200px}#gd .k{font-size:.78rem;color:var(--muted);margin-bottom:3px}#gd #edges{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;word-break:break-all;min-height:18px}#gd #stats{font-size:.83rem;color:var(--muted);line-height:1.6}#gd #valid{font-size:.83rem;margin-top:2px}#gd .ok{color:var(--ok)}#gd .bad{color:var(--bad)}#gd .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:1.3rem 0 0;border-bottom:1px solid var(--line)}#gd .tab-btn{border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;padding:7px 13px;background:var(--panel);color:var(--muted);position:relative;top:1px}#gd .tab-btn.active{background:var(--bg);color:var(--ink);font-weight:600;border-bottom:1px solid var(--bg);border-top:2px solid var(--accent);padding-top:6px}#gd .panel{border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:1rem 1.1rem 1.3rem}#gd .panel.hidden{display:none}#gd .panel .desc{font-size:.86rem;color:var(--muted);margin:0 0 .8rem}#gd .run{padding:8px 16px}#gd .tabout{margin-top:1rem}#gd #engine{font-size:.8rem;color:var(--muted);margin-top:12px;text-align:center}#gd .head{font-size:.92rem;margin-bottom:.5rem}#gd ol.terms{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;padding-left:2.1rem;margin:.3rem 0;max-height:380px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}#gd ol.terms li{padding:2px 8px 2px 0}#gd ol.terms li:nth-child(odd){background:var(--bg)}#gd .tabmono{color:var(--accent)}#gd .sign{color:var(--muted)}#gd .tgrid{display:inline-flex;gap:2px;vertical-align:middle;margin:0 2px}#gd .tcol{display:flex;flex-direction:column;gap:2px}#gd .tcell{width:21px;height:21px;border:1px solid var(--global-text-color-light,#9a9a94);background:var(--surface);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:ui-monospace,Menlo,monospace}#gd .expr{line-height:2.4;font-size:.85rem}#gd .expr .cf{color:var(--muted);margin:0 3px}#gd .badge{display:inline-block;font-size:.78rem;padding:2px 8px;border-radius:20px;margin-right:6px}#gd .badge.g{background:var(--green);color:#fff}#gd .badge.r{background:var(--bad);color:#fff}#gd .badge.b{background:var(--bluebg);color:var(--blue)}#gd .anim-ctl{display:flex;gap:8px;align-items:center;margin:.6rem 0}#gd .caption{font-size:.82rem;color:var(--muted);margin:.4rem 0}#gd .eq{font-size:1rem;margin:.5rem 0;overflow-x:auto}#gd .eq .num{display:inline-block}#gd .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 .2rem}
-#gd .frac .n{border-bottom:1px solid var(--ink);padding:0 .3rem}#gd .frac .d{padding:0 .3rem}#gd table.hs{border-collapse:collapse;font-size:.85rem;margin:.4rem 0}#gd table.hs td{border:1px solid var(--line);padding:3px 10px;text-align:center}#gd table.hs td.lab{color:var(--muted);background:var(--panel)}#gd code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--panel);padding:1px 4px;border-radius:4px}#gd sub,#gd sup{font-size:.72em}#gd a{color:var(--accent)}#gd .tab-btn{transition:background .15s ease,color .15s ease}#gd #out-ehrhart mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}#gd #out-ehrhart mjx-container[display="true"]{margin:.7rem 0}#gd .toolbar button{transition:background .12s ease}#gd .lmn{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap}#gd .blist{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);margin-top:.3rem}#gd .brow{display:flex;align-items:center;gap:12px;padding:5px 12px}#gd .brow:nth-child(odd){background:var(--bg)}#gd .bc{min-width:36px;text-align:right;color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:.82rem}#gd .brow{flex-wrap:wrap}#gd .prod{color:var(--muted);margin:0 2px}#gd .listfoot{margin-top:.55rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}#gd .showmore{font-size:.85rem}#gd .etbl{max-height:470px;overflow:auto;margin-top:.2rem}#gd .etbl table{border-collapse:collapse;font-size:.9rem;width:100%}#gd .etbl td{border:1px solid var(--line);padding:5px 12px;vertical-align:middle}#gd .etbl td.lab{color:var(--muted);background:var(--panel);font-size:.82rem;white-space:nowrap}#gd .etbl td.kcol{text-align:center;color:var(--muted);white-space:nowrap;width:1%}#gd .wrap{max-width:100%;padding:.4rem 0 2.5rem}</style> <div id="gd"> <div class="wrap"> <h1>Hypersimplex harmonics — interactive demos</h1> <p class="lede"> Companion to <em>Graded Ehrhart Theory for Hypersimplices</em>. Draw a loopless multigraph <em>G</em> below; each tab runs a different construction from the paper on it. Click empty space to add a vertex, click two vertices to connect (click a pair again for a parallel edge). The Ehrhart tab uses only ℓ and n. Email me if you find any errors or want some specific function added. </p> <div class="toolbar"> <button id="mode">Mode: add / connect</button> <button id="undo">Undo</button> <button id="clear">Clear</button> <button id="example">Load example</button> <button id="random">Random for ℓ,m,n</button> <span class="spacer"></span> <span class="lmn"> <label>ℓ</label><input id="lval" type="number" min="1" value="4"> <label>m</label><input id="mval" type="number" min="1" value="3"> <label>n</label><input id="nval" type="number" min="1" value="8"> </span> </div> <svg id="cv" viewbox="0 0 600 400" preserveaspectratio="xMidYMid meet"></svg> <div class="row"> <div class="col"> <div class="k">edges</div> <div id="edges"></div> </div> <div class="col" style="max-width:210px"> <div id="stats"></div> <div id="valid"></div> </div> </div> <div class="tabs"> <button class="tab-btn active" data-tab="factor">Factor</button> <button class="tab-btn" data-tab="basis">Maximal basis</button> <button class="tab-btn" data-tab="ehrhart">Ehrhart series</button> </div> <div class="panel" id="panel-factor"> <p class="desc">Corollary 5.19: express δ<sub>G</sub> as an exact integer combination of products of m degree-1 (matching) tableaux, and verify it.</p> <button class="run primary" data-run="factor">Run factorization</button> <div class="tabout" id="out-factor"></div> </div> <div class="panel hidden" id="panel-basis"> <p class="desc">Section 5.2: reduce δ<sub>G</sub> onto the maximal-tableau basis S<sub>max</sub>(ℓ,m,n) of V<sub>mΔℓ</sub>.</p> <button class="run primary" data-run="basis">Reduce to basis</button> <div class="tabout" id="out-basis"></div> </div> <div class="panel hidden" id="panel-ehrhart"> <p class="desc">Section 4: the graded q-Ehrhart series in closed rational form (Theorem 4.2 denominator), its interior series, and the q-reciprocity check. Uses ℓ and n.</p> <button class="run primary" data-run="ehrhart">Compute series</button> <div class="tabout" id="out-ehrhart"></div> </div> <div id="engine">math engine: loads on first run (~a few seconds)</div> </div> <script type="text/x-python" id="straighten-src">
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta name="google-site-verification" content="zxcdn83snss3_cV4SWMvKMc8x8v-TqUO-g2wFCLBymQ"> <meta name="msvalidate.01" content="29D2DDDEBD65D99AD51D5B1535BA634A"> <meta http-equiv="Permissions-Policy" content="interest-cohort=()"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Interactive graph demos | Weston Miller </title> <meta name="author" content="Weston A. Miller"> <meta name="description" content="I am a first year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology). "> <meta name="keywords" content="weston, miller, math, mathematics, ucsd"> <link rel="stylesheet" href="/assets/css/bootstrap.min.css?a4b3f509e79c54a512b890d73235ef04"> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/css/mdb.min.css" integrity="sha256-jpjYvU3G3N6nrrBwXJoVEYI/0zw8htfFnhT9ljN3JJw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="/assets/css/academicons.min.css?f0b7046b84e425c55f3463ac249818f5"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/pi.svg?dc478491a1c0509830705bb2a0df45fe"> <link rel="stylesheet" href="/assets/css/main.css?d41d8cd98f00b204e9800998ecf8427e"> <link rel="canonical" href="https://weston-miller.github.io/graph-demos/"> <script src="/assets/js/theme.js?9a0c749ec5240d9cda97bc72359a72c0"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>initTheme();</script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> Weston Miller </a> <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse text-right" id="navbarNav"> <ul class="navbar-nav ml-auto flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/cv/">cv </a> </li> <li class="toggle-container"> <button id="light-toggle" title="Change theme"> <i class="ti ti-sun-moon" id="light-toggle-system"></i> <i class="ti ti-moon-filled" id="light-toggle-dark"></i> <i class="ti ti-sun-filled" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <style>#gd{--ink:var(--global-text-color,#000);--muted:var(--global-text-color-light,#828282);--line:var(--global-divider-color,rgba(0,0,0,0.1));--bg:var(--global-bg-color,#fff);--panel:rgba(127,127,127,0.11);--surface:var(--global-card-bg-color,#fff);--accent:var(--global-theme-color,#009f06);--accentbg:rgba(0,159,6,0.08);--ok:var(--global-theme-color,#009f06);--bad:var(--global-highlight-color,#b71c1c);--green:var(--global-theme-color,#009f06);--greenbg:rgba(0,159,6,0.10);--blue:var(--global-theme-color,#009f06);--bluebg:rgba(0,159,6,0.08);--edge:#8a8a84;--vfill:color-mix(in srgb,var(--accent) 18%,var(--bg));--radius:6px}#gd *{box-sizing:border-box}#gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;margin:0}#gd .wrap{max-width:900px;margin:0 auto;padding:1.5rem 1.25rem 4rem}#gd h1{font-size:2rem;font-weight:700;margin:.2rem 0 .5rem;line-height:1.2}#gd p.lede{color:var(--muted);margin:.2rem 0 1.2rem;font-size:.95rem}#gd a{text-decoration:none}#gd a:hover{text-decoration:underline}#gd button{font:inherit;font-size:.9rem;padding:6px 12px;border:1px solid var(--line);background:var(--bg);border-radius:var(--radius);cursor:pointer;color:var(--ink)}#gd button:hover{color:var(--accent);border-color:var(--accent)}#gd button:active{transform:scale(.98)}#gd button:disabled{opacity:.5;cursor:default}#gd button:disabled:hover{color:var(--ink);border-color:var(--line)}#gd button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}#gd button.primary:hover{color:#fff;opacity:.88}#gd button.stop{border-color:var(--bad);color:var(--bad)}#gd button.stop:hover{border-color:var(--bad);color:var(--bad);opacity:.8}#gd label{font-size:.85rem;color:var(--muted)}#gd input[type=number]{width:54px;font:inherit;padding:5px 6px;border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);background:var(--bg)}#gd input[type=number].touched{border-color:var(--accent)}#gd .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}#gd .spacer{flex:1}#gd svg#cv{width:100%;max-width:560px;aspect-ratio:3/2;height:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);touch-action:none;cursor:crosshair;display:block;margin:0 auto}#gd svg#cv .edge{fill:none;stroke:var(--edge);stroke-width:1.7}#gd svg#cv .edge.cut{stroke-width:4;stroke-dasharray:7 4}#gd svg#cv .edge.nest{stroke:var(--bad);stroke-width:2.6}#gd svg#cv .baseline{stroke:var(--line);stroke-width:1.5}#gd svg#cv .deflab{fill:var(--muted);font-weight:400}#gd svg#cv .mlabbg{fill:var(--bg);stroke:var(--line);stroke-width:1}#gd svg#cv .mlab{fill:var(--muted);font-weight:600}#gd svg#cv .vtx{fill:var(--bg);fill:var(--vfill);stroke:var(--accent);stroke-width:2.4}#gd svg#cv .vtx.sel{stroke-width:4}#gd svg#cv text{fill:var(--accent);font-family:inherit;font-weight:700}#gd #spares{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;margin:.5rem auto 0;max-width:560px;font-size:.8rem;color:var(--muted)}#gd #spares .sp{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:1.4px dashed var(--muted);border-radius:50%;opacity:.75}#gd #structbox{max-width:560px;margin:.55rem auto 0;font-size:.83rem}#gd #structbox summary{cursor:pointer;color:var(--muted)}#gd #structbox summary:hover{color:var(--accent)}#gd #structout{margin-top:.5rem}#gd table.st{border-collapse:collapse;font-size:.8rem;width:100%}#gd table.st td,#gd table.st th{border:1px solid var(--line);padding:3px 8px;text-align:left;font-weight:400}#gd table.st th{color:var(--muted);background:var(--panel);font-size:.76rem}#gd table.st td.sw{width:10px;padding:0}#gd #enginebar{text-align:center;margin-top:4px}#gd #enginebar button{font-size:.75rem;padding:2px 9px;color:var(--muted)}#gd .listctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:.5rem 0 .2rem;font-size:.82rem}#gd .listctl select,#gd .listctl input{font:inherit;font-size:.82rem;padding:3px 6px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink)}#gd .listctl input{width:120px}#gd .stats{font-size:.8rem;color:var(--muted);margin:.3rem 0}#gd .row{display:flex;gap:14px;align-items:flex-start;margin-top:10px;flex-wrap:wrap}#gd .row .col{flex:1;min-width:200px}#gd .k{font-size:.78rem;color:var(--muted);margin-bottom:3px}#gd textarea#edges{width:100%;min-height:62px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;padding:6px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);color:var(--ink);line-height:1.5}#gd textarea#edges.err{border-color:var(--bad)}#gd #edgeerr{font-size:.78rem;color:var(--bad);min-height:1em}#gd #stats{font-size:.83rem;color:var(--muted);line-height:1.6}#gd #valid{font-size:.83rem;margin-top:2px}#gd .ok{color:var(--ok)}#gd .bad{color:var(--bad)}#gd .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:1.3rem 0 0;border-bottom:1px solid var(--line)}
+#gd .tab-btn{border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;padding:7px 13px;background:var(--panel);color:var(--muted);position:relative;top:1px}#gd .tab-btn.active{background:var(--bg);color:var(--ink);font-weight:600;border-bottom:1px solid var(--bg);border-top:2px solid var(--accent);padding-top:6px}#gd .panel{border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;padding:1rem 1.1rem 1.3rem}#gd .panel.hidden{display:none}#gd .panel .desc{font-size:.86rem;color:var(--muted);margin:0 0 .8rem}#gd .run{padding:8px 16px}#gd .runbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}#gd .elapsed{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}#gd .tabout{margin-top:1rem}#gd .tabout.stale{opacity:.45}#gd #engine{font-size:.8rem;color:var(--muted);margin-top:12px;text-align:center}#gd .head{font-size:.92rem;margin-bottom:.5rem}#gd .tgrid{display:inline-flex;gap:2px;vertical-align:middle;margin:0 2px}#gd .tcol{display:flex;flex-direction:column;gap:2px}#gd .tcell{width:21px;height:21px;border:1px solid var(--global-text-color-light,#9a9a94);background:var(--surface);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:ui-monospace,Menlo,monospace}#gd .one{display:flex;align-items:center;justify-content:center;width:21px;height:42px;font-size:13px;color:var(--muted);font-family:ui-monospace,Menlo,monospace}#gd .badge{display:inline-block;font-size:.78rem;padding:2px 8px;border-radius:20px;margin-right:6px}#gd .badge.g{background:var(--green);color:#fff}#gd .badge.r{background:var(--bad);color:#fff}#gd .badge.b{background:var(--bluebg);color:var(--blue);border:1px solid var(--blue)}#gd .badge.n{background:var(--panel);color:var(--muted)}#gd .caption{font-size:.82rem;color:var(--muted);margin:.4rem 0}#gd .note{font-size:.83rem;border-left:3px solid var(--accent);background:var(--accentbg);padding:.5rem .7rem;margin:.6rem 0;border-radius:0 var(--radius) var(--radius) 0}#gd .note.warn{border-left-color:var(--bad);background:rgba(183,28,28,0.07)}#gd code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;background:var(--panel);padding:1px 4px;border-radius:4px}#gd sub,#gd sup{font-size:.72em}#gd a{color:var(--accent)}#gd .tab-btn{transition:background .15s ease,color .15s ease}#gd #out-ehrhart mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}#gd #out-ehrhart mjx-container[display="true"]{margin:.7rem 0}#gd .toolbar button{transition:background .12s ease}#gd .lmn{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap}#gd .blist{max-height:440px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);margin-top:.3rem}#gd .brow{display:flex;align-items:center;gap:12px;padding:5px 12px;flex-wrap:wrap}#gd .brow:nth-child(odd){background:var(--bg)}#gd .bc{min-width:36px;text-align:right;color:var(--muted);font-family:ui-monospace,Menlo,monospace;font-size:.82rem}#gd .prod{color:var(--muted);margin:0 2px}#gd .listfoot{margin-top:.55rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}#gd .showmore{font-size:.85rem}#gd .etbl{max-height:470px;overflow:auto;margin-top:.2rem}#gd .etbl table{border-collapse:collapse;font-size:.9rem;width:100%}#gd .etbl td{border:1px solid var(--line);padding:5px 12px;vertical-align:middle}#gd .etbl td.lab{color:var(--muted);background:var(--panel);font-size:.82rem;white-space:nowrap}#gd .etbl td.kcol{text-align:center;color:var(--muted);white-space:nowrap;width:1%}#gd .wrap{max-width:100%;padding:.4rem 0 2.5rem}@media print{#gd .toolbar,#gd .runbar,#gd .listctl,#gd .listfoot,#gd #enginebar,#gd #engine,#gd .tabs,#gd #edgeerr{display:none!important}#gd .panel.hidden{display:none!important}#gd .panel{border:0;padding:0}#gd .blist,#gd .etbl,#gd ol.terms{max-height:none!important;overflow:visible!important}#gd textarea#edges{border:0;resize:none}#gd #structbox{display:block}#gd a{color:inherit}}</style> <div id="gd"> <div class="wrap"> <h1>Hypersimplex harmonics — interactive demos</h1> <p class="lede"> Companion to <em>Graded Ehrhart Theory for Hypersimplices</em>. Draw a loopless multigraph <em>G</em> below; each tab runs a different construction from the paper on it. Click empty space to add a vertex, click two vertices to connect (click a pair again for a parallel edge); switch the mode button to delete. You can also type the edge list directly. Email me if you find any errors or want some specific function added. </p> <div class="toolbar"> <button id="mode">Mode: add / connect</button> <button id="undo" title="⌘Z / Ctrl+Z">Undo</button> <button id="redo" title="⌘⇧Z / Ctrl+Y">Redo</button> <button id="clear">Clear</button> <button id="example">Load example</button> <button id="random">Random for ℓ,m,n</button> <button id="fit" title="set ℓ, m, n to the smallest values that make the drawn graph valid">Fit ℓ,m,n</button> <button id="permalink" title="copy a link that reproduces this graph and these parameters">Copy link</button> <button id="layout" title="line layout puts the vertices in label order with every edge an arc above them, so nested (crossing-free-violating) pairs are visible">Layout: free</button> <button id="estyle" title="draw parallel edges as fanned arcs, or as one edge with a multiplicity label">Edges: arcs</button> <button id="overlay" title="colour vertices by block and print the deficit m - deg(v) above each">Blocks: off</button> <span class="spacer"></span> <span class="lmn"> <label>ℓ</label><input id="lval" type="number" min="1" value="4"> <label>m</label><input id="mval" type="number" min="1" value="3"> <label>n</label><input id="nval" type="number" min="1" value="8"> </span> </div> <svg id="cv" viewbox="0 0 600 400" preserveaspectratio="xMidYMid meet" role="application" aria-label="graph drawing canvas; use the edge list box below for keyboard editing"></svg> <div id="spares"></div> <details id="structbox"> <summary>blocks, cut-edges and deficits</summary> <div id="structout"></div> </details> <div class="row"> <div class="col"> <div class="k">edges — editable; e.g. <code>(1,3),(2,4),(3,4)x2</code> or <code>1-3 2-4 3-4 3-4</code> </div> <textarea id="edges" spellcheck="false" aria-label="edge list"></textarea> <div id="edgeerr"></div> </div> <div class="col" style="max-width:240px"> <div id="stats"></div> <div id="valid"></div> </div> </div> <div class="tabs"> <button class="tab-btn active" data-tab="factor">Factor</button> <button class="tab-btn" data-tab="basis">Maximal basis</button> <button class="tab-btn" data-tab="ehrhart">Ehrhart series</button> </div> <div class="panel" id="panel-factor"> <p class="desc">Express δ<sub>G</sub> as an exact integer combination of products of <em>m</em> degree-1 (matching) tableaux, verify the identity, and report the structures that obstruct writing δ<sub>G</sub> as a <em>single</em> such product.</p> <div class="runbar"> <button class="run primary" data-run="factor">Run factorization</button> <button class="stop" data-stop="factor" hidden>Stop</button> <span class="elapsed" data-el="factor"></span> </div> <div class="tabout" id="out-factor" aria-live="polite"></div> </div> <div class="panel hidden" id="panel-basis"> <p class="desc">Reduce δ<sub>G</sub> onto the maximal-tableau basis S<sub>max</sub>(ℓ,m,n) of V<sub>mΔℓ</sub>, giving its unique coordinate vector.</p> <div class="runbar"> <button class="run primary" data-run="basis">Reduce to basis</button> <button class="stop" data-stop="basis" hidden>Stop</button> <span class="elapsed" data-el="basis"></span> </div> <div class="tabout" id="out-basis" aria-live="polite"></div> </div> <div class="panel hidden" id="panel-ehrhart"> <p class="desc">The graded <em>q</em>-Ehrhart series of the cube slice P<sub>ℓ,m,n</sub> in closed rational form, its interior series, and an exact <em>q</em>-reciprocity check. Uses ℓ, m and n; taking m = 1 gives the hypersimplex Δ<sub>ℓ,n</sub>.</p> <div class="runbar"> <button class="run primary" data-run="ehrhart">Compute series</button> <button class="stop" data-stop="ehrhart" hidden>Stop</button> <span class="elapsed" data-el="ehrhart"></span> </div> <div class="tabout" id="out-ehrhart" aria-live="polite"></div> </div> <div id="engine">math engine: loads in the background</div> <div id="enginebar"><button id="resetengine">reset engine</button></div> </div> <script type="text/x-python" id="straighten-src">
 """
-Exact straightening of  delta_G = prod_{(i,j) in G, i<j}(x_i - x_j)  via the quadratic
-relation of Section 5.3:   (a-c)(b-d) = (a-b)(c-d) + (a-d)(b-c)   for a<b<c<d,
+Exact straightening of  delta_G = prod_{(i,j) in G, i<j}(x_i - x_j)  via the quadratic relation
+        (a-c)(b-d) = (a-b)(c-d) + (a-d)(b-c)     for a<b<c<d,
 i.e. the 'crossing' pair (a,d),(b,c) is rewritten
-        δ_{(a,d)(b,c)}  =  δ_{(a,c)(b,d)}  -  δ_{(a,b)(c,d)} .
+        delta_{(a,d)(b,c)}  =  delta_{(a,c)(b,d)}  -  delta_{(a,b)(c,d)} .
 Repeatedly uncrossing reduces delta_G to a combination of NON-CROSSING (two-row semistandard)
 tableaux.  Everything is exact integer arithmetic -- no linear system, no conditioning.
+
+NOTE: the non-crossing tableaux SPAN but are not linearly independent, so the output of
+straighten() is a representation, not a normal form.  For a genuine normal form use the
+maximal-tableau basis (see demos.maximal_basis).
 """
 from collections import defaultdict
 
@@ -21,6 +25,13 @@ def _violation(cols):
     return None
 
 _STRAIGHTEN_CACHE = {}
+_CACHE_CAP = 4000
+def _cache_put(key, val):
+    if len(_STRAIGHTEN_CACHE) >= _CACHE_CAP:      # cheap bound: drop ~half, keep it O(1) amortised
+        for k in list(_STRAIGHTEN_CACHE)[:_CACHE_CAP // 2]:
+            del _STRAIGHTEN_CACHE[k]
+    _STRAIGHTEN_CACHE[key] = val
+
 def straighten(G_edges, max_steps=10**7):
     G = _canon((min(i, j), max(i, j)) for i, j in G_edges)
     return _straighten_core(G, max_steps)
@@ -50,28 +61,60 @@ def _straighten_core(G, max_steps=10**7):
         steps += 1
         if steps > max_steps: raise RuntimeError("did not terminate")
     res = {T: c for T, c in combo.items() if c != 0}
-    _STRAIGHTEN_CACHE[G] = res
+    _cache_put(G, res)
     return dict(res), steps
 
-# ---- verification helper (exact, evaluates delta at integer points) ----
+def reset_caches():
+    _STRAIGHTEN_CACHE.clear()
+
+# ---- exact monomial expansion: an INDEPENDENT check that does not reuse the straightening code ----
+def expand(cols, n, cap=400000):
+    """Expand prod (x_a - x_b) into the monomial basis exactly.  Returns {exponent tuple: int},
+       or None if the intermediate size exceeds `cap` (caller should fall back)."""
+    poly = {(0,) * n: 1}
+    for (a, b) in cols:
+        ia, ib = a - 1, b - 1
+        nxt = defaultdict(int)
+        for ev, c in poly.items():
+            u = list(ev); u[ia] += 1; nxt[tuple(u)] += c
+            u = list(ev); u[ib] += 1; nxt[tuple(u)] -= c
+        poly = {k: v for k, v in nxt.items() if v}
+        if len(poly) > cap: return None
+    return poly
+
+def expand_sum(terms, n, cap=400000):
+    """terms: iterable of (coeff, cols).  Exact monomial expansion of the whole sum, or None."""
+    total = defaultdict(int)
+    for c, cols in terms:
+        p = expand(cols, n, cap)
+        if p is None: return None
+        for ev, cc in p.items(): total[ev] += c * cc
+        if len(total) > cap: return None
+    return {k: v for k, v in total.items() if v}
+
+# ---- probabilistic fallback (fresh seed every call, so repeated runs give new evidence) ----
 def _dval(cols, pt):
     v = 1
     for (a, b) in cols: v *= (pt[a-1] - pt[b-1])
     return v
-def verify(G_edges, result, n, trials=8, seed=0):
+def verify_points(lhs_cols, terms, n, trials=12):
     import random
-    rng = random.Random(seed)
-    G = [(min(i,j),max(i,j)) for i,j in G_edges]
+    rng = random.Random()                       # fresh entropy: not a fixed seed
     for _ in range(trials):
-        pt = rng.sample(range(1, 5*n), n)
-        lhs = _dval(G, pt)
-        rhs = sum(c * _dval(T, pt) for T, c in result.items())
-        if lhs != rhs: return False
+        pt = rng.sample(range(1, 8*n), n)
+        if _dval(lhs_cols, pt) != sum(c * _dval(cols, pt) for c, cols in terms): return False
     return True
 
+def verify(lhs_cols, terms, n, cap=400000, trials=12):
+    """Returns (ok, mode) with mode in {'exact','points'}.  Tries the exact monomial identity
+       first; falls back to random integer points when the expansion would be too large."""
+    L = expand(lhs_cols, n, cap)
+    if L is not None:
+        R = expand_sum(terms, n, cap)
+        if R is not None: return (L == R), 'exact'
+    return verify_points(lhs_cols, terms, n, trials), 'points'
+
 if __name__ == "__main__":
-    import time
-    # sanity checks
     tests = [
         ([(1,2),(2,3),(3,4),(1,4)], 4, "4-cycle"),
         ([(1,2),(2,3),(1,3)], 5, "triangle"),
@@ -80,26 +123,31 @@ if __name__ == "__main__":
     ]
     for e, n, name in tests:
         res, st = straighten(e)
-        ok = verify(e, res, n)
-        print(f"{name:28s}: {len(res)} std tableaux, {st} steps, verified={ok}")
+        ok, mode = verify(e, [(c, list(T)) for T, c in res.items()], n)
+        print(f"{name:28s}: {len(res)} std tableaux, {st} steps, verified={ok} ({mode})")
         for T, c in sorted(res.items()):
             print(f"     {c:+d} * {list(T)}")
         print()
 
 </script> <script type="text/x-python" id="factor-src">
 """
-Factor delta_G (G in G(l,m,n)) into products of degree-1 (dilate-1) standard tableaux,
-using the paper's constructive proof + Section 5.3 relations.  Exact, output-sensitive.
+Factor delta_G (G in G(l,m,n)) into products of degree-1 (dilate-1) standard tableaux, using the
+paper's constructive proof plus the linear and quadratic relations.  Exact, output-sensitive.
 
-  m=1 : straighten the matching -> standard degree-1 tableaux.
-  m=2 : Theorem 5.18.  If bipartite (no odd cycle) proper 2-edge-color -> product of two
-        matchings.  Else break an odd cycle with the linear relation
-             (x_a-x_b) = (x_a-x_w) - (x_b-x_w)   (w a spare vertex),
-        turning the odd cycle into two paths; recurse.
-  m>=3 : Theorem 5.7/5.17.  Split edges T = A(deg<=2) . B(deg<=m-2); recurse.
+  m=1  : straighten the matching -> standard degree-1 tableaux.
+  m=2  : if bipartite (no odd cycle) proper 2-edge-color -> product of two matchings.  Else break
+         an odd cycle with the linear relation  (x_a-x_b) = (x_a-x_w) - (x_b-x_w)  for a spare
+         vertex w (one exists because l <= n/2); recurse.
+  m>=3 : split the edges T = A(deg<=2) . B(deg<=m-2); recurse on B.
 """
 from collections import defaultdict
 from straighten import straighten, _canon
+
+# counters for what the construction actually had to do, so the UI can describe the real run
+# instead of guessing from global graph properties
+STATS = {"odd_breaks": 0, "quad_merges": 0, "raises": 0, "spares": []}
+def reset_stats():
+    STATS["odd_breaks"] = 0; STATS["quad_merges"] = 0; STATS["raises"] = 0; STATS["spares"] = []
 
 def _canon_edge(u, v):           # (x_u - x_v) as (edge, sign)
     return ((u, v), 1) if u < v else ((v, u), -1)
@@ -167,7 +215,9 @@ def _spare(H, cycle_verts, n):
         if v not in cycle_verts and deg[v]==0: return v
     for v in range(1,n+1):                       # else any degree<=1 vertex not in the cycle
         if v not in cycle_verts and deg[v]<=1: return v
-    raise RuntimeError("no spare in 1..n (unexpected for l<=n/2)")
+    raise RuntimeError(
+        "no spare vertex is available in 1..n to break an odd cycle. Raise n (the odd-cycle "
+        "argument needs a vertex outside the cycle, which is guaranteed when l <= n/2).")
 
 def _quad_rewrite(e1, e2):
     """(x_p-x_q)(x_r-x_s) with 4 distinct verts -> the other two pairings.  Returns [(coeff,[eA,eB]),...]."""
@@ -189,11 +239,14 @@ def factor_deg2(A, l, n):
         if len(ocs) >= 2:
             e1 = ocs[0][0]; e2 = ocs[1][0]          # merge two odd cycles (odd+odd -> even)
             rest = list(H); rest.remove(e1); rest.remove(e2)
+            STATS["quad_merges"] += 1
             for coef, pair in _quad_rewrite(e1, e2):
                 stack.append((tuple(rest + [tuple(sorted(pair[0])), tuple(sorted(pair[1]))]), c*coef))
         elif len(ocs) == 1:
             cyc = ocs[0]; cv = set(v for e in cyc for v in e)
             a,b = cyc[0]; w = _spare(list(H), cv, n)
+            STATS["odd_breaks"] += 1
+            if w not in STATS["spares"]: STATS["spares"].append(w)
             e_aw,s_aw=_canon_edge(a,w); e_bw,s_bw=_canon_edge(b,w)
             rest=list(H); rest.remove((a,b))
             stack.append((tuple(rest+[e_aw]), c*s_aw))
@@ -205,36 +258,6 @@ def factor_deg2(A, l, n):
                 for T1,bb in s1.items():
                     result[tuple(sorted((T0,T1)))] += c*aa*bb
     return {k:v for k,v in result.items() if v!=0}
-
-# ---- verification ----
-def _dval(cols, pt):
-    v = 1
-    for (a, b) in cols: v *= (pt[a-1] - pt[b-1])
-    return v
-def verify2(A, result, n, seed=0):
-    import random; rng = random.Random(seed)
-    for _ in range(8):
-        pt = rng.sample(range(1, 5*n), n)
-        lhs = _dval(A, pt)
-        rhs = sum(c*_dval(M0, pt)*_dval(M1, pt) for (M0, M1), c in result.items())
-        if lhs != rhs: return False
-    return True
-
-if __name__ == "__main__":
-    tests = [
-        ([(1,2),(3,4)], "two disjoint edges (even)"),
-        ([(1,2),(2,3),(3,4),(1,4)], "4-cycle (even)"),
-        ([(1,2),(2,3),(1,3)], "triangle (odd)"),
-        ([(1,2),(2,3),(3,4),(4,5),(1,5)], "5-cycle (odd)"),
-        ([(1,2),(2,3),(1,3),(4,5),(5,6),(4,6)], "two triangles"),
-    ]
-    for A, name in tests:
-        n = max(max(e) for e in A) + 2       # room for spare vertices
-        r = factor_deg2(A, 99, n)
-        print(f"{name:26s}: {len(r)} products, verified={verify2(A, r, n)}")
-        for (M0, M1), c in sorted(r.items()):
-            print(f"     {c:+d} * δ{list(M0)} · δ{list(M1)}")
-        print()
 
 # ================= m >= 3 : split T = A(deg<=2) . B(deg<=m-2), recurse =================
 def _extract_AB(T, l, m):
@@ -277,8 +300,8 @@ def _W(T):
     return sum(a + b for a, b in T)                          # total endpoint sum; raise increases it
 
 def _find_raise(T, m, n):
-    """T non-crossing but unsplittable => non-maximal (Thm 5.17).  Find an edge (a,b) whose
-       bottom can be raised: smallest c with b < c <= n and deg_T(c) < m (room for c).  Return
+    """T non-crossing but unsplittable => it is not maximal.  Find an edge (a,b) whose bottom can
+       be raised: smallest c with b < c <= n and deg_T(c) < m (room for c).  Return
        (edge_index, c), else None if T is maximal."""
     d = _deg(T)
     for i, (a, b) in enumerate(T):
@@ -286,6 +309,11 @@ def _find_raise(T, m, n):
             if d[c] < m:                                     # a<b<c so c!=a; multigraph edges ok
                 return (i, c)
     return None
+
+class Unsplittable(Exception):
+    """A maximal tableau that admits no A.B split: delta_G is genuinely not a product of this
+       shape for these parameters."""
+    def __init__(self, T): self.T = T; Exception.__init__(self, str(list(T)))
 
 def maximalize(G, l, m, n):
     """Reduce delta_G to a combination of SPLITTABLE (maximal) non-crossing tableaux, using the
@@ -313,8 +341,9 @@ def maximalize(G, l, m, n):
             continue
         r = _find_raise(T, m, n)
         if r is None:
-            raise ValueError(f"tableau {list(T)} maximal yet unsplittable (contradicts Thm 5.17)")
+            raise Unsplittable(T)
         i, cc = r
+        STATS["raises"] += 1
         a, b = T[i]
         rest = [T[k] for k in range(len(T)) if k != i]
         for coeff, ne in ((c, (a, cc)), (-c, (b, cc))):      # + (a,c)H   - (b,c)H
@@ -323,12 +352,20 @@ def maximalize(G, l, m, n):
                     if t2 not in expr:
                         heapq.heappush(heap, (_W(t2), t2))
                     expr[t2] += coeff * c2
+                elif coeff * c2:
+                    # W strictly increases on a raise and is preserved by straightening, so this
+                    # branch is unreachable; guard against a silent drop if that ever changes.
+                    raise RuntimeError("internal: contribution to an already-finalised tableau")
     return {k: v for k, v in final.items() if v != 0}
 
 _MEMO = {}
+_MEMO_CAP = 2000
+def reset_caches():
+    _MEMO.clear()
+
 def factor_deg1(T, l, m, n):
     """Return dict { (tab_1,...,tab_m) : coeff } expressing delta_T as a sum of products of m
-       standard degree-1 tableaux.  m>=3: reduce to maximal tableaux, split each via Thm 5.17."""
+       standard degree-1 tableaux.  m>=3: reduce to maximal tableaux, split each."""
     T = _canon((min(i, j), max(i, j)) for i, j in T)
     if m == 1:
         return {(M,): c for M, c in straighten(list(T))[0].items()}
@@ -346,70 +383,107 @@ def factor_deg1(T, l, m, n):
             for tb, cb in fb.items():
                 out[tuple(sorted((M0, M1) + tb))] += cT*ca*cb
     res = {k: v for k, v in out.items() if v != 0}
+    if len(_MEMO) >= _MEMO_CAP:
+        for k in list(_MEMO)[:_MEMO_CAP // 2]: del _MEMO[k]
     _MEMO[key] = res
     return res
 
 def express_deg1(G_edges, l, m, n):
     """Full pipeline: straighten G, then factor each tableau to degree-1 products."""
-    return factor_deg1(list((min(i, j), max(i, j)) for i, j in G_edges), l, m, n)
-
-def verify_prod(G_edges, result, n, seed=0):
-    import random; rng = random.Random(seed)
-    G = [(min(i, j), max(i, j)) for i, j in G_edges]
-    for _ in range(8):
-        pt = rng.sample(range(1, 5*n), n)
-        lhs = _dval(G, pt)
-        rhs = 0
-        for prod, c in result.items():
-            v = c
-            for tab in prod: v *= _dval(tab, pt)
-            rhs += v
-        if lhs != rhs: return False
-    return True
+    reset_stats()
+    res = factor_deg1(list((min(i, j), max(i, j)) for i, j in G_edges), l, m, n)
+    return res
 
 </script> <script type="text/x-python" id="demos-src">
 """Supporting routines for the interactive demo tabs.  Pure-Python (no sympy), reuses
    straighten.py / factor.py.  Every function returns a JSON string for the browser."""
 import json
-from fractions import Fraction
 from collections import defaultdict
+from math import comb
 import time, heapq, bisect
-from straighten import straighten, _straighten_core, _canon, _violation, _dval
-from factor import express_deg1, verify_prod, _extract_AB, maximalize, _W, _deg
+import straighten as _st
+from straighten import (straighten, _straighten_core, _canon, _violation, _dval,
+                        expand, expand_sum, verify, verify_points)
+import factor as _fa
+from factor import express_deg1, _extract_AB, maximalize, _W, _deg, Unsplittable
 
+def reset_caches():
+    _st.reset_caches(); _fa.reset_caches(); _CBIN.clear()
+    return json.dumps({"ok": True})
+
+def _lhat(l, n):
+    return min(l, -(-n // 2))            # min(l, ceil(n/2))
+
+# ==================================================================== factor
 def factor_report(edges, l, m, n):
     try:
-        edges = [tuple(e) for e in edges]
-        t0 = time.time(); r = express_deg1(edges, l, m, n); dt = time.time() - t0
-        ok = verify_prod(edges, r, n)
+        E = [(min(a, b), max(a, b)) for a, b in edges]
+        t0 = time.time()
+        try:
+            r = express_deg1(E, l, m, n)
+        except Unsplittable as ex:
+            return json.dumps({"ok": False, "verdict": "obstructed",
+                               "tableau": [list(c) for c in ex.T],
+                               "error": _obstruction_message(E, l, m, n, ex.T)})
+        dt = time.time() - t0
+        ok, mode = verify(E, [(c, [e for tab in prod for e in tab]) for prod, c in r.items()], n)
         terms = [{"c": c, "tabs": [[list(e) for e in tab] for tab in prod]}
                  for prod, c in sorted(r.items())]
-        return json.dumps({"ok": True, "verified": bool(ok), "count": len(r), "time": dt, "terms": terms})
+        info = _structure(E, l, m, n, len(r))
+        return json.dumps({"ok": True, "verdict": "factored", "verified": bool(ok),
+                           "mode": mode, "count": len(r), "time": dt, "terms": terms,
+                           "structure": info})
     except Exception as ex:
         msg = str(ex)
         if "did not terminate" in msg:
             msg = ("This graph is too dense for the in-browser engine: its straightened form is "
                    "exponentially large. Try fewer edges or a smaller n.")
-        return json.dumps({"ok": False, "error": msg})
+        return json.dumps({"ok": False, "verdict": "error", "error": msg})
+
+def _obstruction_message(E, l, m, n, T):
+    lh = _lhat(l, n); thresh = (2*lh + 3) / 3.0
+    parts = ["The reduction reached a maximal tableau that admits no split into a degree-2 part "
+             "and a degree-(m\u22122) part, so \u03b4_G is not a combination of products of this "
+             "shape for these parameters."]
+    if m % 2 == 1 and m < thresh:
+        parts.append("This is expected here: m = %d is odd and below the threshold "
+                     "(2\u2113\u0302+3)/3 = %.2f, where \u2113\u0302 = min(\u2113, \u2308n/2\u2309) = %d "
+                     "\u2014 the regime in which G(\u2113,m,n) = G(\u2113,2,n)\u00b7G(\u2113,m\u22122,n) "
+                     "can fail." % (m, thresh, lh))
+    else:
+        parts.append("This is unexpected for m = %d with \u2113\u0302 = %d (threshold %.2f) \u2014 "
+                     "please report this input." % (m, lh, thresh))
+    return " ".join(parts)
+
+def _structure(E, l, m, n, nprod):
+    lh = _lhat(l, n); thresh = (2*lh + 3) / 3.0
+    colorable, why, nodes = _edge_colorable(E, m)
+    st = _fa.STATS
+    return {"nprod": nprod, "colorable": colorable, "why": why, "nodes": nodes,
+            "strict": bool(m % 2 == 1 and m < thresh), "lhat": lh,
+            "threshold": round(thresh, 2), "odd_m": bool(m % 2),
+            "odd_breaks": st["odd_breaks"], "quad_merges": st["quad_merges"],
+            "raises": st["raises"], "spares": sorted(st["spares"])}
 
 # ==================================================================== Ehrhart
-_CUBE = {}
-def _cube_coeffs(m, n):
-    key = (m, n); cached = _CUBE.get(key)
-    if cached is not None: return cached
-    cur = [1]; base = [1]*(m+1)
-    for _ in range(n):
-        new = [0]*(len(cur)+len(base)-1)
-        for i, a in enumerate(cur):
-            if a:
-                for j, b in enumerate(base): new[i+j] += a*b
-        cur = new
-    _CUBE[key] = cur
-    return cur
+_CBIN = {}
 def _c(d, m, n):
-    if d < 0 or m < 0: return 0
-    cc = _cube_coeffs(m, n)
-    return cc[d] if 0 <= d < len(cc) else 0
+    """#{weak compositions of d into n parts, each at most m}, by inclusion-exclusion:
+         c(d,m,n) = sum_j (-1)^j C(n,j) C(d - j(m+1) + n - 1, n - 1).
+       O(d/(m+1)) per coefficient and no array is built, so large n stays cheap -- the old
+       route convolved the whole (1+q+...+q^m)^n array even when only d <= k*l was needed."""
+    if d < 0 or m < 0 or n <= 0: return 0
+    key = (d, m, n)
+    hit = _CBIN.get(key)
+    if hit is not None: return hit
+    tot = 0
+    step = m + 1
+    for j in range(d // step + 1):
+        if j > n: break
+        tot += (-1)**j * comb(n, j) * comb(d - j*step + n - 1, n - 1)
+    if len(_CBIN) > 300000: _CBIN.clear()
+    _CBIN[key] = tot
+    return tot
 def _delta(d, m, n): return _c(d, m, n) - _c(d-1, m, n)
 
 def _qadd(a, b):
@@ -424,95 +498,55 @@ def _qmul(a, b):
         if x:
             for j, y in enumerate(b): r[i+j] += x*y
     return r
-def _den_tlist(l, n):
-    factors = [l]*(n-1) + list(range(l))
+
+def _den_factors(l, n, M):
+    """Multiset of exponents a, one per denominator factor (1 - q^a t):
+       (1 - q^l t)^{n-1} * prod_{j=0}^{ceil(l/M)-1} (1 - q^{jM} t)."""
+    r = -(-l // M)
+    return [l]*(n-1) + [j*M for j in range(r)]
+
+def _den_tlist(l, n, M):
     D = [[1]]
-    for a in factors:
+    for a in _den_factors(l, n, M):
         new = [[] for _ in range(len(D)+1)]
         for k in range(len(D)):
             new[k] = _qadd(new[k], D[k])
             new[k+1] = _qadd(new[k+1], [0]*a + [-x for x in D[k]])
         D = new
     return D
-def _series_tlist(l, n, M, interior=False):
+
+def _series_tlist(l, n, K, M, interior=False):
+    """Coefficient of t^k, as a q-polynomial, of the defining series:
+       E    = sum_k sum_{d<=k*l}   delta(d, k*M,   n) q^d t^k
+       Ebar = sum_k sum_{d<=k*l-n} delta(d, k*M-2, n) q^d t^k"""
     A = []
-    for m in range(M+1):
-        top = (l*m - n) if interior else (l*m)
-        mm = (m-2) if interior else m
+    for k in range(K+1):
+        top = (k*l - n) if interior else (k*l)
+        mm = (k*M - 2) if interior else (k*M)
         A.append([_delta(d, mm, n) for d in range(0, top+1)] if top >= 0 else [])
     return A
-def _num_tlist(l, n, interior=False, margin=6):
-    D = _den_tlist(l, n); degD = len(D)-1; M = degD+margin
-    A = _series_tlist(l, n, M, interior=interior)
+
+def _num_tlist(l, n, M, interior=False, margin=6):
+    """Numerator of the closed form, as a list (indexed by power of t) of q-polynomials.
+       `margin` extra coefficients past the denominator degree are checked to vanish; if they do
+       not, the numerator degree exceeds the predicted bound and we refuse to guess."""
+    D = _den_tlist(l, n, M); degD = len(D)-1; K = degD+margin
+    A = _series_tlist(l, n, K, M, interior=interior)
     def prod_coeff(k):
         acc = []
         for j in range(len(D)):
             i = k-j
-            if 0 <= i <= M: acc = _qadd(acc, _qmul(D[j], A[i]))
+            if 0 <= i <= K: acc = _qadd(acc, _qmul(D[j], A[i]))
         return acc
     num = [prod_coeff(k) for k in range(degD+1)]
-    for k in range(degD+1, M+1):
+    for k in range(degD+1, K+1):
         if any(x != 0 for x in prod_coeff(k)):
-            raise ValueError("series/denominator mismatch")
+            raise ValueError(
+                "the numerator degree exceeded the predicted denominator degree by more than the "
+                "safety margin, so the closed form was not computed. Please report this input.")
     return num
 
-def _sup(e):
-    return "" if e == 0 else ("" if e == 1 else "<sup>%d</sup>" % e)
-def _qpoly_html(qp, var="q"):
-    terms = []
-    for e, c in enumerate(qp):
-        if c == 0: continue
-        if e == 0: terms.append(("+" if c > 0 else "-", str(abs(c))))
-        else:
-            co = "" if abs(c) == 1 else str(abs(c))
-            terms.append(("+" if c > 0 else "-", co + var + _sup(e)))
-    if not terms: return "0"
-    out = ""
-    for i, (s, body) in enumerate(terms):
-        if i == 0: out += ("-" if s == "-" else "") + body
-        else: out += " " + s + " " + body
-    return out
-def _num_html(num):
-    parts = []
-    for k, qp in enumerate(num):
-        if all(x == 0 for x in qp): continue
-        s = _qpoly_html(qp)
-        if k == 0: parts.append("(" + s + ")" if s not in ("0",) else "")
-        else:
-            wrap = ("(" + s + ")") if (sum(1 for x in qp if x) > 1 or any(x < 0 for x in qp)) else s
-            parts.append(wrap + " t" + _sup(k))
-    parts = [p for p in parts if p]
-    out = parts[0]
-    for p in parts[1:]:
-        out += (" − " + p[1:]) if p.startswith("-") else (" + " + p)
-    return out
-def _den_html(l, n):
-    a = "(1 − q" + (_sup(l) if l != 1 else "") + "t)" + (_sup(n-1) if n-1 != 1 else "")
-    b = ""
-    for j in range(l):
-        b += "(1 − " + ("q" + _sup(j) if j >= 1 else "") + ("" if j >= 1 else "") + "t)" if j >= 1 else "(1 − t)"
-    return a + b
 def _texp(e): return '' if e == 1 else ('^{%d}' % e)     # q^e / t^e in LaTeX (caller: e>=1)
-def _num_tex(num):
-    terms = []
-    for k, qp in enumerate(num):
-        for e, c in enumerate(qp):
-            if c: terms.append((c, e, k))
-    if not terms: return '0'
-    terms.sort(key=lambda z: (z[2], z[1]))
-    out = ''
-    for i, (c, e, k) in enumerate(terms):
-        mono = ''
-        if abs(c) != 1 or (e == 0 and k == 0): mono += str(abs(c))
-        if e > 0: mono += 'q' + _texp(e)
-        if k > 0: mono += 't' + _texp(k)
-        out += (('-' if c < 0 else '') + mono) if i == 0 else ((' - ' if c < 0 else ' + ') + mono)
-    return out
-def _den_tex(l, n):
-    out = '(1-q' + _texp(l) + 't)' + (('^{%d}' % (n-1)) if n-1 != 1 else '')
-    for j in range(l):
-        out += '(1-t)' if j == 0 else '(1-q' + _texp(j) + 't)'
-    return out
 def _qp_tex(qp):
     terms = [(c, e) for e, c in enumerate(qp) if c]
     if not terms: return '0'
@@ -539,10 +573,12 @@ def _divide_factor(N, a):
     if any(x != 0 for x in _qadd(cd, _qshift(Q[-1], a))): return None
     while len(Q) > 1 and not any(Q[-1]): Q.pop()
     return Q
-def _reduce_denominator(numE, numB, l, n):
-    """Cancel any denominator factor (1 - q^a t) dividing BOTH numerators (keeps the shared
-       denominator).  Reduces exactly when l = n/2; leaves the minimal cases untouched."""
-    factors = [l]*(n-1) + list(range(l))              # a means the factor (1 - q^a t)
+
+def _reduce_denominator(numE, numB, l, n, M):
+    """Cancel any denominator factor (1 - q^a t) dividing BOTH numerators (keeping a shared
+       denominator).  The predicted reduction is the exponent n-1 -> n-2 exactly when n >= 3 and
+       2l = nM; anything else is reported so it can be looked at."""
+    factors = _den_factors(l, n, M)
     changed = True
     while changed:
         changed = False
@@ -551,6 +587,7 @@ def _reduce_denominator(numE, numB, l, n):
             if qE is not None and qB is not None:
                 numE, numB = qE, qB; factors.pop(idx); changed = True; break
     return numE, numB, factors
+
 def _den_tex_factors(factors):
     from collections import Counter
     cnt = Counter(factors); out = ''
@@ -559,103 +596,148 @@ def _den_tex_factors(factors):
         out += base + (('^{%d}' % cnt[a]) if cnt[a] > 1 else '')
     return out
 
-def _eval(num, l, n, t0, q0):
-    val = Fraction(0)
-    for k, qp in enumerate(num):
-        for e, c in enumerate(qp):
-            if c: val += c * (t0**k) * (q0**e)
-    den = (1 - q0**l * t0)**(n-1)
-    for j in range(l): den *= (1 - q0**j * t0)
-    return val/den
+def _coeff(num, k, e):
+    if k < 0 or k >= len(num): return 0
+    row = num[k]
+    return row[e] if 0 <= e < len(row) else 0
 
-def ehrhart_report(l, n):
+def _recip_exact(numE, numB, n, factors):
+    """Exact check of  q^{n-1} Ebar(t,q) = (-1)^n E(1/t,1/q).
+       With D = prod (1 - q^a t) over `factors` (F factors, total q-degree S) one has
+       D(1/t,1/q) = (-1)^F q^{-S} t^{-F} D(t,q), so the identity is equivalent to the finite
+       coefficient identity  Nbar_{k, e-(n-1)} = (-1)^{n+F} N_{F-k, S-e}  for all k, e."""
+    F = len(factors); S = sum(factors); sgn = (-1)**((n+F) % 2)
+    emaxE = max([len(r) for r in numE if r] + [0])
+    emaxB = max([len(r) for r in numB if r] + [0])
+    kmax = max(len(numE), len(numB), F) + 1
+    emax = max(emaxE + n, emaxB + n, S + n) + 2
+    for k in range(kmax + 1):
+        for e in range(emax + 1):
+            if _coeff(numB, k, e - (n-1)) != sgn * _coeff(numE, F - k, S - e):
+                return False
+    return True
+
+def ehrhart_report(l, m, n):
     try:
-        _wall0 = time.time()
-        numE = _num_tlist(l, n, False)
-        numB = _num_tlist(l, n, True)
-        # reciprocity spot-check: q^{n-1} Ebar(t,q) == (-1)^n E(1/t,1/q)
-        rec_ok = True
-        for (t0, q0) in [(Fraction(1,7), Fraction(1,3)), (Fraction(1,11), Fraction(2,5))]:
-            lhs = q0**(n-1) * _eval(numB, l, n, t0, q0)
-            rhs = (-1)**n * _eval(numE, l, n, 1/t0, 1/q0)
-            if lhs != rhs: rec_ok = False
-        latt = [_c(l*m, m, n) for m in range(min(6, 2*l+2))]     # #lattice points of m*Delta_l
-        rE, rB, rfac = _reduce_denominator(numE, numB, l, n)     # minimal (reduced) form
-        reduced = len(rfac) < (n - 1 + l)
+        t0 = time.time()
+        lmax = (n*m) // 2
+        if l < 1 or n < 1 or m < 1:
+            return json.dumps({"ok": False, "error": "need l, m, n >= 1."})
+        if l > lmax:
+            alt = n*m - l
+            if alt >= 1:
+                return json.dumps({"ok": False, "error":
+                    "l = %d exceeds l_max = floor(n*m/2) = %d. The slices P(l,m,n) and P(nm-l,m,n) "
+                    "are affinely equivalent, so use l = %d instead." % (l, lmax, alt)})
+            if alt == 0:
+                return json.dumps({"ok": False, "error":
+                    "l = nm = %d: the slice is the single point (m,...,m)." % (n*m)})
+            return json.dumps({"ok": False, "error":
+                "l = %d exceeds nm = %d, so the slice of the cube is empty." % (l, n*m)})
+        numE = _num_tlist(l, n, m, False)
+        numB = _num_tlist(l, n, m, True)
+        factors = _den_factors(l, n, m)
+        rec_ok = _recip_exact(numE, numB, n, factors)
+        latt = [_c(l*k, k*m, n) for k in range(min(6, 2*l+2))]   # |L(k * P(l,m,n))|
+        rE, rB, rfac = _reduce_denominator(numE, numB, l, n, m)
+        reduced = len(rfac) < len(factors)
+        half = (n >= 3 and 2*l == n*m)
+        # the only predicted reduction is the exponent n-1 -> n-2 when n >= 3 and 2l = nm
+        predicted = (len(factors) - len(rfac)) == (1 if half else 0)
         degN = max(len(rE), len(rB))
-        rows = []                                                # per t-power: [k, coeff of E, coeff of Ebar]
+        rows = []                                                # per t-power: [k, coeff E, coeff Ebar]
         for k in range(degN):
             ce = _qp_tex(rE[k]) if k < len(rE) and any(rE[k]) else ""
             cb = _qp_tex(rB[k]) if k < len(rB) and any(rB[k]) else ""
             if ce or cb: rows.append([k, ce, cb])
-        return json.dumps({"ok": True, "l": l, "n": n, "den_tex": _den_tex_factors(rfac),
-            "reduced": bool(reduced), "half": (2*l == n), "rows": rows, "time": time.time() - _wall0,
-            "recip": bool(rec_ok), "lattice": latt})
+        nonneg = all(c >= 0 for row in rE for c in row)
+        nu = len(rfac); simplex = (l <= m)
+        return json.dumps({"ok": True, "l": l, "m": m, "n": n,
+            "den_tex": _den_tex_factors(rfac), "den_full_tex": _den_tex_factors(factors),
+            "reduced": bool(reduced), "predicted": bool(predicted), "half": bool(half),
+            "rows": rows, "time": time.time() - t0, "recip": bool(rec_ok), "lattice": latt,
+            "nonneg": bool(nonneg), "nu": nu, "dim": n-1, "simplex": bool(simplex)})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
 
-# ==================================================================== straightening frames
-def straighten_record(edges, cap=500):
-    try:
-        G = _canon((min(i, j), max(i, j)) for i, j in edges)
-        combo = defaultdict(int); combo[G] = 1
-        stack = [G]; frames = []
-        def snap(cr):
-            return {"terms": [{"c": c, "tab": [list(e) for e in T]} for T, c in combo.items() if c != 0],
-                    "cross": cr}
-        frames.append(snap(None))
-        steps = 0
-        while stack and steps < cap:
-            T = stack.pop(); c = combo.get(T, 0)
-            if c == 0: continue
-            v = _violation(T)
-            if v is None: continue
-            i, j = v; p, q = T[i]; r, s = T[j]
-            cr = {"cols": [i, j], "e1": [p, q], "e2": [r, s]}
-            del combo[T]
-            rest = T[:i] + T[i+2:]
-            T1 = _canon(rest + ((p, s), (r, q))); T2 = _canon(rest + ((p, r), (s, q)))
-            combo[T1] += c; combo[T2] -= c
-            stack.append(T1); stack.append(T2); steps += 1
-            frames.append(snap(cr))
-        done = all(_violation(T) is None for T, c in combo.items() if c != 0)
-        return json.dumps({"ok": True, "frames": frames, "done": bool(done), "n": len(frames)})
-    except Exception as ex:
-        return json.dumps({"ok": False, "error": str(ex)})
+# ==================================================================== edge colourability
+def _chromatic_index_bounds(edges, m):
+    """Decide chi'(G) <= m cheaply where possible.  Returns (verdict, reason) with verdict in
+       {True, False, None}; None means 'search needed'.  delta_G is a SINGLE product of m
+       degree-1 tableaux exactly when chi'(G) <= m, and deciding that in general is NP-hard,
+       so it is worth settling the easy cases without any search."""
+    if not edges: return True, "G has no edges"
+    deg = defaultdict(int); mult = defaultdict(int)
+    for a, b in edges:
+        deg[a] += 1; deg[b] += 1; mult[(min(a,b), max(a,b))] += 1
+    D = max(deg.values()); mu = max(mult.values())
+    if D > m:
+        return False, "a vertex has degree %d > m = %d, and chi' >= max degree" % (D, m)
 
-# ==================================================================== obstruction analysis
-def _bridges_and_cuts(nv, edges):
-    adj = defaultdict(list)                       # vertex -> list of (nbr, edge_id)
-    for idx, (a, b) in enumerate(edges):
-        adj[a].append((b, idx)); adj[b].append((a, idx))
-    disc = {}; low = {}; timer = [0]; bridges = []; arts = set()
-    def dfs(u, pe):
-        disc[u] = low[u] = timer[0]; timer[0] += 1; kids = 0
-        for w, eid in adj[u]:
-            if eid == pe: continue
-            if w not in disc:
-                kids += 1; dfs(w, eid)
-                low[u] = min(low[u], low[w])
-                if low[w] > disc[u]: bridges.append(eid)
-                if pe != -1 and low[w] >= disc[u]: arts.add(u)
-            else:
-                low[u] = min(low[u], disc[w])
-        if pe == -1 and kids > 1: arts.add(u)
-    import sys as _s; _s.setrecursionlimit(10000)
-    for v in list(adj.keys()):
-        if v not in disc: dfs(v, -1)
-    return bridges, sorted(arts)
+    # density bound: chi'(G) >= ceil(|E(H)| / floor(|V(H)|/2)) for every subgraph H
+    verts = sorted(deg)
+    def density_fail(S):
+        S = set(S)
+        if len(S) < 2: return None
+        k = len(S) // 2
+        e = sum(1 for a, b in edges if a in S and b in S)
+        need = -(-e // k)                                    # ceil(e/k)
+        return (need, e, len(S)) if need > m else None
 
-def _edge_colorable(edges, m):
-    """can the edges be properly colored with m colors (i.e. split into m matchings)?
-       delta_G is a single product of m degree-1 tableaux  <=>  chi'(G) <= m."""
+    cand = [verts]
+    adj = defaultdict(set)
+    for a, b in edges: adj[a].add(b); adj[b].add(a)
+    seen = set()
+    for v in verts:                                          # connected components
+        if v in seen: continue
+        comp = {v}; stack = [v]; seen.add(v)
+        while stack:
+            u = stack.pop()
+            for w in adj[u]:
+                if w not in seen: seen.add(w); comp.add(w); stack.append(w)
+        cand.append(sorted(comp))
+    if len(verts) <= 13:                                     # small odd subsets give the sharp bounds
+        from itertools import combinations
+        for r in (3, 5):
+            if len(verts) >= r:
+                cand.extend(combinations(verts, r))
+    for S in cand:
+        hit = density_fail(S)
+        if hit:
+            need, e, sz = hit
+            return False, ("%d vertices carry %d edges, and %d edges need at least "
+                           "ceil(%d/%d) = %d colours" % (sz, e, e, e, sz//2, need))
+
+    if D + mu <= m:
+        return True, ("max degree %d plus max edge multiplicity %d is at most m = %d "
+                      "(Vizing's bound for multigraphs)" % (D, mu, m))
+    col = {}; bip = True
+    for sv in verts:
+        if sv in col: continue
+        col[sv] = 0; st = [sv]
+        while st and bip:
+            u = st.pop()
+            for w in adj[u]:
+                if w not in col: col[w] = 1-col[u]; st.append(w)
+                elif col[w] == col[u]: bip = False; break
+        if not bip: break
+    if bip:
+        return True, "G is bipartite with max degree %d <= m = %d (Koenig's theorem)" % (D, m)
+    return None, None
+
+def _edge_colorable(edges, m, node_cap=400000):
+    """(verdict, reason, nodes).  Cheap bounds first; exact backtracking only if they fail."""
+    v, why = _chromatic_index_bounds(edges, m)
+    if v is not None: return v, why, 0
     E = list(edges); nE = len(E)
     vtoE = defaultdict(list)
     for i, (a, b) in enumerate(E): vtoE[a].append(i); vtoE[b].append(i)
     order = sorted(range(nE), key=lambda i: -(len(vtoE[E[i][0]]) + len(vtoE[E[i][1]])))
-    color = [-1]*nE
+    color = [-1]*nE; nodes = [0]
     def bt(k):
         if k == nE: return True
+        nodes[0] += 1
+        if nodes[0] > node_cap: raise TimeoutError
         ei = order[k]; a, b = E[ei]; used = set()
         for ej in vtoE[a]:
             if color[ej] >= 0: used.add(color[ej])
@@ -667,73 +749,29 @@ def _edge_colorable(edges, m):
                 if bt(k+1): return True
                 color[ei] = -1
         return False
-    return bt(0)
-
-def _bipartite(edges):
-    adj = defaultdict(list)
-    for a, b in edges: adj[a].append(b); adj[b].append(a)
-    col = {}
-    for s in list(adj):
-        if s in col: continue
-        col[s] = 0; st = [s]
-        while st:
-            u = st.pop()
-            for w in adj[u]:
-                if w not in col: col[w] = 1-col[u]; st.append(w)
-                elif col[w] == col[u]: return False
-    return True
-
-def obstruction_analysis(edges, l, m, n):
     try:
-        E = [(min(a, b), max(a, b)) for a, b in edges]
-        nv = max((max(e) for e in E), default=0)
-        bridges, arts = _bridges_and_cuts(nv, E)
-        nprod = len(express_deg1(E, l, m, n))
-        colorable = _edge_colorable(E, m)
-        bip = _bipartite(E)
-        strict = m < (2*l + 2) / 3
-        if colorable:
-            cls = "δ<sub>G</sub> is a single product of m matchings (χ&prime;(G) ≤ m) — no obstruction."
-            if nprod > 1:
-                cls += (" In the standard non-crossing basis it still expands to %d terms, "
-                        "because those matchings are not individually non-crossing." % nprod)
-        else:
-            feats = []
-            if not bip:
-                feats.append("an odd cycle (broken by the linear relation using a spare vertex — "
-                             "Thm 5.18, which needs ℓ ≤ n/2)")
-            if bridges:
-                feats.append("%d cut-edge(s), a structural / bridge-forest obstruction "
-                             "(Figure 2, Remark 5.5)" % len(bridges))
-            if strict:
-                feats.append("m in the strict regime m &lt; (2ℓ+2)/3 = %.2f (Theorem 5.9)" % ((2*l+2)/3))
-            if not feats:
-                feats.append("an ℓ-too-tight configuration (Example 5.13)")
-            cls = ("Obstructed: δ<sub>G</sub> is <em>not</em> a single product of m matchings "
-                   "(χ&prime;(G) &gt; m). Contributing structure: " + "; ".join(feats) + ".")
-        return json.dumps({"ok": True, "bridges": bridges, "arts": arts, "nprod": nprod,
-            "colorable": bool(colorable), "bipartite": bool(bip), "strict": bool(strict),
-            "threshold": round((2*l+2)/3, 2), "cls": cls})
-    except Exception as ex:
-        return json.dumps({"ok": False, "error": str(ex)})
+        ok = bt(0)
+        return ok, ("an explicit %d-edge-colouring was found" % m) if ok else \
+                   ("an exhaustive search of %d states found no %d-edge-colouring" % (nodes[0], m)), nodes[0]
+    except TimeoutError:
+        return None, ("the search hit its budget of %d states without deciding" % node_cap), nodes[0]
 
-# ==================================================================== 2-factor split
+# ==================================================================== A.B split
 def split_view(edges, l, m, n):
     try:
         E = [(min(a, b), max(a, b)) for a, b in edges]
-        if m < 2:
-            return json.dumps({"ok": False, "error": "the A·B split needs m ≥ 2."})
+        if m < 3:
+            return json.dumps({"ok": False, "error": "the A.B split applies when m >= 3."})
         M = maximalize(list(E), l, m, n)
-        # choose the maximal tableau closest to the drawn graph if present, else the first
         key = _canon(E)
         chosen = key if key in M else next(iter(M))
         A, B = _extract_AB(chosen, l, m)
         used = sorted({v for e in chosen for v in e})
-        return json.dumps({"ok": True,
-            "maximal": [list(e) for e in chosen],
+        return json.dumps({"ok": True, "maximal": [list(e) for e in chosen],
             "A": [list(e) for e in A], "B": [list(e) for e in B],
-            "same_as_drawn": chosen == key, "nmax": len(M),
-            "verts": used})
+            "same_as_drawn": chosen == key, "nmax": len(M), "verts": used})
+    except Unsplittable as ex:
+        return json.dumps({"ok": False, "error": _obstruction_message(edges, l, m, n, ex.T)})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
 
@@ -741,7 +779,7 @@ def split_view(edges, l, m, n):
 def _raise_to_max(T, m, n):
     """Greedy-maximal raise.  Scan edges RIGHT-TO-LEFT (greedy fills b_d first, then b_{d-1}, ...);
        raise the first raisable edge's bottom to the largest legal v.  This order visits ~6x fewer
-       intermediate tableaux than left-to-right.  None <=> T is already in S_max."""
+       intermediate tableaux than left-to-right.  None <=> T is already maximal."""
     d = _deg(T)
     for k in range(len(T)-1, -1, -1):
         a, b = T[k]
@@ -752,7 +790,8 @@ def _raise_to_max(T, m, n):
 
 def maximal_basis(G, l, m, n):
     """Express delta_G in the maximal-tableau basis S_max(l,m,n): raise EVERY tableau all the way
-       to greedy-maximal (not merely splittable), via the linear relation."""
+       to greedy-maximal (not merely splittable), via the linear relation.  Since S_max is a basis,
+       the result is the unique coordinate vector -- a genuine normal form."""
     expr = defaultdict(int); heap = []
     for t, c in straighten(G)[0].items():
         expr[t] += c; heapq.heappush(heap, (_W(t), t))
@@ -773,6 +812,8 @@ def maximal_basis(G, l, m, n):
                 if t2 not in seen:
                     if t2 not in expr: heapq.heappush(heap, (_W(t2), t2))
                     expr[t2] += coeff * c2
+                elif coeff * c2:
+                    raise RuntimeError("internal: contribution to an already-finalised tableau")
     return {kk: vv for kk, vv in final.items() if vv != 0}
 
 def basis_view(edges, l, m, n):
@@ -780,21 +821,15 @@ def basis_view(edges, l, m, n):
         E = [(min(a, b), max(a, b)) for a, b in edges]
         t0 = time.time()
         M = maximal_basis(list(E), l, m, n)
-        # verify: sum reproduces delta_G, and every output tableau is genuinely maximal
-        import random
-        rng = random.Random(0); good = True
-        for _ in range(6):
-            pt = rng.sample(range(1, 5*n), n)
-            lhs = _dval([tuple(e) for e in E], pt)
-            rhs = sum(c * _dval(T, pt) for T, c in M.items())
-            if lhs != rhs: good = False
+        ok, mode = verify(E, [(c, list(T)) for T, c in M.items()], n)
         maximal_ok = all(_raise_to_max(T, m, n) is None for T in M)
         dt = time.time() - t0
         tabs = [{"c": c, "tab": [list(e) for e in T]} for T, c in sorted(M.items())]
         d = len(E)
         return json.dumps({"ok": True, "tabs": tabs, "count": len(M), "edges": d, "time": dt,
-            "graded_dim": _delta(d, m, n), "verified": bool(good and maximal_ok)})
+            "graded_dim": _delta(d, m, n), "verified": bool(ok and maximal_ok), "mode": mode,
+            "maximal_ok": bool(maximal_ok)})
     except Exception as ex:
         return json.dumps({"ok": False, "error": str(ex)})
 
-</script> <script>!function(){"use strict";function e(e){const t=w.w/2,n=w.h/2,a=.4*w.w,s=.4*w.h,o=[];for(let r=0;r<e;r++){const i=-Math.PI/2+2*Math.PI*r/e;o.push([t+a*Math.cos(i),n+s*Math.sin(i)])}return o}function t(e){return new Promise((t,n)=>{const a=document.createElement("script");a.src=e,a.async=!0,a.onload=(()=>t()),a.onerror=(()=>n(new Error("could not load Pyodide from "+e+" (network / ad-blocker?)"))),document.head.appendChild(a)})}function n(){return J||(H("engine").textContent="loading math engine\u2026 (first time ~a few seconds)",(J=(async()=>{if("undefined"==typeof loadPyodide&&await t(y),"undefined"==typeof loadPyodide)throw new Error("Pyodide loaded but loadPyodide missing");const e=await loadPyodide();return e.FS.writeFile("/home/pyodide/straighten.py",H("straighten-src").textContent),e.FS.writeFile("/home/pyodide/factor.py",H("factor-src").textContent),e.FS.writeFile("/home/pyodide/demos.py",H("demos-src").textContent),e.runPython("import sys\nif '/home/pyodide' not in sys.path: sys.path.insert(0,'/home/pyodide')\nimport json, demos"),H("engine").textContent="math engine ready",e})())["catch"](e=>{H("engine").innerHTML='<span class="bad">'+(e&&e.message?e.message:e)+"</span>",J=null}),J)}async function a(e){const t=await n();return JSON.parse(t.runPython(e))}function s(){k.push(JSON.stringify([E,L])),k.length>300&&k.shift()}function o(){return L.map(e=>[Math.min(e[0],e[1])+1,Math.max(e[0],e[1])+1])}function r(){const e=E.map(()=>0);return L.forEach(t=>{e[t[0]]++,e[t[1]]++}),e}function i(e){const t=e.touches?e.touches[0]:e,n=M.getScreenCTM();if(n){const e=M.createSVGPoint();e.x=t.clientX,e.y=t.clientY;const a=e.matrixTransform(n.inverse());return[a.x,a.y]}const a=M.getBoundingClientRect();return[(t.clientX-a.left)/a.width*w.w,(t.clientY-a.top)/a.height*w.h]}function l(e,t){let n=-1,a=x*x*3;return E.forEach((s,o)=>{const r=s[0]-e,i=s[1]-t,l=r*r+i*i;l<a&&(a=l,n=o)}),n}function c(e,t){let n=-1,a=90;return L.forEach((s,o)=>{const r=E[s[0]],i=E[s[1]],l=(r[0]+i[0])/2,c=(r[1]+i[1])/2,d=(l-e)**2+(c-t)**2;d<a&&(a=d,n=o)}),n}function d(e){e.preventDefault();const[t,n]=i(e),a=l(t,n);if(S){if(a>=0)s(),L=L.filter(e=>e[0]!==a&&e[1]!==a).map(e=>[e[0]-(e[0]>a?1:0),e[1]-(e[1]>a?1:0)]),E.splice(a,1),T=-1;else{const e=c(t,n);e>=0&&(s(),L.splice(e,1))}f()}else a>=0?T<0?T=a:T!==a?(s(),L.push([T,a]),T=-1):T=-1:(s(),E.push([t,n]),T=-1),f()}function u(){["factor","basis"].forEach(e=>H("out-"+e).innerHTML="")}function h(){const e={};let t="";return L.forEach(n=>{const a=Math.min(n[0],n[1]),s=Math.max(n[0],n[1]),o=a+"-"+s,r=L.filter(e=>Math.min(e[0],e[1])===a&&Math.max(e[0],e[1])===s).length,i=(e[o]=(e[o]||0)+1)-1,l=E[a],c=E[s],d=15*(i-(r-1)/2),u=(l[0]+c[0])/2,h=(l[1]+c[1])/2;let m=c[0]-l[0],p=c[1]-l[1];const v=Math.hypot(m,p)||1,f=u+-p/v*d*1.4,g=h+m/v*d*1.4;t+=`<path class="edge" d="M${l[0]},${l[1]} Q${f},${g} ${c[0]},${c[1]}"/>`}),t}function m(){let e="";return E.forEach((t,n)=>{e+=`<circle class="vtx${n===T?" sel":""}" cx="${t[0]}" cy="${t[1]}" r="${x}"/>`+`<text x="${t[0]}" y="${t[1]+4}" text-anchor="middle" font-size="12">${n+1}</text>`}),e}function p(){const e=r(),t=e.length?Math.max(...e):0,n=Math.max(parseInt(H("mval").value)||1,t,1),a=Math.max(parseInt(H("lval").value)||1,Math.ceil(L.length/Math.max(n,1)),1),s=Math.max(parseInt(H("nval").value)||1,E.length,2*a);H("mval").value=n,H("lval").value=a,H("nval").value=s}function v(){H("edges").textContent=L.length?JSON.stringify(o()):"(none \u2014 click empty space for a vertex, then two vertices to connect)";const e=r(),t=e.length?Math.max(...e):0,n=+H("lval").value,a=+H("mval").value,s=+H("nval").value;H("stats").innerHTML=`vertices: ${E.length}<br>edges: ${L.length}<br>max degree: ${t}`;const i=t<=a&&L.length<=n*a&&n<=s/2&&E.length>0;H("valid").innerHTML=i?`<span class="ok">&#10003; valid in G(${n}, ${a}, ${s})</span>`:`<span class="bad">&#9650; ${t>a?"a vertex has degree > m":L.length>n*a?"more than \u2113m edges":n>s/2?"need \u2113 \u2264 n/2":"draw a graph"}</span>`,document.querySelectorAll(".run").forEach(e=>{"ehrhart"!==e.dataset.run&&(e.disabled=!i)})}function f(){M.innerHTML=h(null)+m(null),p(),v()}function g(e,t){let n='<span class="tgrid">';return e.forEach((e,a)=>{const s=t?t(a):null,o=s?`background:${s};`:"";n+=`<span class="tcol"><span class="tcell" style="${o}">${e[0]}</span><span class="tcell" style="${o}">${e[1]}</span></span>`}),n+"</span>"}function $(e,t,n){function a(){if(s.insertAdjacentHTML("beforeend",t.slice(r,r+n).join("")),(r=Math.min(r+n,t.length))>=t.length)o.innerHTML=t.length>n?`<span class="caption">showing all ${t.length} terms</span>`:"";else{const e=Math.min(n,t.length-r);o.innerHTML=`<button class="showmore">Show ${e} more</button><span class="caption">showing ${r} of ${t.length}</span>`,o.querySelector(".showmore").onclick=a}}const s=document.createElement("div");s.className="blist";const o=document.createElement("div");o.className="listfoot",e.appendChild(s),e.appendChild(o);let r=0;a()}function b(){return P||(window.MathJax={tex:{displayMath:[["\\[","\\]"]],inlineMath:[["\\(","\\)"],["$","$"]]},options:{enableMenu:!1}},P=t("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"))}const y="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js",M=document.getElementById("cv"),x=16,w={w:600,h:400};let E=[],L=[],T=-1,S=!1,k=[];const H=e=>document.getElementById(e);let J=null;M.addEventListener("mousedown",d),M.addEventListener("touchstart",d,{passive:!1}),H("mode").onclick=(()=>{S=!S,T=-1,H("mode").textContent=S?"Mode: delete":"Mode: add / connect",M.style.cursor=S?"not-allowed":"crosshair",f()}),H("undo").onclick=(()=>{k.length&&([E,L]=JSON.parse(k.pop()),T=-1,f())}),H("clear").onclick=(()=>{s(),E=[],L=[],T=-1,u(),f()}),H("example").onclick=(()=>{s(),E=e(7),L=[[0,1],[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[4,6],[5,6],[5,6]],T=-1,H("lval").value=4,H("mval").value=3,H("nval").value=8,u(),f()}),H("random").onclick=(()=>{s();const t=Math.max(1,parseInt(H("lval").value)||1),n=Math.max(1,parseInt(H("mval").value)||1),a=Math.max(2*t,parseInt(H("nval").value)||2*t);E=e(a),L=[];const o=new Array(a).fill(0),r=t*n,i=Math.min(r,Math.max(a-1,Math.floor(r*(.55+.45*Math.random()))));let l=0;for(;L.length<i&&l<4e3;){l++;const e=Math.floor(Math.random()*a),t=Math.floor(Math.random()*a);e!==t&&o[e]<n&&o[t]<n&&(L.push([e,t]),o[e]++,o[t]++)}T=-1,u(),f()}),["lval","mval","nval"].forEach(e=>H(e).addEventListener("input",()=>{M.innerHTML=h(null)+m(null),v()})),document.querySelectorAll(".tab-btn").forEach(e=>{e.onclick=(()=>{document.querySelectorAll(".tab-btn").forEach(e=>e.classList.remove("active")),document.querySelectorAll(".panel").forEach(e=>e.classList.add("hidden")),e.classList.add("active"),H("panel-"+e.dataset.tab).classList.remove("hidden")})}),document.querySelector("[data-run=factor]").onclick=(async()=>{const e=+H("lval").value,t=+H("mval").value,a=+H("nval").value,s=H("out-factor");s.innerHTML='<div class="head">computing\u2026</div>';try{const i=await n();i.globals.set("EJ",JSON.stringify(o()));const l=JSON.parse(i.runPython(`demos.factor_report(json.loads(EJ), ${e}, ${t}, ${a})`));if(!l.ok)return void(s.innerHTML=`<div class="head bad">${l.error}</div>`);let c=`<div class="head">&delta;<sub>G</sub> = sum of <strong>${l.count}</strong> product${1===l.count?"":"s"} of ${t} degree-1 tableau${1===t?"":"x"} `+`<span class="badge ${l.verified?"g":"r"}">${l.verified?"verified":"check failed"}</span> `+`<span style="color:var(--muted)">(${l.time<.001?"<0.001":l.time.toFixed(3)} s)</span></div>`;s.innerHTML=c,$(s,l.terms.map(e=>{const t=e.c>0?"+":"\u2212",n=1===Math.abs(e.c)?"":Math.abs(e.c);return`<div class="brow"><span class="bc">${t}${n?" "+n:""}</span>`+e.tabs.map(e=>g(e,null)).join('<span class="prod">&middot;</span>')+"</div>"}),150)}catch(r){s.innerHTML=`<div class="head bad">Error: ${r.message||r}</div>`}}),document.querySelector("[data-run=basis]").onclick=(async()=>{const e=+H("lval").value,t=+H("mval").value,a=+H("nval").value,s=H("out-basis");s.innerHTML='<div class="head">computing\u2026</div>';try{const i=await n();i.globals.set("EJ",JSON.stringify(o()));const l=JSON.parse(i.runPython(`demos.basis_view(json.loads(EJ), ${e}, ${t}, ${a})`));if(!l.ok)return void(s.innerHTML=`<div class="head bad">${l.error}</div>`);let c=`<div class="head">\u03b4<sub>G</sub> reduces onto <strong>${l.count}</strong> of the ${l.graded_dim} basis `+`element${1===l.graded_dim?"":"s"} of S<sub>max</sub>(${e},${t},${a}) `+`<span class="badge ${l.verified?"g":"r"}">${l.verified?"verified":"check failed"}</span> `+`<span style="color:var(--muted)">(${l.time<.001?"<0.001":l.time.toFixed(3)} s)</span></div>`;c+=`<p class="caption">\u03b4<sub>G</sub> has degree d = ${l.edges} (edges); the degree-d graded piece of `+`V<sub>m&Delta;&#8467;</sub> is ${l.graded_dim}-dimensional, so this is the unique coordinate vector of \u03b4<sub>G</sub> in that basis.</p>`,s.innerHTML=c,$(s,l.tabs.map(e=>{const t=e.c>0?"+":"\u2212",n=1===Math.abs(e.c)?"":Math.abs(e.c);return`<div class="brow"><span class="bc">${t}${n?" "+n:""}</span>${g(e.tab,null)}</div>`}),150)}catch(r){s.innerHTML=`<div class="head bad">Error: ${r.message||r}</div>`}});let P=null;document.querySelector("[data-run=ehrhart]").onclick=(async()=>{const e=+H("lval").value,t=+H("nval").value,n=H("out-ehrhart");n.innerHTML='<div class="head">computing\u2026</div>';try{const o=await a(`demos.ehrhart_report(${e}, ${t})`);if(!o.ok)return void(n.innerHTML=`<div class="head bad">${o.error}</div>`);let r=`<div class="head">&Delta;<sub>${e}</sub> &sub; &#8477;<sup>${t}</sup> `+`<span style="color:var(--muted)">(${o.time<.001?"<0.001":o.time.toFixed(3)} s)</span></div>`;const i=o.reduced?"sharing the <strong>reduced</strong> denominator \u2014 the Theorem 4.2 form simplifies here because \u2113 = n/2":"sharing the Theorem 4.2 denominator";r+='<p style="font-size:.88rem;margin:.1rem 0 .7rem">Closed rational form \\(E=N(t,q)/D\\), interior '+`\\(\\overline{E}=\\overline{N}(t,q)/D\\), ${i} `+`\\(D(t,q)=${o.den_tex}\\). Numerators, coefficient of each power of \\(t\\):</p>`,r+='<div class="etbl"><table><tr><td class="lab">power of t</td><td class="lab">numerator of E</td><td class="lab">numerator of interior E&#772;</td></tr>',o.rows.forEach(e=>{const t=0===e[0]?"1":1===e[0]?"t":"t^{"+e[0]+"}";r+=`<tr><td class="kcol">\\(${t}\\)</td><td>${e[1]?"\\("+e[1]+"\\)":"\u2014"}</td><td>${e[2]?"\\("+e[2]+"\\)":"\u2014"}</td></tr>`}),r+="</table></div>",r+=`<p class="caption"><span class="badge ${o.recip?"g":"r"}">q-reciprocity ${o.recip?"holds":"fails"}</span>`+`lattice points L(m&Delta;<sub>${e}</sub>) = ${o.lattice.join(", ")}, \u2026</p>`,n.innerHTML=r,await b(),window.MathJax&&MathJax.typesetPromise&&await MathJax.typesetPromise([n])}catch(s){n.innerHTML=`<div class="head bad">Error: ${s.message||s}</div>`}}),f()}();</script> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Weston A. Miller. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Last updated: July 17, 2026. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?85ddb88934d28b74e78031fd54cf8308"></script> <script src="/assets/js/no_defer.js?2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?e0514a05c5c95ac1a93a8dfd5249b92e"></script> <script defer src="/assets/js/copy_code.js?12775fdf7f95e901d7119054556e495f" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?d9f17b6adc2311cbabd747f4538bb15f"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script type="text/javascript">window.MathJax={tex:{tags:"ams"}};</script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.min.js" integrity="sha256-rjmgmaB99riUNcdlrDtcAiwtLIojSxNyUFdl+Qh+rB4=" crossorigin="anonymous"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-1SEVG0M3D2"></script> <script>function gtag(){window.dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-1SEVG0M3D2");</script> <script type="text/javascript">function progressBarSetup(){"max"in document.createElement("progress")?(initializeProgressElement(),$(document).on("scroll",function(){progressBar.attr({value:getCurrentScrollPosition()})}),$(window).on("resize",initializeProgressElement)):(resizeProgressBar(),$(document).on("scroll",resizeProgressBar),$(window).on("resize",resizeProgressBar))}function getCurrentScrollPosition(){return $(window).scrollTop()}function initializeProgressElement(){let e=$("#navbar").outerHeight(!0);$("body").css({"padding-top":e}),$("progress-container").css({"padding-top":e}),progressBar.css({top:e}),progressBar.attr({max:getDistanceToScroll(),value:getCurrentScrollPosition()})}function getDistanceToScroll(){return $(document).height()-$(window).height()}function resizeProgressBar(){progressBar.css({width:getWidthPercentage()+"%"})}function getWidthPercentage(){return getCurrentScrollPosition()/getDistanceToScroll()*100}const progressBar=$("#progress");window.onload=function(){setTimeout(progressBarSetup,50)};</script> <script src="/assets/js/vanilla-back-to-top.min.js?f40d453793ff4f64e238e420181a1d17"></script> <script>addBackToTop();</script> <script src="/assets/js/shortcut-key.js"></script> </body> </html>
+</script> <script>!function(){"use strict";function e(e,t){const n=se.w/2,s=se.h/2,a=.4*se.w*(t||1),o=.4*se.h*(t||1),r=[];for(let t=0;t<e;t++){const i=-Math.PI/2+2*Math.PI*t/e;r.push([n+a*Math.cos(i),s+o*Math.sin(i)])}return r}function t(e,t){ae("engine").innerHTML=t?'<span class="bad">'+oe(e)+"</span>":oe(e)}function n(){if(xe)return xe;try{const n=URL.createObjectURL(new Blob([ye],{type:"text/javascript"}));(xe=new Worker(n)).onmessage=(e=>{const t=ke.get(e.data.id);t&&(ke["delete"](e.data.id),e.data.ok?t.res(e.data.result):t.rej(new Error(e.data.error)))}),xe.onerror=(()=>{t("background thread unavailable; falling back to the main thread",!0),ke.forEach(e=>e.rej(new Error("background thread failed"))),ke.clear(),xe=null,$e="main"}),xe.postMessage({id:++we,kind:"boot",base:ee,srcs:ve()});const s=we;return new Promise((e,t)=>ke.set(s,{res:e,rej:t})).then(()=>{$e="worker",t("math engine ready (background thread)")})["catch"](e=>{t("engine failed to load: "+(e.message||e),!0),xe=null,$e="main"}),xe}catch(e){return xe=null,$e="main",null}}function s(e){return new Promise((t,n)=>{const s=document.createElement("script");s.src=e,s.async=!0,s.onload=(()=>t()),s.onerror=(()=>n(new Error("could not load the math engine from "+e+" (network / ad-blocker?)"))),document.head.appendChild(s)})}function a(){return Le||(t("loading math engine\u2026"),(Le=(async()=>{"undefined"==typeof loadPyodide&&await s(ee+"pyodide.js");const e=await loadPyodide({indexURL:ee}),n=ve();for(const t in n)e.FS.writeFile("/home/pyodide/"+t,n[t]);return e.runPython("import sys\nsys.path.insert(0,'/home/pyodide')\nimport json, demos"),t("math engine ready"),Me=e,e})())["catch"](e=>{t(e&&e.message||e,!0),Le=null}),Le)}async function o(e){if((xe||"idle"===$e)&&(n(),xe)){const t=++we,n=new Promise((e,n)=>ke.set(t,{res:e,rej:n}));return xe.postMessage({id:t,kind:"run",code:e}),JSON.parse(await n)}const t=await a();return await Ee(),JSON.parse(t.runPython(e))}function r(){xe?(xe.terminate(),xe=null,ke.forEach(e=>e.rej(new Error("stopped"))),ke.clear(),$e="idle",t("engine stopped \u2014 it will restart on the next run")):t("this browser is running the engine on the main thread, so a run in progress cannot be interrupted \u2014 reload the page to stop it",!0)}function i(){de.push(JSON.stringify([re,ie])),de.length>300&&de.shift(),ue.length=0}function l(){return ie.map(e=>[Math.min(e[0],e[1])+1,Math.max(e[0],e[1])+1])}function c(){const e=re.map(()=>0);return ie.forEach(t=>{e[t[0]]++,e[t[1]]++}),e}function d(){return Math.max(1,parseInt(ae("nval").value)||1)}function u(e){const t=e.touches?e.touches[0]:e,n=te.getScreenCTM();if(n){const e=te.createSVGPoint();e.x=t.clientX,e.y=t.clientY;const s=e.matrixTransform(n.inverse());return[s.x,s.y]}const s=te.getBoundingClientRect();return[(t.clientX-s.left)/s.width*se.w,(t.clientY-s.top)/s.height*se.h]}function h(){const e=te.getBoundingClientRect();return e.width?se.w/e.width:1}function p(){const e=re.length;if(!e)return[];const t=Math.min(60,se.w/(e+2)),n=se.w-2*t;return Array.from({length:e},(s,a)=>[t+(1===e?n/2:n*a/(e-1)),Se])}function m(){return"line"===pe?p():re}function f(e,t){const n=m(),s=Math.max(1.6*ne,20*h());let a=-1,o=s*s;return n.forEach((n,s)=>{const r=n[0]-e,i=n[1]-t,l=r*r+i*i;l<o&&(o=l,a=s)}),a}function g(e){const t=m(),n={},s=[];return ie.forEach((a,o)=>{const r=Math.min(a[0],a[1]),i=Math.max(a[0],a[1]),l=r+"-"+i;if(e&&n[l]!==undefined){const e=s[n[l]];return e.count++,void e.idxs.push(o)}const c=ie.filter(e=>Math.min(e[0],e[1])===r&&Math.max(e[0],e[1])===i).length,d=e?0:n[l]=n[l]===undefined?0:n[l]+1;e&&(n[l]=s.length);const u=t[r],h=t[i];let p,m;if("line"===pe){const e=Math.abs(i-r),t=Math.min(Se-26,26+26*e+17*d);p=(u[0]+h[0])/2,m=Se-2*t}else{const t=e?0:15*(d-(c-1)/2),n=(u[0]+h[0])/2,s=(u[1]+h[1])/2,a=h[0]-u[0],o=h[1]-u[1],r=Math.hypot(a,o)||1;p=n+-o/r*t*1.4,m=s+a/r*t*1.4}s.push({a:u,b:h,c:[p,m],mid:[(u[0]+2*p+h[0])/4,(u[1]+2*m+h[1])/4],count:1,idxs:[o]})}),s}function b(e,t){const n="labels"===me,s=g(n),a=Math.max(16,14*h());let o=-1,r=a*a;return s.forEach((n,s)=>{const a=(n.mid[0]-e)**2+(n.mid[1]-t)**2;a<r&&(r=a,o=s)}),o<0?-1:n?s[o].idxs[s[o].idxs.length-1]:o}function v(e){e.preventDefault();const[t,n]=u(e),s=f(t,n);Ce=!ce&&s>=0&&"free"===pe?{i:s,x0:t,y0:n,moved:!1,ox:re[s][0],oy:re[s][1]}:{i:-1,x0:t,y0:n,moved:!1}}function y(e){if(!Ce||Ce.i<0)return;const[t,n]=u(e);!Ce.moved&&Math.hypot(t-Ce.x0,n-Ce.y0)<6*h()||(Ce.moved||(i(),Ce.moved=!0),e.preventDefault(),re[Ce.i]=[Math.max(ne,Math.min(se.w-ne,Ce.ox+t-Ce.x0)),Math.max(ne,Math.min(se.h-ne,Ce.oy+n-Ce.y0))],P())}function $(e){if(!Ce)return;const t=Ce;if(Ce=null,t.moved)return void G();const[n,s]=u(e.changedTouches?{touches:e.changedTouches}:e);x(n,s)}function x(e,t){const n=f(e,t);if(ce){if(n>=0)i(),ie=ie.filter(e=>e[0]!==n&&e[1]!==n).map(e=>[e[0]-(e[0]>n?1:0),e[1]-(e[1]>n?1:0)]),re.splice(n,1),le=-1;else{const n=b(e,t);n>=0&&(i(),ie.splice(n,1))}G()}else{if(n>=0)le<0?le=n:le!==n?(i(),ie.push([le,n]),le=-1):le=-1;else{if(re.length>=ge)return void k("at most "+ge+" vertices can be drawn");i(),re.push("line"===pe?[se.w/2,Se]:[e,t]),le=-1}G()}}function w(){de.length&&(ue.push(JSON.stringify([re,ie])),[re,ie]=JSON.parse(de.pop()),le=-1,G(!0))}function M(){ue.length&&(de.push(JSON.stringify([re,ie])),[re,ie]=JSON.parse(ue.pop()),le=-1,G(!0))}function k(e){clearTimeout(Te);const t=ae("edgeerr");t.textContent=e,Te=setTimeout(()=>{t.textContent===e&&(t.textContent="")},2500)}function L(e,t,n){ae("lval").value=e,ae("mval").value=t,ae("nval").value=n,["lval","mval","nval"].forEach(e=>ae(e).classList.remove("touched"))}function E(){const e=c(),t=e.length?Math.max(...e):0,n=Math.max(t,1),s=Math.max(Math.ceil(ie.length/n),1);L(s,n,Math.max(re.length,2*s,1))}function S(){if(he)return;const e=c(),t=e.length?Math.max(...e):0,n=Math.max(parseInt(ae("mval").value)||1,t,1),s=Math.max(parseInt(ae("lval").value)||1,Math.ceil(ie.length/Math.max(n,1)),1),a=Math.max(parseInt(ae("nval").value)||1,re.length,2*s);ae("mval").value=n,ae("lval").value=s,ae("nval").value=a}function T(){["factor","basis","ehrhart"].forEach(e=>{const t=ae("out-"+e);t.innerHTML="",t.classList.remove("stale"),delete t.dataset.stale})}function C(e){e.forEach(e=>{const t=ae("out-"+e);t.innerHTML.trim()&&!t.dataset.stale&&(t.dataset.stale="1",t.classList.add("stale"),t.insertAdjacentHTML("afterbegin",'<div class="head bad">&#8635; the graph or parameters changed since this was computed \u2014 re-run to update</div>'))})}function j(e){const t=ae("out-"+e);t.classList.remove("stale"),delete t.dataset.stale}function q(){const e=re.length,t=+ae("mval").value,n=new Array(e).fill(0);ie.forEach(([e,t])=>{n[e]++,n[t]++});const s=Array.from({length:e},()=>[]);ie.forEach(([e,t],n)=>{s[e].push([t,n]),s[t].push([e,n])});const a=new Array(e).fill(-1),o=new Array(e).fill(0),r=new Array(ie.length).fill(!1);let i=0;for(let t=0;t<e;t++){if(a[t]>=0)continue;a[t]=o[t]=i++;const e=[[t,-1,0]];for(;e.length;){const t=e[e.length-1];if(t[2]<s[t[0]].length){const[n,r]=s[t[0]][t[2]++];if(r===t[1])continue;a[n]<0?(a[n]=o[n]=i++,e.push([n,r,0])):o[t[0]]=Math.min(o[t[0]],a[n])}else if(e.pop(),e.length){const n=e[e.length-1];o[n[0]]=Math.min(o[n[0]],o[t[0]]),o[t[0]]>a[n[0]]&&(r[t[1]]=!0)}}}const l=new Array(e).fill(-1);let c=0;const d=Array.from({length:e},()=>[]);ie.forEach(([e,t],n)=>{r[n]||(d[e].push(t),d[t].push(e))});for(let t=0;t<e;t++){if(l[t]>=0)continue;l[t]=c;const e=[t];for(;e.length;){const t=e.pop();for(const n of d[t])l[n]<0&&(l[n]=c,e.push(n))}c++}const u=Array.from({length:c},(e,t)=>({id:t,verts:[],edges:0,deficit:0,tdeg:0}));for(let s=0;s<e;s++)u[l[s]].verts.push(s),u[l[s]].deficit+=t-n[s];ie.forEach(([e,t],n)=>{r[n]||u[l[e]].edges++}),ie.forEach(([e,t],n)=>{r[n]&&(u[l[e]].tdeg++,u[l[t]].tdeg++)}),u.forEach(e=>{e.leaf=1===e.tdeg,e.kind=0===e.deficit?"full":1===e.deficit?"almost full":""});const h=new Array(e).fill(-1);let p=0;for(let t=0;t<e;t++){if(h[t]>=0)continue;h[t]=p;const e=[t];for(;e.length;){const t=e.pop();for(const[n]of s[t])h[n]<0&&(h[n]=p,e.push(n))}p++}const m=new Array(p).fill(0);for(let s=0;s<e;s++)m[h[s]]+=t-n[s];const f=new Array(e).fill(-1);let g=!0;for(let t=0;t<e&&g;t++){if(f[t]>=0)continue;f[t]=0;const e=[t];for(;e.length&&g;){const t=e.pop();for(const[n]of s[t])f[n]<0?(f[n]=1-f[t],e.push(n)):f[n]===f[t]&&(g=!1)}}const b=new Array(ie.length).fill(!1),v=[],y=ie.map(e=>[Math.min(e[0],e[1]),Math.max(e[0],e[1])]);for(let e=0;e<y.length;e++)for(let t=0;t<y.length;t++){if(e===t)continue;const[n,s]=y[e],[a,o]=y[t];n<a&&a<o&&o<s&&(b[e]=b[t]=!0,v.length<8&&v.push([e,t]))}const $=[];return r.forEach((e,t)=>{e&&$.push(t)}),{deg:n,bridge:r,bridges:$,block:l,blocks:u,comp:h,nc:p,compDef:m,bip:g,nest:b,nestPairs:v,FL:u.filter(e=>e.leaf&&0===e.deficit).length,AFL:u.filter(e=>e.leaf&&1===e.deficit).length}}function A(){const e="labels"===me,t=g(e);let n="";return t.forEach(e=>{const t=["edge"];je&&e.idxs.some(e=>je.bridge[e])&&t.push("cut"),"line"===pe&&je&&e.idxs.some(e=>je.nest[e])&&t.push("nest"),n+=`<path class="${t.join(" ")}" d="M${e.a[0]},${e.a[1]} Q${e.c[0]},${e.c[1]} ${e.b[0]},${e.b[1]}"/>`}),e&&t.forEach(e=>{e.count>1&&(n+=`<rect class="mlabbg" x="${e.mid[0]-11}" y="${e.mid[1]-9}" width="22" height="18" rx="4"/>`+`<text class="mlab" x="${e.mid[0]}" y="${e.mid[1]+4}" text-anchor="middle" font-size="11">&times;${e.count}</text>`)}),n}function N(){const e=m();let t="";return"line"===pe&&(t+=`<line class="baseline" x1="20" y1="${Se}" x2="${se.w-20}" y2="${Se}"/>`),e.forEach((e,n)=>{const s="blocks"===fe&&je&&je.blocks.length>1?` style="stroke:${qe(je.block[n])}"`:"";if(t+=`<circle class="vtx${n===le?" sel":""}"${s} cx="${e[0]}" cy="${e[1]}" r="${ne}"/>`+`<text x="${e[0]}" y="${e[1]+4}" text-anchor="middle" font-size="12">${n+1}</text>`,"blocks"===fe&&je){const s=je.deg[n],a=+ae("mval").value;t+=`<text class="deflab" x="${e[0]}" y="${e[1]-ne-5}" text-anchor="middle" font-size="10">${a-s}</text>`}}),t}function H(){const e=d(),t=e-re.length,n=ae("spares");if(t<=0)return void(n.innerHTML="");const s=t<=16?Array.from({length:t},(e,t)=>`<span class="sp">${re.length+t+1}</span>`).join(""):`<span class="sp">${re.length+1}</span><span>\u2026</span><span class="sp">${e}</span>`;n.innerHTML=s+`<span>${t} spare ${1===t?"vertex":"vertices"} \u2014 counted by n, unused by G, and available to the constructions</span>`}function P(){te.innerHTML=A()+N(),H()}function _(){const e=new Map;return l().forEach(([t,n])=>{const s=t+","+n;e.set(s,(e.get(s)||0)+1)}),[...e].map(([e,t])=>"("+e+")"+(t>1?"x"+t:"")).join(", ")}function I(e,t){const n=[],s=[],a=/\(?\s*(\d+)\s*[,\-\u2013\s]\s*(\d+)\s*\)?(?:\s*[x\u00d7*]\s*(\d+))?/g,o=e=>e.replace(/[,;()\[\]\s]/g,"");let r,i=0;for(;null!==(r=a.exec(e));){const l=e.slice(i,r.index);o(l)&&s.push('ignored "'+l.trim()+'"'),i=a.lastIndex;const c=+r[1],d=+r[2],u=r[3]?+r[3]:1;if(c!==d)if(c<1||d<1||c>t||d>t)s.push("vertex "+(c<1||c>t?c:d)+" is outside 1\u2026"+t);else if(u<1||u>999)s.push('bad multiplicity in "'+r[0].trim()+'"');else for(let e=0;e<u;e++)n.push([Math.min(c,d)-1,Math.max(c,d)-1]);else s.push("loop at "+c+" \u2014 G must be loopless")}const l=e.slice(i);return o(l)&&s.push('ignored "'+l.trim()+'"'),{edges:n,errors:s}}function F(){const e=ae("structout");ae("mval").value;if(!re.length)return void(e.innerHTML='<p class="caption">draw a graph to see its block structure</p>');const t=je.blocks.length,n=je.bridges.length;let s=`<p class="caption">${je.nc} connected component${1===je.nc?"":"s"} &middot; `+`${t} block${1===t?"":"s"} &middot; ${n} cut-edge${1===n?"":"s"} &middot; `+`${je.FL} full leaf-block${1===je.FL?"":"s"}, ${je.AFL} almost-full &middot; `+`${je.bip?"bipartite":"not bipartite"}`+("line"===pe?je.nestPairs.length?` &middot; <span class="bad">${je.nestPairs.length>=8?"8+":je.nestPairs.length} nesting pair${1===je.nestPairs.length?"":"s"} \u2014 G is not in S(&#8467;,m,n)</span>`:' &middot; <span class="ok">nonnesting: G is in S(&#8467;,m,n)</span>':"")+"</p>";s+='<table class="st"><tr><th></th><th>block</th><th>vertices</th><th>edges</th><th>deficit &Sigma;(m&minus;deg)</th><th>in bridge forest</th></tr>',je.blocks.forEach(e=>{s+=`<tr><td class="sw" style="background:${qe(e.id)}"></td>`+`<td>B${e.id+1}</td><td>${e.verts.map(e=>e+1).join(", ")}</td><td>${e.edges}</td>`+`<td>${e.deficit}${e.kind?' <span class="badge n">'+e.kind+"</span>":""}</td>`+`<td>degree ${e.tdeg}${e.leaf?" &mdash; leaf":""}</td></tr>`}),s+="</table>",je.nc>1&&(s+=`<p class="caption">total deficit per component: ${je.compDef.join(", ")}</p>`),s+='<p class="caption">A block is a connected component of G once every cut-edge is removed; the cut-edges join the blocks into the bridge forest. Deficit 0 is <em>full</em>, deficit 1 is <em>almost full</em>. Cut-edges are drawn dashed.</p>',e.innerHTML=s}function D(){const e=c(),t=e.length?Math.max(...e):0,n=+ae("lval").value,s=+ae("mval").value,a=d(),o=Math.min(n,Math.ceil(a/2)),r=Math.floor(a/2),i=Math.floor(a*s/2);if(a>be)return ae("nval").value=be,k("n is capped at "+be+" here"),D();ae("stats").innerHTML=`vertices drawn: ${re.length} &nbsp;(n = ${a})<br>edges: ${ie.length} / &#8467;m = ${n*s}`+`<br>max degree: ${t} / m = ${s}<br>&#8467;&#770; = min(&#8467;, &lceil;n/2&rceil;) = ${o}`;let l="",u=t<=s&&ie.length<=n*s&&n<=r&&re.length>0;l=u?`<span class="ok">&#10003; valid in G(${n}, ${s}, ${a})</span>`:0===re.length?'<span class="bad">&#9650; draw a graph</span>':t>s?`<span class="bad">&#9650; a vertex has degree ${t} &gt; m = ${s}</span>`:ie.length>n*s?`<span class="bad">&#9650; ${ie.length} edges &gt; &#8467;m = ${n*s}</span>`:`<span class="bad">&#9650; the graph constructions need &#8467; &le; &lfloor;n/2&rfloor; = ${r}</span>`+` <button id="swapl" style="padding:2px 8px;font-size:.8rem">use &#8467; = n&minus;&#8467; = ${a-n}</button>`,ae("valid").innerHTML=l;const h=ae("swapl");h&&(h.onclick=(()=>{ae("lval").value=Math.max(1,a-n),he=!0,G()})),document.querySelectorAll(".run").forEach(e=>{e.disabled="ehrhart"===e.dataset.run?!(n>=1&&s>=1&&a>=1&&n<=i):!u})}function G(e){S(),je=q(),P(),D(),F(),Ne||(ae("edges").value=_()),C(["factor","basis"]),e||B()}function O(){return document.querySelector(".tab-btn.active").dataset.tab}function J(){const e=("line"===pe?"L":"")+("labels"===me?"M":"")+("blocks"===fe?"B":"");return"l"+ae("lval").value+"m"+ae("mval").value+"n"+d()+"t"+O()[0]+"v"+re.map(e=>Math.round(e[0])+"."+Math.round(e[1])).join("_")+"e"+ie.map(e=>e[0]+"."+e[1]).join("_")+(e?"x"+e:"")}function B(e){clearTimeout(Ae);const t=()=>{try{history.replaceState(null,"","#"+J())}catch(e){}};e?t():Ae=setTimeout(t,250)}function R(e){const t=/^#?l(\d+)m(\d+)n(\d+)t(\w)v([^ex]*)e([^x]*)(?:x(\w*))?$/.exec(e||"");if(!t)return!1;const[,n,s,a,o,r,i,l]=t;L(+n,+s,+a),he=!0,re=r?r.split("_").filter(Boolean).map(e=>e.split(".").map(Number)):[],ie=i?i.split("_").filter(Boolean).map(e=>e.split(".").map(Number)):[];const c=l||"";pe=c.indexOf("L")>=0?"line":"free",me=c.indexOf("M")>=0?"labels":"arcs",fe=c.indexOf("B")>=0?"blocks":"none",ae("layout").textContent="Layout: "+pe,ae("estyle").textContent="Edges: "+me,ae("overlay").textContent="Blocks: "+("blocks"===fe?"on":"off"),"blocks"===fe&&(ae("structbox").open=!0);const d={f:"factor",b:"basis",e:"ehrhart"}[o];return d&&z(d),le=-1,je=q(),P(),D(),F(),ae("edges").value=_(),!0}function z(e){document.querySelectorAll(".tab-btn").forEach(t=>t.classList.toggle("active",t.dataset.tab===e)),document.querySelectorAll(".panel").forEach(e=>e.classList.add("hidden")),ae("panel-"+e).classList.remove("hidden")}function U(e,t,n,s){const a=document.querySelector("[data-run="+e+"]"),i=document.querySelector("[data-stop="+e+"]"),l=document.querySelector("[data-el="+e+"]");let c=null;i.onclick=(()=>{r()});let d=!1;a.onclick=(async()=>{const r=ae("out-"+e);j(e);const u=s&&!d?s():null;if(u)return r.innerHTML=`<div class="note warn">${u} <button class="goanyway">Run anyway</button></div>`,void(r.querySelector(".goanyway").onclick=(()=>{d=!0,a.click(),d=!1}));r.innerHTML='<div class="head">computing\u2026</div>',a.disabled=!0,i.hidden=!1;const h=performance.now();c=setInterval(()=>{l.textContent=((performance.now()-h)/1e3).toFixed(1)+" s"},100);try{const e=await o(t());await n(r,e)}catch(p){const e=p&&p.message||String(p);r.innerHTML="stopped"===e?'<div class="head bad">stopped</div>':'<div class="head bad">Error: '+oe(e)+"</div>"}finally{clearInterval(c),i.hidden=!0,a.disabled=!1,D(),l.textContent=((performance.now()-h)/1e3).toFixed(1)+" s"}})}function X(e){if(!e.length)return'<span class="tgrid"><span class="one" title="empty tableau: the empty product is 1">1</span></span>';let t='<span class="tgrid">';return e.forEach(e=>{t+=`<span class="tcol"><span class="tcell">${e[0]}</span><span class="tcell">${e[1]}</span></span>`}),t+"</span>"}function K(e){const t=e>0?"+":"&minus;",n=1===Math.abs(e)?"":Math.abs(e);return`<span class="bc">${t}${n?" "+n:""}</span>`}function W(e,t,n){function s(e){if(!e.length)return"no terms match";const s=e.map(e=>Math.abs(e.c)),a=Math.max(...s),o=s.reduce((e,t)=>e+t,0),r=e.filter(e=>e.c>0).length,i=e.length-r;let l=`${e.length} term${1===e.length?"":"s"}`;return e.length!==t.length&&(l+=` of ${t.length}`),l+=` &middot; max |c| = ${a} &middot; &Sigma;|c| = ${o} &middot; ${r} positive, ${i} negative`,n.dim&&(l+=` &middot; support ${t.length}/${n.dim} = ${(100*t.length/n.dim).toFixed(1)}% of the graded piece`),l}function a(){const e=r.querySelector(".lsort").value,n=r.querySelector(".lfilt").value.trim(),a=parseInt(r.querySelector(".lmin").value);if(h=t,n){const e=/^\s*(\d+)\s*[,\-\s]\s*(\d+)\s*$/.exec(n);if(e){const t=Math.min(+e[1],+e[2]),n=Math.max(+e[1],+e[2]);h=h.filter(e=>e.cols.some(e=>e[0]===t&&e[1]===n))}else{const e=parseInt(n);isNaN(e)||(h=h.filter(t=>t.cols.some(t=>t[0]===e||t[1]===e)))}}isNaN(a)||(h=h.filter(e=>Math.abs(e.c)>=a)),"absdesc"===e?h=[...h].sort((e,t)=>Math.abs(t.c)-Math.abs(e.c)):"absasc"===e?h=[...h].sort((e,t)=>Math.abs(e.c)-Math.abs(t.c)):"signed"===e&&(h=[...h].sort((e,t)=>e.c-t.c)),i.innerHTML=s(h),l.innerHTML="",u=0,o()}function o(){l.insertAdjacentHTML("beforeend",h.slice(u,u+d).map(e=>e.html).join("")),(u=Math.min(u+d,h.length))>=h.length?c.innerHTML=h.length>d?`<span class="caption">showing all ${h.length}</span>`:"":(c.innerHTML=`<button class="showmore">Show ${Math.min(d,h.length-u)} more</button>`+`<span class="caption">showing ${u} of ${h.length}</span>`,c.querySelector(".showmore").onclick=o)}n=n||{};const r=document.createElement("div");r.className="listctl",r.innerHTML='<label>sort <select class="lsort">\n         <option value="given">as computed</option>\n         <option value="absdesc">|coefficient| &darr;</option>\n         <option value="absasc">|coefficient| &uarr;</option>\n         <option value="signed">coefficient &uarr;</option>\n       </select></label>\n       <label>contains column <input class="lfilt" placeholder="e.g. 3,4"></label>\n       <label>|c| &ge; <input class="lmin" type="number" min="0" step="1" style="width:64px"></label>\n       <button class="lclear">reset</button>';const i=document.createElement("div");i.className="stats";const l=document.createElement("div");l.className="blist";const c=document.createElement("div");c.className="listfoot",e.appendChild(r),e.appendChild(i),e.appendChild(l),e.appendChild(c);const d=n.chunk||150;let u=0,h=t;r.querySelector(".lsort").onchange=a,r.querySelector(".lfilt").oninput=a,r.querySelector(".lmin").oninput=a,r.querySelector(".lclear").onclick=(()=>{r.querySelector(".lsort").value="given",r.querySelector(".lfilt").value="",r.querySelector(".lmin").value="",a()}),a()}function Y(e){return e.verified?"exact"===e.mode?'<span class="badge g">verified exactly</span>':'<span class="badge b">consistent at 12 random points</span>':'<span class="badge r">check FAILED</span>'}function V(){return _e||(window.MathJax={tex:{displayMath:[["\\[","\\]"]],inlineMath:[["\\(","\\)"],["$","$"]]},options:{enableMenu:!1}},_e=s("https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js")["catch"](()=>{throw _e=null,new Error("typesetting unavailable")}))}async function Q(e){try{await V(),window.MathJax&&MathJax.typesetPromise&&await MathJax.typesetPromise([e])}catch(t){e.insertAdjacentHTML("beforeend",'<p class="caption">(math typesetting could not be loaded, so the formulas above are shown as LaTeX source)</p>')}}function Z(){const[e,t,n]=He(),s=n-1+Math.ceil(e/t),a=s+6;return{secs:a*a*e*n*25e-7,degD:s}}const ee="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",te=document.getElementById("cv"),ne=16,se={w:600,h:400},ae=e=>document.getElementById(e),oe=e=>String(e).replace(/[&<>"']/g,e=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[e]);let re=[],ie=[],le=-1,ce=!1,de=[],ue=[],he=!1,pe="free",me="arcs",fe="none";const ge=60,be=400,ve=()=>({"straighten.py":ae("straighten-src").textContent,"factor.py":ae("factor-src").textContent,"demos.py":ae("demos-src").textContent}),ye="\n    let py, booted;\n    async function boot(base, srcs){\n      importScripts(base + \"pyodide.js\");\n      py = await loadPyodide({indexURL: base});\n      for (const [name, text] of Object.entries(srcs)) py.FS.writeFile('/home/pyodide/'+name, text);\n      py.runPython(\"import sys\\nsys.path.insert(0,'/home/pyodide')\\nimport json, demos\");\n    }\n    self.onmessage = async ev => {\n      const {id, kind, base, srcs, code} = ev.data;\n      try{\n        if(kind === 'boot'){ booted = boot(base, srcs); await booted; return self.postMessage({id, ok:true}); }\n        await booted;\n        self.postMessage({id, ok:true, result: py.runPython(code)});\n      }catch(e){ self.postMessage({id, ok:false, error: String((e && e.message) || e)}); }\n    };";let $e="idle",xe=null,we=0,Me=null,ke=new Map,Le=null;const Ee=()=>new Promise(e=>requestAnimationFrame(()=>requestAnimationFrame(e)));(window.requestIdleCallback||(e=>setTimeout(e,1500)))(()=>{"idle"===$e&&n()});const Se=.74*se.h;let Te,Ce=null;te.addEventListener("mousedown",v),te.addEventListener("mousemove",y),window.addEventListener("mouseup",$),te.addEventListener("touchstart",v,{passive:!1}),te.addEventListener("touchmove",y,{passive:!1}),window.addEventListener("touchend",$),document.addEventListener("keydown",e=>{const t=e.target&&e.target.tagName;if("INPUT"===t||"TEXTAREA"===t)return;const n=e.metaKey||e.ctrlKey;n&&"z"===e.key.toLowerCase()?(e.preventDefault(),(e.shiftKey?M:w)()):n&&"y"===e.key.toLowerCase()?(e.preventDefault(),M()):"Escape"===e.key?(le=-1,P()):"Delete"!==e.key&&"Backspace"!==e.key||le>=0&&(e.preventDefault(),i(),ie=ie.filter(e=>e[0]!==le&&e[1]!==le).map(e=>[e[0]-(e[0]>le?1:0),e[1]-(e[1]>le?1:0)]),re.splice(le,1),le=-1,G())}),ae("undo").onclick=w,ae("redo").onclick=M,ae("mode").onclick=(()=>{ce=!ce,le=-1,ae("mode").textContent=ce?"Mode: delete":"Mode: add / connect",ae("mode").setAttribute("aria-pressed",ce?"true":"false"),te.style.cursor=ce?"not-allowed":"crosshair",P()}),ae("clear").onclick=(()=>{i(),re=[],ie=[],le=-1,he=!1,T(),G()}),ae("example").onclick=(()=>{i(),re=e(7),ie=[[0,1],[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[4,6],[5,6],[5,6]],le=-1,L(4,3,8),he=!1,T(),G()}),ae("random").onclick=(()=>{i();const t=Math.max(1,parseInt(ae("lval").value)||1),n=Math.max(1,parseInt(ae("mval").value)||1),s=Math.max(2*t,parseInt(ae("nval").value)||2*t);re=e(s),ie=[];const a=new Array(s).fill(0),o=t*n,r=Math.min(o,Math.max(s-1,Math.floor(o*(.55+.45*Math.random()))));let l=0;for(;ie.length<r&&l<4e3;){l++;const e=Math.floor(Math.random()*s),t=Math.floor(Math.random()*s);e!==t&&a[e]<n&&a[t]<n&&(ie.push([e,t]),a[e]++,a[t]++)}le=-1,L(t,n,s),T(),G()}),ae("fit").onclick=(()=>{E(),he=!1,G()}),ae("layout").onclick=(()=>{pe="free"===pe?"line":"free",ae("layout").textContent="Layout: "+pe,le=-1,G()}),ae("estyle").onclick=(()=>{me="arcs"===me?"labels":"arcs",ae("estyle").textContent="Edges: "+me,P(),B()}),ae("overlay").onclick=(()=>{fe="none"===fe?"blocks":"none",ae("overlay").textContent="Blocks: "+("blocks"===fe?"on":"off"),"blocks"===fe&&(ae("structbox").open=!0),P(),B()}),ae("resetengine").onclick=(async()=>{try{(xe||"idle"!==$e)&&await o("demos.reset_caches()")}catch(e){}r(),k("engine caches cleared")}),ae("permalink").onclick=(async()=>{B(!0);try{await navigator.clipboard.writeText(location.href),ae("permalink").textContent="Copied \u2713",setTimeout(()=>ae("permalink").textContent="Copy link",1400)}catch(e){ae("permalink").textContent="Copy from the URL bar",setTimeout(()=>ae("permalink").textContent="Copy link",2200)}});let je=null;const qe=e=>`hsl(${67*e%360} 55% 45%)`;let Ae,Ne=!1;ae("edges").addEventListener("input",()=>{Ne=!0;const{edges:t,errors:n}=I(ae("edges").value,999);if(ae("edgeerr").textContent=n.join("; "),ae("edges").classList.toggle("err",n.length>0),n.length)Ne=!1;else{if(JSON.stringify(t)!==JSON.stringify(ie)){const n=t.reduce((e,t)=>Math.max(e,t[0]+1,t[1]+1),0);if(i(),n>re.length){const t=e(Math.max(n,re.length));for(let e=re.length;e<n;e++)re.push(t[e])}ie=t,le=-1,G()}Ne=!1}}),["lval","mval","nval"].forEach(e=>ae(e).addEventListener("input",()=>{he=!0,ae(e).classList.add("touched"),je=q(),P(),D(),F(),B(),C(["factor","basis","ehrhart"])})),document.querySelectorAll(".tab-btn").forEach(e=>{e.onclick=(()=>{z(e.dataset.tab),B(!0)})});const He=()=>[+ae("lval").value,+ae("mval").value,d()],Pe=()=>JSON.stringify(JSON.stringify(l()));U("factor",()=>{const[e,t,n]=He();return`demos.factor_report(json.loads(${Pe()}), ${e}, ${t}, ${n})`},(e,t)=>{if(!t.ok){let n=`<div class="head bad">${"obstructed"===t.verdict?"No such factorization exists":"Could not compute"}</div><div class="note warn">${oe(t.error)}</div>`;return t.tableau&&(n+='<p class="caption">the obstructing maximal tableau:</p>'+X(t.tableau)),void(e.innerHTML=n)}const[n,s,a]=He();let o=`<div class="head">&delta;<sub>G</sub> = sum of <strong>${t.count}</strong> product${1===t.count?"":"s"} of ${s} degree-1 tableau${1===s?"":"x"} `+Y(t)+`<span style="color:var(--muted)">(${t.time<.001?"<0.001":t.time.toFixed(3)} s)</span></div>`;const r=t.structure;if(r){let e;!0===r.colorable?(e=`No obstruction: &chi;&prime;(G) &le; m, because ${r.why}. So &delta;<sub>G</sub> is a <em>single</em> product of m matchings.`,r.nprod>1&&(e+=` It still expands to ${r.nprod} terms above, because those matchings are not individually non-crossing.`)):e=null===r.colorable?`Undecided: ${r.why}. &chi;&prime;(G) &le; m could not be settled, so it is not known whether &delta;<sub>G</sub> is a single product of m matchings.`:`Obstructed: &chi;&prime;(G) &gt; m, because ${r.why}. So &delta;<sub>G</sub> is not a single product of m matchings.`;const t=[];r.odd_breaks&&t.push(`the linear relation was used ${r.odd_breaks} time${1===r.odd_breaks?"":"s"} to break an odd cycle in a degree-&le;2 part`+(r.spares&&r.spares.length?` (spare vert${1===r.spares.length?"ex ":"ices "}${r.spares.join(", ")})`:"")),r.quad_merges&&t.push(`${r.quad_merges} quadratic rewrite${1===r.quad_merges?"":"s"} merged two odd cycles`),r.raises&&t.push(`${r.raises} tableau raise${1===r.raises?" was":"s were"} needed to reach a splittable form`),je&&je.bridges.length&&t.push(`G has ${je.bridges.length} cut-edge${1===je.bridges.length?"":"s"} (dashed on the canvas), so its bridge forest is nontrivial`),r.strict&&t.push(`m = ${s} is odd and below the threshold (2&#8467;&#770;+3)/3 = ${r.threshold} with &#8467;&#770; = ${r.lhat}, the regime where the degree-2 &middot; degree-(m&minus;2) split can fail`),t.length&&(e+=`<br><br>What the construction did: ${t.join("; ")}.`),o+=`<div class="note">${e}</div>`}e.innerHTML=o,W(e,t.terms.map(e=>({c:e.c,cols:[].concat(...e.tabs),html:`<div class="brow">${K(e.c)}`+e.tabs.map(e=>X(e)).join('<span class="prod">&middot;</span>')+"</div>"})))}),U("basis",()=>{const[e,t,n]=He();return`demos.basis_view(json.loads(${Pe()}), ${e}, ${t}, ${n})`},(e,t)=>{if(!t.ok)return void(e.innerHTML=`<div class="head bad">${oe(t.error)}</div>`);const[n,s,a]=He();let o=`<div class="head">&delta;<sub>G</sub> reduces onto <strong>${t.count}</strong> of the ${t.graded_dim} degree-${t.edges} element${1===t.graded_dim?"":"s"} of S<sub>max</sub>(${n},${s},${a}) `+Y(t)+`<span style="color:var(--muted)">(${t.time<.001?"<0.001":t.time.toFixed(3)} s)</span></div>`;o+=`<p class="caption">&delta;<sub>G</sub> has degree d = ${t.edges} (one per edge); the degree-d graded piece of `+`V<sub>m&Delta;&#8467;</sub> is ${t.graded_dim}-dimensional, so this is the unique coordinate vector of &delta;<sub>G</sub> in that basis.`+(t.maximal_ok?"":' <span class="bad">Warning: some output tableaux are not maximal.</span>')+"</p>",e.innerHTML=o,W(e,t.tabs.map(e=>({c:e.c,cols:e.tab,html:`<div class="brow">${K(e.c)}${X(e.tab)}</div>`})),{dim:t.graded_dim})});let _e=null;U("ehrhart",()=>{const[e,t,n]=He();return`demos.ehrhart_report(${e}, ${t}, ${n})`},async(e,t)=>{if(!t.ok)return void(e.innerHTML=`<div class="head bad">${oe(t.error)}</div>`);let n=`<div class="head">${1===t.m?`&Delta;<sub>${t.l},${t.n}</sub>`:`P<sub>${t.l},${t.m},${t.n}</sub>`} &sub; &#8477;<sup>${t.n}</sup>, dimension ${t.dim}</div>`;const s=t.reduced?"sharing the <strong>reduced</strong> denominator \u2014 the exponent n&minus;1 improves to n&minus;2 because n &ge; 3 and 2&#8467; = nm":"sharing the predicted denominator";n+='<p style="font-size:.88rem;margin:.1rem 0 .7rem">Closed rational form \\(E=N(t,q)/D\\), interior '+`\\(\\overline{E}=\\overline{N}(t,q)/D\\), ${s}, `+`\\(D(t,q)=${t.den_tex}\\). Numerators, coefficient of each power of \\(t\\):</p>`,t.predicted||(n+='<div class="note warn">The denominator reduced by more than predicted '+`(full form \\(${t.den_full_tex}\\)). That is worth a closer look \u2014 please report this input.</div>`),n+='<div class="etbl"><table><tr><td class="lab">power of t</td><td class="lab">numerator of E</td><td class="lab">numerator of interior E&#772;</td></tr>',t.rows.forEach(e=>{const t=0===e[0]?"1":1===e[0]?"t":"t^{"+e[0]+"}";n+=`<tr><td class="kcol">\\(${t}\\)</td><td>${e[1]?"\\("+e[1]+"\\)":"\u2014"}</td><td>${e[2]?"\\("+e[2]+"\\)":"\u2014"}</td></tr>`}),n+="</table></div>",n+=`<p class="caption"><span class="badge ${t.recip?"g":"r"}">q-reciprocity ${t.recip?"holds (checked exactly)":"FAILS"}</span>`+`<span class="badge ${t.nonneg?"g":"n"}">numerator ${t.nonneg?"has nonnegative coefficients":"has negative coefficients"}</span>`+`<span class="badge n">&nu; = ${t.nu}, d+1 = ${t.dim+1}</span></p>`,n+=`<p class="caption">lattice points |L(k&middot;${1===t.m?"&Delta;":"P"})| for k = 0,1,2,\u2026 : ${t.lattice.join(", ")}, \u2026`+` <span style="color:var(--muted)">(${t.time<.001?"<0.001":t.time.toFixed(3)} s)</span></p>`,e.innerHTML=n,await Q(e)},()=>{const e=Z();return e.secs>8?`These parameters give a denominator of degree ${e.degD}; the computation should take `+`roughly ${e.secs<60?Math.round(e.secs)+" seconds":(e.secs/60).toFixed(1)+" minutes"}. `+"You can stop it once it starts.":null}),R(location.hash)||G(),window.addEventListener("hashchange",()=>{R(location.hash)})}();</script> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Weston A. Miller. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. Last updated: August 18, 2026. </div> </footer> <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <script src="/assets/js/bootstrap.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@4.20.0/js/mdb.min.js" integrity="sha256-NdbiivsvWt7VYCt6hYNT3h/th9vSTL4EDWeGs5SN3DA=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js" type="text/javascript"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/js/zoom.js?85ddb88934d28b74e78031fd54cf8308"></script> <script src="/assets/js/no_defer.js?2781658a0a2b13ed609542042a859126"></script> <script defer src="/assets/js/common.js?e0514a05c5c95ac1a93a8dfd5249b92e"></script> <script defer src="/assets/js/copy_code.js?12775fdf7f95e901d7119054556e495f" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?d9f17b6adc2311cbabd747f4538bb15f"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script type="text/javascript">window.MathJax={tex:{tags:"ams"}};</script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.min.js" integrity="sha256-rjmgmaB99riUNcdlrDtcAiwtLIojSxNyUFdl+Qh+rB4=" crossorigin="anonymous"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-1SEVG0M3D2"></script> <script>function gtag(){window.dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-1SEVG0M3D2");</script> <script type="text/javascript">function progressBarSetup(){"max"in document.createElement("progress")?(initializeProgressElement(),$(document).on("scroll",function(){progressBar.attr({value:getCurrentScrollPosition()})}),$(window).on("resize",initializeProgressElement)):(resizeProgressBar(),$(document).on("scroll",resizeProgressBar),$(window).on("resize",resizeProgressBar))}function getCurrentScrollPosition(){return $(window).scrollTop()}function initializeProgressElement(){let e=$("#navbar").outerHeight(!0);$("body").css({"padding-top":e}),$("progress-container").css({"padding-top":e}),progressBar.css({top:e}),progressBar.attr({max:getDistanceToScroll(),value:getCurrentScrollPosition()})}function getDistanceToScroll(){return $(document).height()-$(window).height()}function resizeProgressBar(){progressBar.css({width:getWidthPercentage()+"%"})}function getWidthPercentage(){return getCurrentScrollPosition()/getDistanceToScroll()*100}const progressBar=$("#progress");window.onload=function(){setTimeout(progressBarSetup,50)};</script> <script src="/assets/js/vanilla-back-to-top.min.js?f40d453793ff4f64e238e420181a1d17"></script> <script>addBackToTop();</script> <script src="/assets/js/shortcut-key.js"></script> </body> </html>
