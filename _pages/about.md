@@ -17,7 +17,7 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am a second year PhD student in mathematics at the University of California, San Diego.
+I am a third year PhD student in mathematics at the University of California, San Diego.
 
 My advisor is [Brendon Rhoades](https://mathweb.ucsd.edu/~bprhoades/).
 
