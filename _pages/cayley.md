@@ -5,6 +5,7 @@ permalink: /cayley/
 nav: false
 ---
 
+{% raw %}
 <div id="cayley-app">
 <style>
 /* Styling mirrors weston-miller.github.io/graph-demos: same variable scheme, same
@@ -1163,3 +1164,5 @@ gaDraw();
 })();
 </script>
 </div>
+
+{% endraw %}
