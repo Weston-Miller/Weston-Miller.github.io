@@ -282,7 +282,7 @@ sass:
 # -----------------------------------------------------------------------------
 
 jekyll-minifier:
-  exclude: ["robots.txt", "assets/js/search/*.js"]
+  exclude: ["robots.txt", "assets/js/search/*.js", "rational-catalan/index.html"]
   uglifier_args:
     harmony: true
 
