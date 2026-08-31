@@ -48,7 +48,7 @@ rss_icon: false
 
 navbar_fixed: true
 footer_fixed: true
-search_enabled: false
+search_enabled: true
 socials_in_search: true
 
 # Dimensions
@@ -76,7 +76,7 @@ dblp_url: # your DBLP profile url
 discord_id: # your discord id (18-digit unique numerical identifier)
 facebook_id: # your facebook id
 flickr_id: # your flickr id
-github_username: # your GitHub user name
+github_username: weston-miller # your GitHub user name
 gitlab_username: # your GitLab user name
 ieee_id: # your ieeexplore.ieee.org/author/id
 instagram_id: # your instagram id
@@ -233,7 +233,6 @@ exclude:
   - lighthouse_results/
   - package.json
   - package-lock.json
-  - _pages/about_einstein.md
   - purgecss.config.js
   - README.md
   - readme_preview/
