@@ -17,7 +17,7 @@ selected_papers: true  # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am a third year PhD student in mathematics at the University of California, San Diego. Today is day <span id="phd-day">{% assign phd_start = "2024-09-23" | date: "%s" | plus: 0 %}{% assign phd_now = "now" | date: "%s" | plus: 0 %}{{ phd_now | minus: phd_start | divided_by: 86400 | floor }}</span> of the PhD.
+I am a third year PhD student in mathematics at the University of California, San Diego. Today is day <span id="phd-day">{% assign phd_start = "2024-09-23" | date: "%s" | plus: 0 %}{% assign phd_now = "now" | date: "%s" | plus: 0 %}{{ phd_now | minus: phd_start | divided_by: 86400 | floor }}</span> of my PhD.
 
 My advisor is [Brendon Rhoades](https://mathweb.ucsd.edu/~bprhoades/).
 
