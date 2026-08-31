@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "assets/**"
+      - "bin/**"
       - "**.bib"
       - "**.html"
       - "**.js"
@@ -34,6 +35,7 @@ on:
       - main
     paths:
       - "assets/**"
+      - "bin/**"
       - "**.bib"
       - "**.html"
       - "**.js"
@@ -55,6 +57,11 @@ on:
       - "!FAQ.md"
       - "!INSTALL.md"
       - "!README.md"
+  schedule:
+    # 11:00 UTC daily (04:00 America/Los_Angeles) — refreshes the Goodreads
+    # currently-reading list on the live site. GitHub disables cron in repos
+    # with no activity for 60 days; re-enable it in the Actions tab if it stops.
+    - cron: "0 11 * * *"
   workflow_dispatch:
 
 permissions:
@@ -84,6 +91,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
           pip3 install --upgrade jupyter
+      - name: Refresh currently-reading from Goodreads 📚
+        # Best-effort: the script exits 0 on any network/parse failure and the
+        # committed _data/reading.yml stands in.
+        run: python3 bin/fetch_goodreads.py
       - name: Install and Build 🔧
         run: |
           export JEKYLL_ENV=production

@@ -1289,8 +1289,14 @@ ninja-keys::part(ninja-input-wrapper) {
 }
 
 // Demo strip on the landing page
-.demo-strip {
+// The about layout floats the profile image right, so the whole section — not
+// just the grid — has to clear it, or the heading wraps beside the photo and
+// the cards drop below it with a gap in between.
+.demos-section {
   clear: both;
+}
+
+.demo-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
