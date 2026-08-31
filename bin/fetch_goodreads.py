@@ -62,15 +62,17 @@ def main():
             continue
         added = text(item, "user_date_added")
         try:
-            since = parsedate_to_datetime(added).strftime("%B %Y")
+            # ISO so the template can do date arithmetic on it; quoted on the way
+            # out so YAML keeps it a string rather than a Date.
+            started = parsedate_to_datetime(added).strftime("%Y-%m-%d")
         except (TypeError, ValueError):
-            since = ""
+            started = ""
         books.append(
             {
                 "title": title,
                 "author": text(item, "author_name"),
                 "link": "https://www.goodreads.com/book/show/" + text(item, "book_id"),
-                "since": since,
+                "started": started,
             }
         )
 
@@ -84,7 +86,7 @@ def main():
         lines.append("  - title: " + quote(book["title"]))
         lines.append("    author: " + quote(book["author"]))
         lines.append("    link: " + quote(book["link"]))
-        lines.append("    since: " + quote(book["since"]))
+        lines.append("    started: " + quote(book["started"]))
     if not books:
         lines[-1] = "books: []"
 
