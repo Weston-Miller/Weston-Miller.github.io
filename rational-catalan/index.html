@@ -36,7 +36,8 @@
   
 </title>
 <meta name="author" content="Weston A. Miller">
-<meta name="description" content="An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.">
+<meta name="description" content="I am a third year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+">
 
   <meta name="keywords" content="weston, miller, math, mathematics, ucsd">
 
@@ -50,7 +51,8 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Weston Miller | Rational Catalan numbers for complex reflection groups">
   <meta property="og:url" content="https://weston-miller.github.io/rational-catalan/">
-  <meta property="og:description" content="An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.">
+  <meta property="og:description" content="I am a third year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+">
   
     <meta property="og:image" content="https://weston-miller.github.io/assets/img/og-card.png">
   
@@ -59,7 +61,8 @@
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rational Catalan numbers for complex reflection groups">
-  <meta name="twitter:description" content="An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.">
+  <meta name="twitter:description" content="I am a third year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+">
   
     <meta name="twitter:image" content="https://weston-miller.github.io/assets/img/og-card.png">
   
@@ -115,7 +118,8 @@
         },
         "url": "https://weston-miller.github.io/rational-catalan/",
         "@type": "WebSite",
-        "description": "An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.",
+        "description": "I am a third year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+",
         "headline": "Rational Catalan numbers for complex reflection groups",
         
         "sameAs": ["https://orcid.org/0009-0005-7698-3079", "https://scholar.google.com/citations?user=Ty5xv4UAAAAJ", "https://github.com/weston-miller", "https://www.linkedin.com/in/westonalanmiller"],
@@ -306,7 +310,7 @@
         <div class="post">
   <header class="post-header">
     <h1 class="post-title">Rational Catalan numbers for complex reflection groups</h1>
-    <p class="post-description">An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.</p>
+    <p class="post-description"></p>
   </header>
 
   <article>
@@ -606,13 +610,10 @@ html[data-theme="dark"]{
 <div class="rc-intro">
   <p class="dek">Take an irreducible <em>spetsial</em> complex reflection group, and assume the standard
     conjectures. The canonical symmetrizing trace of its Hecke algebra, evaluated at a power of a Coxeter
-    element, is then a rational Catalan number<a href="#src-5" class="cite">5</a>:</p>
+    element is related to the rational Catalan number<a href="#src-5" class="cite">5</a>:</p>
   <p class="formula">Cat(<em>W</em>, <em>p</em>) = ∏<sub>i</sub>
     <span class="frac"><span class="num"><em>p</em> + (<em>p m<sub>i</sub></em> mod <em>h</em>)</span><span class="den"><em>d<sub>i</sub></em></span></span></p>
-  <p class="dek">The first two tabs compute it. They cover every spetsial group, and the trace itself, from
-    the paper's GAP3 code. The last two show what the number becomes at <em>W</em> = <em>S<sub>a</sub></em>.
-    There it counts lattice paths. For finite Coxeter groups, the rational noncrossing side of this story is
-    the subject of Galashin, Lam, Trinh and Williams<a href="#src-4" class="cite">4</a>.</p>
+  <p class="dek">Email me if you find any errors or want some specific function added.</p> 
   <p class="rc-links">
     <a href="https://doi.org/10.1016/j.jalgebra.2025.01.027" rel="external nofollow noopener" target="_blank">Journal of Algebra 435 (2025)</a>
     <a href="https://doi.org/10.48550/arXiv.2310.12354" rel="external nofollow noopener" target="_blank">arXiv:2310.12354</a>
@@ -670,8 +671,7 @@ html[data-theme="dark"]{
     <em>a</em>+<em>b</em> rotations, exactly one stays above the diagonal<a href="#src-1" class="cite">1</a>.
     That one is an (<em>a</em>, <em>b</em>)-Dyck path<a href="#src-2" class="cite">2</a>. There are
     Cat(<em>a</em>,<em>b</em>) of them, and that number is also Cat(S<sub><em>a</em></sub>, <em>b</em>).
-    These are the objects the trace counts, in the case where the group is a symmetric group and you can draw
-    them.</p>
+    These are the objects the trace counts, in the case where the group is a symmetric group.</p>
 
   <div class="figrow">
     <div class="card">
@@ -822,8 +822,7 @@ html[data-theme="dark"]{
 <!-- ============ TAB 5 ============ -->
 <section class="tabpanel" id="panel-t" role="tabpanel" aria-labelledby="tab-t">
   <h2 class="sec">The trace</h2>
-  <p class="lede">The canonical symmetrizing trace splits over the irreducible characters, one over each Schur
-    element. One row each. This is the trace, not yet a Catalan number.</p>
+  <p class="lede">The canonical symmetrizing trace splits over the irreducible characters.</p>
   <p class="formula" style="font-size:18px">τ<sub><em>p</em></sub>(<em>q</em>) =
     ∑<sub><em>χ</em></sub>
     <span class="frac"><span class="num"><em>q</em><sup>−<em>p</em>(<em>a</em>+<em>c<sub>χ</sub></em>)/<em>h</em></sup>
@@ -902,10 +901,8 @@ html[data-theme="dark"]{
 <!-- ============ TAB 6 ============ -->
 <section class="tabpanel" id="panel-f" role="tabpanel" aria-labelledby="tab-f" hidden>
   <h2 class="sec">The other side of the trace</h2>
-  <p class="lede">The generic degrees and the fake degrees can be paired either way round. Evaluate the
-    generic degrees at the root of unity instead. Almost everything vanishes, and the sum that survives is
-    always the Catalan number. Identifying that sum with the trace is what Lusztig's Fourier transform does,
-    and it needs <em>W</em> spetsial.</p>
+  <p class="lede">In this tab, we rewrite the trace sum with the generic degrees evaluated at the root of unity instead of the fake degrees. Almost everything vanishes, and the sum that survives is
+    always the Catalan number. Identifying that sum with the trace is what Lusztig's Fourier transform does in the case that <em>W</em> is spetsial.</p>
 
   <p class="formula" style="font-size:17px">Cat<sub>q</sub>(<em>W</em>, <em>p</em>) =
     <span class="frac"><span class="num">1</span><span class="den"><em>P<sub>W</sub></em>(<em>q</em>)</span></span>
@@ -971,14 +968,10 @@ html[data-theme="dark"]{
     characteristic zero. The Schur elements are taken in factored form, as a product of cyclotomic polynomials
     evaluated at monomials. A generic degree at a root of unity is then a limit of a ratio of products of linear
     atoms <em>c x<sup>A</sup></em> − ζ. Both the order of vanishing and the leading coefficient of such a
-    product can be read off atom by atom, so nothing is ever expanded. The cost does not grow with <em>h</em>.
-    That is what brought in the four groups the direct route could not finish: G34, and G17, G18 and G21 with
-    their <em>q</em><sup>1/20</sup>, <em>q</em><sup>1/30</sup> and <em>q</em><sup>1/12</sup>. They now take
-    seconds. The two sum identities are tested as exact equalities at <em>q</em> = 2<sup><em>hm</em></sup>,
+    product can be read off atom by atom, so nothing is ever expanded. The two sum identities are tested as exact equalities at <em>q</em> = 2<sup><em>hm</em></sup>,
     a point where no atom can vanish. The one that divides by a Schur element is tested modulo a prime
     <em>P</em> ≡ 1 (mod <em>hm</em>), where a nonzero difference proves an inequality. Two independent
-    primes agree in every case. Six groups already computed the slow way (G4, G5, G10, G16, G20, H3, F4) were
-    recomputed this way and agree entry for entry.</p>
+    primes agree in every case.</p>
     <p><b>The result.</b> Take any spetsial group in the list. The trace, the collapsed sum and the closed form
     agree at every <em>p</em> coprime to <em>h</em>. The generic degrees at
     ζ<sub><em>h</em></sub><sup><em>p</em></sup> are 0, except for (−1)<sup><em>k</em></sup> on the exterior
