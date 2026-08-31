@@ -57,7 +57,7 @@
   <meta property="og:locale" content="en">
 
   <!-- Twitter card -->
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rational Catalan numbers for complex reflection groups">
   <meta name="twitter:description" content="An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.">
   
@@ -118,7 +118,7 @@
         "description": "An interactive companion: the canonical trace of a Hecke algebra at a power of a Coxeter element, and the Catalan number it produces.",
         "headline": "Rational Catalan numbers for complex reflection groups",
         
-        "sameAs": ["https://orcid.org/0009-0005-7698-3079", "https://scholar.google.com/citations?user=Ty5xv4UAAAAJ", "https://www.linkedin.com/in/westonalanmiller"],
+        "sameAs": ["https://orcid.org/0009-0005-7698-3079", "https://scholar.google.com/citations?user=Ty5xv4UAAAAJ", "https://github.com/weston-miller", "https://www.linkedin.com/in/westonalanmiller"],
         
         "name": "Weston A. Miller",
         "@context": "https://schema.org"
@@ -267,6 +267,13 @@
               
             
           
+          
+            <!-- Search -->
+            <li class="nav-item">
+              <button id="search-toggle" title="Search" onclick="openSearchModal()">
+                <span class="nav-link">ctrl k <i class="ti ti-search"></i></span>
+              </button>
+            </li>
           
           
             <!-- Toogle theme mode -->
@@ -2362,6 +2369,124 @@ readHash();
 
 
     
+  <script type="module" src="/assets/js/search/ninja-keys.min.js?601a2d3465e2a52bec38b600518d5f70"></script>
+  <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys>
+  <script>
+    let searchTheme = determineComputedTheme();
+    const ninjaKeys = document.querySelector('ninja-keys');
+
+    if (searchTheme === 'dark') {
+      ninjaKeys.classList.add('dark');
+    } else {
+      ninjaKeys.classList.remove('dark');
+    }
+
+    const openSearchModal = () => {
+      // collapse navbarNav if expanded on mobile
+      const $navbarNav = $('#navbarNav');
+      if ($navbarNav.hasClass('show')) {
+        $navbarNav.collapse('hide');
+      }
+      ninjaKeys.open();
+    };
+  </script>
+  <script>
+    // get the ninja-keys element
+    const ninja = document.querySelector('ninja-keys');
+
+    // add the home and posts menu items
+    ninja.data = [{
+        id: "nav-about",
+        title: "about",
+        section: "Navigation",
+        handler: () => {
+          window.location.href = "/";
+        },
+      },{id: "nav-research",
+              title: "research",
+              description: "",
+              section: "Navigation",
+              handler: () => {
+                window.location.href = "/research/";
+              },
+            },{id: "nav-demos",
+              title: "demos",
+              description: "Interactive companions to my papers. Each one runs the paper&#39;s construction on an example you choose.",
+              section: "Navigation",
+              handler: () => {
+                window.location.href = "/demos/";
+              },
+            },{id: "nav-cv",
+              title: "cv",
+              description: "",
+              section: "Navigation",
+              handler: () => {
+                window.location.href = "/cv/";
+              },
+            },{
+            id: 'socials-email',
+            title: 'Send email',
+            section: 'Socials',
+            handler: () => {
+              window.open("mailto:%77%33%6D%69%6C%6C%65%72@%75%63%73%64.%65%64%75", "_blank");
+            },
+          },{
+            id: 'socials-orcid',
+            title: 'ORCID',
+            section: 'Socials',
+            handler: () => {
+              window.open("https://orcid.org/0009-0005-7698-3079", "_blank");
+            },
+          },{
+            id: 'socials-google-scholar',
+            title: 'Google Scholar',
+            section: 'Socials',
+            handler: () => {
+              window.open("https://scholar.google.com/citations?user=Ty5xv4UAAAAJ", "_blank");
+            },
+          },{
+            id: 'socials-github',
+            title: 'GitHub',
+            section: 'Socials',
+            handler: () => {
+              window.open("https://github.com/weston-miller", "_blank");
+            },
+          },{
+            id: 'socials-linkedin',
+            title: 'LinkedIn',
+            section: 'Socials',
+            handler: () => {
+              window.open("https://www.linkedin.com/in/westonalanmiller", "_blank");
+            },
+          },{
+          id: 'light-theme',
+          title: 'Change theme to light',
+          description: 'Change the theme of the site to Light',
+          section: 'Theme',
+          handler: () => {
+            setThemeSetting("light");
+          },
+        },
+        {
+          id: 'dark-theme',
+          title: 'Change theme to dark',
+          description: 'Change the theme of the site to Dark',
+          section: 'Theme',
+          handler: () => {
+            setThemeSetting("dark");
+          },
+        },
+        {
+          id: 'system-theme',
+          title: 'Use system default theme',
+          description: 'Change the theme of the site to System Default',
+          section: 'Theme',
+          handler: () => {
+            setThemeSetting("system");
+          },
+        },];
+  </script>
+
 
     <script src="/assets/js/shortcut-key.js"></script>
   </body>
