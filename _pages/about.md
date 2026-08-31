@@ -36,7 +36,7 @@ Each of my papers has an interactive companion that runs its construction on an 
       <path d="M5 55 V30 H27.5 V17.5 H50 V12 H72.5 V5 H95" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
     <span class="demo-title">Rational Catalan numbers</span>
-    <span class="demo-note">Count <em>(a,b)</em>-Dyck paths, then compute the same number from the Hecke algebra trace, and watch the two sides stay equal.</span>
+    <span class="demo-note">Coompute traces and Catalan numbers for any complex reflection group.</span>
   </a>
 
   <a class="demo-card" href="{{ '/cayley/' | relative_url }}">
@@ -50,7 +50,7 @@ Each of my papers has an interactive companion that runs its construction on an 
       </g>
     </svg>
     <span class="demo-title">Cayley's formula</span>
-    <span class="demo-note">One labelled tree, three ways at once — embedding, cyclic factorization, distinguished subword. Edit any one and the others follow.</span>
+    <span class="demo-note">Choose a labelled tree and see its corresponding cyclic embedding, cyclic factorization, and distinguished subword.</span>
   </a>
 
   <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
@@ -65,6 +65,6 @@ Each of my papers has an interactive companion that runs its construction on an 
       </g>
     </svg>
     <span class="demo-title">Hypersimplex harmonics</span>
-    <span class="demo-note">Draw a loopless multigraph and run each construction from the paper on it.</span>
+    <span class="demo-note">Draw a loopless multigraph and compute its factorization in the harmonic algebra.</span>
   </a>
 </div>

@@ -148,10 +148,9 @@ nav: false
   <h1>Cayley's formula &mdash; interactive companion</h1>
   <p class="lede">
     Companion to <em>An elaborate new proof of Cayley's formula</em>. Pick a vertex-labelled tree on
-    <em>n</em> vertices; the app draws its cyclic embedding, reads off the cyclic factorization of
+    <em>n</em> vertices. The app draws its cyclic embedding, reads off the cyclic factorization of
     &lambda;<sub>n</sub> by walking clockwise from vertex <em>n</em>, and shows the maximal distinguished
-    subword of <b>&lambda;</b><sub>n</sub> corresponding to it. Tree, factorization and subword are one
-    object seen three ways &mdash; edit either end and the rest follows.
+    subword of <b>&lambda;</b><sub>n</sub> corresponding to it.
     Email me if you find any errors or want some specific function added.
   </p>
 
@@ -165,8 +164,7 @@ nav: false
     &lambda;<sub>n</sub> &isin; <span style="font-style:italic">S&#771;</span><sub>n</sub> by walking clockwise
     from vertex <i>n</i> along the marked edge (Theorem 4.8), and shows the <b>maximal distinguished
     subword</b> of <b>&lambda;</b><sub>n</sub> = [s<sub>0</sub>, &hellip;, s<sub>n-1</sub>]<sup>n-1</sup>
-    that corresponds to it (Theorem 6.1). Everything below is one object seen three ways &mdash; edit
-    the tree or the subword grid and the rest follows.
+    that corresponds to it (Theorem 6.1).
   </p>
   <div class="toolbar">
     <label>n = <input type="range" id="ex-n" min="2" max="30" value="6"></label>
@@ -255,7 +253,7 @@ nav: false
 <div class="panel hidden" data-panel="gallery">
   <p style="margin-top:0">
     Every vertex-labelled tree on <i>n</i> vertices in its cyclic embedding, together with its cyclic
-    factorization &mdash; the n = 4 page reproduces Figure 3 of the paper. Click a tree to open it in the
+    factorization. The n = 4 page reproduces Figure 3 of the paper. Click a tree to open it in the
     explorer.
   </p>
   <div class="toolbar">

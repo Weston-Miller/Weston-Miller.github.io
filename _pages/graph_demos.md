@@ -149,7 +149,7 @@ nav: false
   <h1>Hypersimplex harmonics — interactive demos</h1>
   <p class="lede">
     Companion to <em>Graded Ehrhart Theory for Hypersimplices</em>. Draw a loopless multigraph
-    <em>G</em> below; each tab runs a different construction from the paper on it. Click empty
+    <em>G</em> below. Each tab runs a different construction from the paper on it. Click empty
     space to add a vertex, click two vertices to connect (click a pair again for a parallel edge);
     switch the mode button to delete. You can also type the edge list directly.
     Email me if you find any errors or want some specific function added.
