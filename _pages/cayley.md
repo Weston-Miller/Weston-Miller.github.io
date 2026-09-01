@@ -54,6 +54,14 @@ nav: false
   border-radius:var(--radius); color:var(--ink); background:var(--bg);
   font-family:ui-monospace,Menlo,Consolas,monospace;}
 #cayley-app input[type=text].err{border-color:var(--bad);}
+/* The two example boxes carry size="34" and size="42", which is an intrinsic
+   width of ~300px and ~365px of monospace -- wider than a phone. Nothing was
+   holding them back: .toolbar is a flex container, and a flex item defaults to
+   min-width:auto, so the label refused to shrink below its content and pushed
+   the whole document to 398px in a 375px viewport. Both halves are needed --
+   min-width:0 lets the label shrink, max-width:100% makes the input follow. */
+#cayley-app input[type=text]{max-width:100%;}
+#cayley-app .toolbar > *{min-width:0;}
 #cayley-app select{font:inherit; font-size:.85rem; padding:4px 6px; border:1px solid var(--line);
   border-radius:var(--radius); background:var(--bg); color:var(--ink);}
 #cayley-app input[type=range]{vertical-align:middle;}
