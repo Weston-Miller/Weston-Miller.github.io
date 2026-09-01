@@ -248,8 +248,10 @@
       const nodes = el("g", { class: "nodes" }, svg);
       for (let v = 1; v <= n; v++) {
         el("circle", { cx: X(v), cy: Y(v), r: 11, fill: "currentColor" }, nodes);
+        // 14 in a 220-unit viewBox, so the labels stay readable once the
+        // figure is scaled down to its 180px column.
         el("text", { x: X(v), y: Y(v), "text-anchor": "middle",
-          "dominant-baseline": "central", "font-size": 12,
+          "dominant-baseline": "central", "font-size": 14,
           fill: "var(--global-bg-color)" }, nodes).textContent = v;
       }
     }
