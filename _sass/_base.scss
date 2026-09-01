@@ -1452,13 +1452,16 @@ ninja-keys::part(ninja-input-wrapper) {
   }
 }
 
+// Scoped to .is-playing, which the script adds only for the length of a run.
+// Unscoped, these fire the moment an element is created — so every figure
+// animated once on first paint and again when it scrolled into view.
 @media (prefers-reduced-motion: no-preference) {
-  .demo-mini svg .draw {
+  .demo-mini.is-playing svg .draw {
     animation: demo-draw 0.9s ease forwards;
   }
 
-  .demo-mini svg .nodes circle,
-  .demo-mini svg .nodes text {
+  .demo-mini.is-playing svg .nodes circle,
+  .demo-mini.is-playing svg .nodes text {
     animation: demo-pop 0.35s ease backwards;
     animation-delay: 0.55s;
   }

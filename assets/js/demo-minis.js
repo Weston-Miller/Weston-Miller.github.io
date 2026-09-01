@@ -199,14 +199,14 @@
     let frame = target;
     drawPath(svg, rot(word, frame), a, b);
 
-    return function play(done) {
+    return function play(finish) {
       const extra = ((target - frame) % n + n) % n;
       let left = n + extra;
       (function step() {
         frame = (frame + 1) % n;
         drawPath(svg, rot(word, frame), a, b);
-        if (--left <= 0) return done();
-        done(setTimeout(step, SLOW - (SLOW - FAST) * Math.min(1, left / n)));
+        if (--left <= 0) return finish();
+        setTimeout(step, SLOW - (SLOW - FAST) * Math.min(1, left / n));
       })();
     };
   }
@@ -255,12 +255,13 @@
     }
 
     render();
-    return function play(done) {
+    return function play(finish) {
       edges = randomTree(n);
       const next = cyclicEmbedding(n, edges);
       if (next) emb = next;
       render();
-      done();
+      // the drawing is done in CSS; hold the playing flag until it has run
+      setTimeout(finish, 1500);
     };
   }
 
@@ -319,10 +320,13 @@
     }
 
     render(true);                                  // rest state: 2-factor already picked out
-    return function play(done) {
+    return function play(finish) {
       g = randomMultigraph();
       render(false);
-      done(setTimeout(function () { render(true); done(); }, 700));
+      setTimeout(function () {
+        render(true);
+        setTimeout(finish, 1100);
+      }, 700);
     };
   }
 
@@ -330,7 +334,7 @@
 
   const KINDS = { cycle: cycleMini, tree: treeMini, graph: graphMini };
 
-  function setup(host) {
+  function setup(host, index) {
     const build = KINDS[host.dataset.kind];
     if (!build) return;
 
@@ -351,17 +355,19 @@
     const play = build(host, svg);
     if (!play || still()) return;
 
-    let timer = null;
+    // The .draw / .nodes keyframes only apply while the host carries
+    // .is-playing. Without that they would fire on the very first render —
+    // before the figure is even in view — and then again when it is, which
+    // reads as a stutter on page load.
     let running = false;
-    function done(next) {
-      if (next) { timer = next; return; }
-      timer = null;
-      running = false;
-    }
     function start() {
       if (running) return;
       running = true;
-      play(done);
+      host.classList.add("is-playing");
+      play(function () {
+        running = false;
+        host.classList.remove("is-playing");
+      });
     }
 
     link.addEventListener("mouseenter", start);
@@ -371,14 +377,18 @@
       for (const e of entries) {
         if (!e.isIntersecting) continue;
         io.disconnect();
-        setTimeout(start, 250);
+        // Staggered: on a tall screen all three are in view at once, and three
+        // figures moving together on arrival is a lot to land on.
+        setTimeout(start, 250 + 400 * (index || 0));
       }
     }, { threshold: 0.5 });
     io.observe(host);
   }
 
   function init() {
-    Array.prototype.forEach.call(document.querySelectorAll(".demo-mini"), setup);
+    Array.prototype.forEach.call(document.querySelectorAll(".demo-mini"), function (host, i) {
+      setup(host, i);
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
