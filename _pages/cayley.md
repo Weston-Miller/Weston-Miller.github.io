@@ -33,7 +33,7 @@ nav: false
 }
 #cayley-app *{box-sizing:border-box;}
 #cayley-app{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  color:var(--ink); background:var(--bg); line-height:1.55; margin:0;}
+  color:var(--ink); background:transparent; line-height:1.55; margin:0;}
 #cayley-app .wrap{max-width:100%; margin:0 auto; padding:0.4rem 0 2.5rem;}
 #cayley-app h1{font-size:2rem; font-weight:700; margin:.2rem 0 .5rem; line-height:1.2;}
 #cayley-app p.lede{color:var(--muted); margin:.2rem 0 1.2rem; font-size:.95rem;}

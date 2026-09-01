@@ -17,7 +17,7 @@ nav: false
          --edge:#8a8a84; --vfill:color-mix(in srgb, var(--accent) 18%, var(--bg)); --radius:6px;}
 #gd *{box-sizing:border-box;}
 #gd{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-        color:var(--ink); background:var(--bg); line-height:1.55; margin:0;}
+        color:var(--ink); background:transparent; line-height:1.55; margin:0;}
 #gd .wrap{max-width:900px; margin:0 auto; padding:1.5rem 1.25rem 4rem;}
 #gd h1{font-size:2rem; font-weight:700; margin:.2rem 0 .5rem; line-height:1.2;}
 #gd p.lede{color:var(--muted); margin:.2rem 0 1.2rem; font-size:.95rem;}
@@ -1349,10 +1349,11 @@ def basis_view(edges, l, m, n):
     svg.style.cursor=del?'not-allowed':'crosshair'; draw(); };
 
   $('clear').onclick=()=>{ push(); V=[]; E=[]; sel=-1; touched=false; clearOuts(); changed(); };
-  $('example').onclick=()=>{ push();
+  function loadExample(){
     V=ellipse(7);
     E=[[0,1],[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[4,6],[5,6],[5,6]];
-    sel=-1; setLMN(4,3,8); touched=false; clearOuts(); changed(); };
+    sel=-1; setLMN(4,3,8); touched=false; clearOuts(); changed(); }
+  $('example').onclick=()=>{ push(); loadExample(); };
   $('random').onclick=()=>{ push();
     const l=Math.max(1,parseInt($('lval').value)||1), m=Math.max(1,parseInt($('mval').value)||1);
     const n=Math.max(2*l, parseInt($('nval').value)||2*l);
@@ -1963,7 +1964,7 @@ def basis_view(edges, l, m, n):
         : null; });
 
   // ============================================================ boot
-  if(!unpackState(location.hash)) changed();
+  if(!unpackState(location.hash)) loadExample();
   window.addEventListener('hashchange', ()=>{ unpackState(location.hash); });
 })();
 </script>
