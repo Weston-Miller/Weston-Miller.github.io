@@ -17,33 +17,13 @@ selected_papers: true  # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am a third year PhD student in mathematics at the University of California, San Diego. Today is day <span id="phd-day">{% assign phd_start = "2024-09-23" | date: "%s" | plus: 0 %}{% assign phd_now = "now" | date: "%s" | plus: 0 %}{{ phd_now | minus: phd_start | divided_by: 86400 | floor }}</span> of my PhD.
+I am a third year PhD student in mathematics at the University of California, San Diego. Today is day <span data-local-days="2024-09-23">{% assign phd_start = "2024-09-23" | date: "%s" | plus: 0 %}{% assign phd_now = "now" | date: "%s" | plus: 0 %}{{ phd_now | minus: phd_start | divided_by: 86400 | floor }}</span> of my PhD.
 
 My advisor is [Brendon Rhoades](https://mathweb.ucsd.edu/~bprhoades/).
 
 My research interests are in algebraic combinatorics. Most of my work has been in graded Ehrhart theory and representation-theoretic aspects of Coxeter–Catalan theory.
 
-When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atropos7){% assign chess_record = site.data.chess.total_record %}{% if chess_record.games %} ({{ chess_record.games_pretty }} games and counting){% endif %}, and play piano. {% assign reading = site.data.reading.books %}{% if reading != blank %}{% assign today = "now" | date: "%s" | plus: 0 %}I am currently reading {% for book in reading %}{% unless forloop.first %}{% if forloop.last %}{% if forloop.length > 2 %},{% endif %} and {% else %}, {% endif %}{% endunless %}[*{{ book.title }}*]({{ book.link }}){% if book.started != '' %}{% assign shelved = book.started | date: "%s" | plus: 0 %}{% assign book_days = today | minus: shelved | divided_by: 86400 | floor | plus: 1 %} (<span class="reading-day" data-started="{{ book.started }}">for {{ book_days }} day{% unless book_days == 1 %}s{% endunless %}</span>){% endif %}{% endfor %}, according to [Goodreads](https://www.goodreads.com/user/show/109451240-weston).{% else %}I keep a [reading list](https://www.goodreads.com/user/show/109451240-weston) on Goodreads.{% endif %}
-
-<script>
-  (function () {
-    var el = document.getElementById('phd-day');
-    if (!el) return;
-    var days = Math.floor((Date.now() - Date.UTC(2024, 8, 23)) / 86400000);
-    if (days > 0) el.textContent = days;
-  })();
-  (function () {
-    // Same idea for each book: the build-time number is right when the page is
-    // built, this keeps it right on the days in between.
-    Array.prototype.forEach.call(document.querySelectorAll('.reading-day'), function (el) {
-      var parts = (el.getAttribute('data-started') || '').split('-');
-      if (parts.length !== 3) return;
-      var start = Date.UTC(+parts[0], +parts[1] - 1, +parts[2]);
-      var days = Math.floor((Date.now() - start) / 86400000) + 1;
-      if (days > 0) el.textContent = 'for ' + days + (days === 1 ? ' day' : ' days');
-    });
-  })();
-</script>
+When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atropos7){% assign chess_record = site.data.chess.total_record %}{% if chess_record.games %} ({{ chess_record.games_pretty }} games and counting){% endif %}, and play piano. {% assign reading = site.data.reading.books %}{% if reading != blank %}{% assign today = "now" | date: "%s" | plus: 0 %}I am currently reading {% for book in reading %}{% unless forloop.first %}{% if forloop.last %}{% if forloop.length > 2 %},{% endif %} and {% else %}, {% endif %}{% endunless %}[*{{ book.title }}*]({{ book.link }}){% if book.started != '' %}{% assign shelved = book.started | date: "%s" | plus: 0 %}{% assign book_days = today | minus: shelved | divided_by: 86400 | floor | plus: 1 %} (<span data-local-days="{{ book.started }}" data-local-days-offset="1" data-local-days-format="for">for {{ book_days }} day{% unless book_days == 1 %}s{% endunless %}</span>){% endif %}{% endfor %}, according to [Goodreads](https://www.goodreads.com/user/show/109451240-weston).{% else %}I keep a [reading list](https://www.goodreads.com/user/show/109451240-weston) on Goodreads.{% endif %}
 
 <div class="demos-section">
 <h2><a href="{{ '/demos/' | relative_url }}" style="color: inherit">demos</a></h2>
