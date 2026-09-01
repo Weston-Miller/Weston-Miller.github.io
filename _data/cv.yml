@@ -1,8 +1,11 @@
-- title: General Information
-  type: map
-  contents:
-    - name: Full Name
-      value: Weston Miller
+# Rendered by _layouts/cv.liquid at /cv/. Each top-level entry becomes a card;
+# `type` picks the include under _includes/cv/.
+#
+# An optional `description` on an entry renders as a note under the section
+# heading. Presentations uses it because all seven were the same talk, and
+# repeating the title once per venue turned the section into a wall of the same
+# sentence. A talk with a different title still takes a per-entry `description`,
+# which time_table.liquid renders as before.
 
 - title: Education
   type: time_table
@@ -21,26 +24,20 @@
         - Major Honors with Distinction
 
 - title: Presentations
+  description: All on <em>Rational Catalan Numbers for Complex Reflection Groups</em>.
   type: time_table
   contents:
     - title: <a href="https://fpsac2024.rub.de/">FPSAC 2024</a>
       year: 2024.07
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://www.math.tamu.edu/conferences/combinatexas/">CombinaTexas</a>
       year: 2024.03
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://calendar.mit.edu/event/richard-p-stanley-seminar-in-combinatorics-weston-miller-ut-dallas">Harvard-MIT Combinatorics Seminar</a>
       year: 2024.03
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://www.utrgv.edu/discgeo/schedule/index.htm">Eleventh Discrete Geometry and Algebraic Combinatorics Conference</a>
       year: 2024.02
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://meetings.ams.org/math/jmm2024/meetingapp.cgi/Paper/30208">JMM PME Contributed Session</a>
       year: 2024.01
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://userweb.ucs.louisiana.edu/~C00424602/SIAMTXLA2023/minisymposia.html">SIAM TX-LA Sectional Meeting</a>
       year: 2023.11
-      description: Rational Catalan Numbers for Complex Reflection Groups
     - title: <a href="https://calendar.utdallas.edu/event/algebra_and_combinatorics_seminar_8749">UTD Algebra and Combinatorics Seminar</a>
       year: 2023.09
-      description: Rational Catalan Numbers for Complex Reflection Groups

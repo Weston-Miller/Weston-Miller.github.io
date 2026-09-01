@@ -27,6 +27,14 @@ layout: default
           <a class="anchor" id="{{ entry.title }}"></a>
           <div class="card mt-3 p-3">
             <h3 class="card-title font-weight-medium">{{ entry.title }}</h3>
+            {% comment %}
+              Optional note under a section heading. Presentations uses it to
+              state the talk title once instead of repeating it under all seven
+              venues; see the comment at the top of _data/cv.yml.
+            {% endcomment %}
+            {% if entry.description %}
+              <p class="cv-section-note">{{ entry.description }}</p>
+            {% endif %}
             <div>
               {% if entry.type == 'list' %}
                 {% include cv/list.liquid %}

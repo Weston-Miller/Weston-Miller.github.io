@@ -466,6 +466,13 @@ footer.sticky-bottom {
 .cv {
   margin-bottom: 40px;
 
+  // Note under a section heading, from an entry's optional `description`.
+  .cv-section-note {
+    margin: -0.15rem 0 0.9rem;
+    color: var(--global-text-color-light);
+    font-size: 0.9rem;
+  }
+
   .card {
     background-color: var(--global-card-bg-color);
     border: 1px solid var(--global-divider-color);
@@ -474,9 +481,15 @@ footer.sticky-bottom {
       background-color: inherit;
       border-color: var(--global-divider-color);
 
+      // The date rail. These were solid theme-green pills, which made a
+      // column of dates the loudest thing on the page and left them competing
+      // with the green venue links immediately beside them. Outlined and
+      // muted, they read as the index they are and the venues lead.
       .badge {
-        color: var(--global-card-bg-color) !important;
-        background-color: var(--global-theme-color) !important;
+        color: var(--global-text-color-light) !important;
+        background-color: transparent !important;
+        border: 1px solid var(--global-divider-color);
+        font-variant-numeric: tabular-nums;
       }
     }
   }
