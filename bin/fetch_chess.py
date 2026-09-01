@@ -26,6 +26,19 @@ TIMEOUT = 20
 MODES = ("rapid", "blitz", "bullet", "daily")
 
 
+def record_block(name, wins, losses, draws):
+    games = wins + losses + draws
+    return [
+        "{}:".format(name),
+        "  wins: {}".format(wins),
+        "  losses: {}".format(losses),
+        "  draws: {}".format(draws),
+        "  games: {}".format(games),
+        # Preformatted because Liquid has no thousands-separator filter.
+        '  games_pretty: "{:,}"'.format(games),
+    ]
+
+
 def main():
     args = sys.argv[1:]
     if args[:1] == ["--from-file"]:
@@ -68,21 +81,22 @@ def main():
             lines.append('    date: "{}"'.format(stamp.strftime("%Y-%m-%d")))
             lines.append('    month: "{}"'.format(stamp.strftime("%B %Y")))
 
+    # Per-mode records, and their sum: the landing page quotes the total, so it
+    # has to be accumulated here rather than added up in Liquid.
+    total = {"wins": 0, "losses": 0, "draws": 0}
     for mode in MODES:
         record = (stats.get("chess_" + mode) or {}).get("record") or {}
         wins, losses, draws = (record.get("win"), record.get("loss"), record.get("draw"))
         if not all(isinstance(v, int) for v in (wins, losses, draws)):
             continue
-        games = wins + losses + draws
-        lines += [
-            "{}_record:".format(mode),
-            "  wins: {}".format(wins),
-            "  losses: {}".format(losses),
-            "  draws: {}".format(draws),
-            "  games: {}".format(games),
-            # Preformatted because Liquid has no thousands-separator filter.
-            '  games_pretty: "{:,}"'.format(games),
-        ]
+        total["wins"] += wins
+        total["losses"] += losses
+        total["draws"] += draws
+        lines += record_block(mode + "_record", wins, losses, draws)
+
+    if not any(total.values()):
+        raise ValueError("no game records found in payload")
+    lines += record_block("total_record", total["wins"], total["losses"], total["draws"])
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
