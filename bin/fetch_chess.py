@@ -52,27 +52,37 @@ def main():
         if isinstance(rating, int):
             lines.append("  {}: {}".format(mode, rating))
 
+    if len(lines) == 4:  # nothing but the "ratings:" header
+        raise ValueError("no ratings found in payload")
+
+    lines.append("peaks:")
+    for mode in MODES:
+        best = (stats.get("chess_" + mode) or {}).get("best") or {}
+        rating, when = best.get("rating"), best.get("date")
+        if not isinstance(rating, int):
+            continue
+        lines.append("  {}:".format(mode))
+        lines.append("    rating: {}".format(rating))
+        if isinstance(when, int):
+            stamp = datetime.utcfromtimestamp(when)
+            lines.append('    date: "{}"'.format(stamp.strftime("%Y-%m-%d")))
+            lines.append('    month: "{}"'.format(stamp.strftime("%B %Y")))
+
     for mode in MODES:
         record = (stats.get("chess_" + mode) or {}).get("record") or {}
         wins, losses, draws = (record.get("win"), record.get("loss"), record.get("draw"))
         if not all(isinstance(v, int) for v in (wins, losses, draws)):
             continue
         games = wins + losses + draws
-        net = wins - losses
         lines += [
             "{}_record:".format(mode),
             "  wins: {}".format(wins),
             "  losses: {}".format(losses),
             "  draws: {}".format(draws),
             "  games: {}".format(games),
-            "  net: {}".format(net),
             # Preformatted because Liquid has no thousands-separator filter.
             '  games_pretty: "{:,}"'.format(games),
-            '  net_pretty: "{:+,}"'.format(net),
         ]
-
-    if len(lines) == 4:  # nothing but the "ratings:" header
-        raise ValueError("no ratings found in payload")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
