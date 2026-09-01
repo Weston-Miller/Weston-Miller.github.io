@@ -17,11 +17,22 @@ body {
   //      30 * sqrt(3) = 51.96 -- get that wrong and the rows stop being
   //      equilateral.
   // Both dot layers are fixed, so the lattice sits still while the page
-  // scrolls over it. Colours are per-theme; see _themes.scss.
+  // scrolls over it. Colour AND dot radius are per-theme; see _themes.scss.
+  // The radius appears three times per layer -- as the centre offset twice and
+  // as the stop -- and all three have to agree or the dot clips at the tile
+  // edge, which is why it is a variable rather than a literal.
   background-image:
     radial-gradient(ellipse 900px 400px at 50% 0, var(--global-vignette-color), transparent 70%),
-    radial-gradient(circle at 1px 1px, var(--global-lattice-color) 1px, transparent 0),
-    radial-gradient(circle at 1px 1px, var(--global-lattice-color) 1px, transparent 0);
+    radial-gradient(
+      circle at var(--global-lattice-dot) var(--global-lattice-dot),
+      var(--global-lattice-color) var(--global-lattice-dot),
+      transparent 0
+    ),
+    radial-gradient(
+      circle at var(--global-lattice-dot) var(--global-lattice-dot),
+      var(--global-lattice-color) var(--global-lattice-dot),
+      transparent 0
+    );
   background-size:
     100% 500px,
     30px 52px,

@@ -23,9 +23,12 @@
   --global-newsletter-text-color: #{$black-color};
 
   // Background texture: an A2 (triangular) lattice of dots, plus a soft
-  // vignette behind the header. Dark needs a higher alpha than light to read
-  // at all, so the two are tuned separately rather than shared.
-  --global-lattice-color: rgba(0, 0, 0, 0.07);
+  // vignette behind the header. Light and dark are tuned separately -- and not
+  // just in alpha. A 1px dot dark enough to read on white looks like a
+  // pinprick; on white the dot has to get bigger as well as darker, while on
+  // #1c1c1d a 1px dot at a low alpha reads fine.
+  --global-lattice-color: rgba(0, 0, 0, 0.15);
+  --global-lattice-dot: 1.5px;
   --global-vignette-color: rgba(0, 0, 0, 0.035);
 
   --global-tip-block: #42b983;
@@ -93,6 +96,7 @@ html[data-theme="dark"] {
   --global-newsletter-text-color: #{$grey-color-dark};
 
   --global-lattice-color: rgba(255, 255, 255, 0.11);
+  --global-lattice-dot: 1px;
   --global-vignette-color: rgba(255, 255, 255, 0.07);
 
   --global-tip-block: #42b983;
