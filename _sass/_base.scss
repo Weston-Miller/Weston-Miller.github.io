@@ -1295,6 +1295,99 @@ ninja-keys::part(ninja-input-wrapper) {
 // The about layout floats the profile image right, so the whole section — not
 // just the grid — has to clear it, or the heading wraps beside the photo and
 // the cards are squeezed into the narrow column left of it.
+// ---------------------------------------------------------------------------
+// Prose: voice, leading, measure
+//
+// The container is 930px, so at 16px Roboto running text reached ~115
+// characters a line -- well past comfortable. Body copy is now the serif and
+// 1.6, both of which _pages/rational-catalan.html had already chosen for
+// itself, and the measure is capped.
+//
+// font-family and line-height are set on the ARTICLE, not on p, so they are
+// inherited: any page that styles its own container still wins, because a
+// direct rule always beats an inherited value.
+//
+// The measure is a blanket rule on purpose. Scoping it to an explicit list of
+// wrappers left the demo pages' own intro prose running the full 930px while
+// everything else was capped, which is the inconsistency this was meant to
+// fix. Nothing is harmed by the blanket version: text already inside a card or
+// a grid cell is narrower than 70ch, so the cap does not bite there.
+.post article {
+  font-family: var(--global-font-serif);
+  line-height: 1.6;
+}
+
+.post article p,
+.post article ul,
+.post article ol,
+.post article blockquote,
+.gloss {
+  max-width: 70ch;
+}
+
+// Headings and metadata stay sans -- a sans display face over serif text is
+// the pairing here, and it also leaves the h1 (which lives in .post-header,
+// outside article) matching the h2s below it rather than clashing with them.
+// So: prose is serif, everything that labels or names something is not.
+// The publication title also gains a little weight -- at 16px/400 beside a
+// 16px serif gloss it was not leading its own entry.
+.publications .title {
+  font-weight: 500;
+}
+
+.post article h1,
+.post article h2,
+.post article h3,
+.post article h4,
+.post article h5,
+.post article h6,
+.post article .demo-title,
+.publications .title,
+.publications .author,
+.publications .periodical,
+.publications .links,
+.post article .badge,
+.post article .btn {
+  font-family: var(--global-font-sans);
+}
+
+// ---------------------------------------------------------------------------
+// Shared vocabulary promoted out of the demo pages
+//
+// _pages/rational-catalan.html built a small design language for itself --
+// uppercase tracked-out labels, quiet panels keyed to the theme variables --
+// and used it nowhere else, which is why that page looks like a different
+// site. These are the two pieces worth having everywhere.
+.section-label {
+  display: block;
+  font-family: var(--global-font-sans);
+  font-size: 0.66rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--global-label-color);
+  margin-bottom: 0.35rem;
+}
+
+.panel {
+  background: var(--global-card-bg-color);
+  border: 1px solid var(--global-divider-color);
+  border-radius: 6px;
+  padding: 1rem 1.15rem;
+}
+
+// The plain-English note attached to a publication. On /research/ it replaces
+// the old duplicate 'selected work' section; on the landing page the same
+// markup is emitted and hidden, because three paragraphs would swamp a list
+// that is meant to be scanned.
+.gloss {
+  margin: 0.6rem 0 0;
+  color: var(--global-text-color);
+}
+
+.about-page .gloss {
+  display: none;
+}
+
 .demos-section {
   clear: both;
 }

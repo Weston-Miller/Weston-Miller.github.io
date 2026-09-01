@@ -22,6 +22,16 @@
   --global-newsletter-bg-color: #{$white-color};
   --global-newsletter-text-color: #{$black-color};
 
+  // Type stacks. The serif is the same Georgia stack _pages/rational-catalan.html
+  // already picked for its formulas, so promoting it here makes the rest of the
+  // site read in the voice that page had chosen for itself. These do not vary
+  // by theme, so they are defined once, in :root only.
+  --global-font-serif: Georgia, "Times New Roman", Times, serif;
+  --global-font-sans: Roboto, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  // Small-caps section labels, lifted from that page's .tabgroup / .bandlab.
+  --global-label-color: var(--global-text-color-light);
+
   // Background texture: an A2 (triangular) lattice of dots, plus a soft
   // vignette behind the header. Light and dark are tuned separately -- and not
   // just in alpha. A 1px dot dark enough to read on white looks like a

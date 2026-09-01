@@ -1,0 +1,36 @@
+# Plain-English note for each paper, keyed by its BibTeX citation key.
+# _layouts/bib.liquid renders site.data.glosses[entry.key] under the entry, so
+# the prose lives beside the record instead of in a second list that repeated
+# every title. Hidden on the landing page by CSS (.about-page .gloss).
+#
+# HTML, not markdown -- this is emitted straight into the page. Keep the links
+# root-relative; the site has no baseurl.
+
+gradedEhrhartHypersimplices: >-
+  Ehrhart theory counts lattice points in dilates of a polytope. Reiner and
+  Rhoades conjectured a graded refinement, where that count is upgraded to a
+  <em>q</em>-series coming from orbit harmonics. We prove rationality of this
+  refinement for hypersimplices by writing down generators for the harmonics
+  ideal, which as a bonus hands you the Hilbert series and the graded Frobenius
+  characteristic. The combinatorial heart of it turns out to be a statement
+  about 2-factors of regular multigraphs, and you can
+  <a href="/graph-demos/">draw one</a> to see the constructions run.
+
+ALCO_2025__8_4_971_0: >-
+  Cayley's formula says there are <em>n</em><sup><em>n</em>&minus;2</sup>
+  labelled trees on <em>n</em> vertices, and it has a dozen proofs that fit on a
+  postcard. Ours goes through Deodhar components of a braid variety built from
+  an affine Kac&ndash;Moody group of type <em>A</em><sub><em>n</em>&minus;1</sub>,
+  Opdam's trace formula in the affine Hecke algebra, and an identity of Haglund.
+  The bijection is completely explicit, though, so you can
+  <a href="/cayley/">watch it run</a> on a tree you pick yourself.
+
+MILLER202510: >-
+  Galashin, Lam, Trinh, and Williams proved the enumeration of noncrossing
+  Catalan objects for finite Coxeter groups uniformly, by evaluating the
+  canonical symmetrizing trace on the Hecke algebra at a power of a Coxeter
+  element. This paper runs the same machine on the spetsial complex reflection
+  groups &mdash; the ones that behave as though they were Weyl groups of a group
+  that does not exist &mdash; and rational Catalan numbers come back out the
+  other end. There is <a href="/rational-catalan/">a demo</a> that computes this
+  trace explicitly.

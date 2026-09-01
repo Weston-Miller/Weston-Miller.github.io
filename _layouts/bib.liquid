@@ -183,6 +183,16 @@
     </div>
 
     <!-- Links/Buttons -->
+    <!--
+      Plain-English note, from _data/glosses.yml keyed by the citation key.
+      Same lookup shape as site.data.venues above. Hidden on the landing
+      page by CSS (.about-page .gloss).
+    -->
+    {%- assign gloss = site.data.glosses[entry.key] -%}
+    {% if gloss != blank %}
+      <div class="gloss">{{ gloss }}</div>
+    {% endif %}
+
     <div class="links">
       {% if entry.award %}
         <a class="award btn btn-sm z-depth-0" role="button">
