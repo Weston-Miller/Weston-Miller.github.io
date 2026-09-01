@@ -1288,6 +1288,13 @@ ninja-keys::part(ninja-input-wrapper) {
   }
 }
 
+// The about layout floats the profile image right, so the whole section — not
+// just the grid — has to clear it, or the heading wraps beside the photo and
+// the cards are squeezed into the narrow column left of it.
+.demos-section {
+  clear: both;
+}
+
 // Demo strip on the landing page
 .demo-strip {
   display: grid;
@@ -1319,7 +1326,6 @@ ninja-keys::part(ninja-input-wrapper) {
       height: 60px;
       color: var(--global-theme-color);
       margin-bottom: 0.6rem;
-
     }
 
     // Hovering (or tabbing to) a card redraws its icon: strokes draw
@@ -1393,15 +1399,30 @@ ninja-keys::part(ninja-input-wrapper) {
   }
 }
 
-// The cycle-lemma miniature on the demos index.
-.cycle-mini {
-  margin: 1.2rem 0 1.8rem;
+// Demos index: each entry is a figure beside its own heading and description.
+// A float would let a heading ride up next to the previous entry's figure, so
+// this is a grid per entry instead.
+.demo-entry {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.4rem;
+  align-items: start;
+  margin: 0 0 2.2rem;
+
+  h2 {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.demo-mini {
   color: var(--global-theme-color);
 
-  .cycle-mini-figure {
+  .demo-mini-figure {
     display: block;
-    width: 100%;
-    max-width: 240px;
     color: inherit;
 
     svg {
@@ -1411,11 +1432,34 @@ ninja-keys::part(ninja-input-wrapper) {
     }
   }
 
-  .cycle-mini-caption {
+  .demo-mini-caption {
     color: var(--global-text-color);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     opacity: 0.7;
-    margin: 0.5rem 0 0;
-    max-width: 380px;
+    line-height: 1.35;
+    margin: 0.45rem 0 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .demo-entry {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .demo-mini {
+    max-width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .demo-mini svg .draw {
+    animation: demo-draw 0.9s ease forwards;
+  }
+
+  .demo-mini svg .nodes circle,
+  .demo-mini svg .nodes text {
+    animation: demo-pop 0.35s ease backwards;
+    animation-delay: 0.55s;
   }
 }
