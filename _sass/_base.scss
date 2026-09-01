@@ -438,6 +438,15 @@ footer.fixed-bottom {
     padding-top: 9px;
     padding-bottom: 8px;
     text-align: center;
+
+    // The blanket `span { color: var(--global-text-color) }` at the top of this
+    // file matches a span in here directly, and a direct match beats inheriting
+    // from this rule whatever the specificity. Without this, the year and the
+    // "last updated" date came out page-coloured against the footer's inverted
+    // slab -- black on near-black in light mode, and light on light in dark.
+    span {
+      color: inherit;
+    }
   }
 
   a {
