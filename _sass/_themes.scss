@@ -22,6 +22,12 @@
   --global-newsletter-bg-color: #{$white-color};
   --global-newsletter-text-color: #{$black-color};
 
+  // Background texture: an A2 (triangular) lattice of dots, plus a soft
+  // vignette behind the header. Dark needs a higher alpha than light to read
+  // at all, so the two are tuned separately rather than shared.
+  --global-lattice-color: rgba(0, 0, 0, 0.07);
+  --global-vignette-color: rgba(0, 0, 0, 0.035);
+
   --global-tip-block: #42b983;
   --global-tip-block-bg: #e2f5ec;
   --global-tip-block-text: #215d42;
@@ -85,6 +91,9 @@ html[data-theme="dark"] {
   --global-back-to-top-text-color: #{$black-color};
   --global-newsletter-bg-color: #{$grey-color-light};
   --global-newsletter-text-color: #{$grey-color-dark};
+
+  --global-lattice-color: rgba(255, 255, 255, 0.11);
+  --global-vignette-color: rgba(255, 255, 255, 0.07);
 
   --global-tip-block: #42b983;
   --global-tip-block-bg: #e2f5ec;
