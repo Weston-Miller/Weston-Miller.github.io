@@ -1289,13 +1289,6 @@ ninja-keys::part(ninja-input-wrapper) {
 }
 
 // Demo strip on the landing page
-// The about layout floats the profile image right, so the whole section — not
-// just the grid — has to clear it, or the heading wraps beside the photo and
-// the cards drop below it with a gap in between.
-.demos-section {
-  clear: both;
-}
-
 .demo-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1326,6 +1319,31 @@ ninja-keys::part(ninja-input-wrapper) {
       height: 60px;
       color: var(--global-theme-color);
       margin-bottom: 0.6rem;
+
+    }
+
+    // Hovering (or tabbing to) a card redraws its icon: strokes draw
+    // themselves in order, then the vertices arrive. Static otherwise — the
+    // rest state is the finished drawing, never a blank card.
+    // Every animated stroke carries pathLength="100", so one keyframe pair
+    // works for all three icons whatever their real geometry.
+    &:hover,
+    &:focus-visible {
+      svg .draw {
+        animation: demo-draw 0.85s ease forwards;
+      }
+
+      svg .nodes circle {
+        animation: demo-pop 0.3s ease backwards;
+
+        // Must come after the shorthand above: `animation:` resets
+        // animation-delay, so a delay set anywhere else is discarded.
+        @for $i from 1 through 6 {
+          &:nth-child(#{$i}) {
+            animation-delay: 0.42s + 0.07 * $i;
+          }
+        }
+      }
     }
 
     .demo-title {
@@ -1340,5 +1358,64 @@ ninja-keys::part(ninja-input-wrapper) {
       opacity: 0.75;
       line-height: 1.4;
     }
+  }
+}
+
+@keyframes demo-draw {
+  from {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  to {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes demo-pop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-card:hover,
+  .demo-card:focus-visible {
+    svg .draw,
+    svg .nodes circle {
+      animation: none;
+    }
+  }
+}
+
+// The cycle-lemma miniature on the demos index.
+.cycle-mini {
+  margin: 1.2rem 0 1.8rem;
+  color: var(--global-theme-color);
+
+  .cycle-mini-figure {
+    display: block;
+    width: 100%;
+    max-width: 240px;
+    color: inherit;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .cycle-mini-caption {
+    color: var(--global-text-color);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: 0.5rem 0 0;
+    max-width: 380px;
   }
 }

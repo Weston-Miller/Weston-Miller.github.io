@@ -12,6 +12,8 @@ nav_order: 3
 Companion to *Rational Catalan numbers for complex reflection groups* ([J. Algebra, 2025](https://doi.org/10.1016/j.jalgebra.2025.01.027)).
 Choose a complex reflection group and parameter. The app computes the canonical symmetrizing trace on the Hecke algebra at a power of a Coxeter element and computes the corresponding rational Catalan number. There are also examples in type *A* showing how this counts rational Dyck paths.
 
+<div class="cycle-mini" data-a="3" data-b="5" data-href="{{ '/rational-catalan/' | relative_url }}"></div>
+
 ## [Cayley's formula](/cayley/)
 
 Companion to *An elaborate new proof of Cayley's formula* ([Algebraic Combinatorics, 2025](https://doi.org/10.5802/alco.429)).
@@ -24,3 +26,5 @@ distinguished subword.
 Companion to *Graded Ehrhart theory for hypersimplices* ([arXiv, 2026](https://arxiv.org/abs/2608.27438)).
 Draw a loopless multigraph. The app writes it as a polynomial of matchings in the harmonic algebra or as a linear combination of maximal tableaux.
 The app can also compute the rational form of the *q*-Ehrhart series for any slice of the cube.
+
+<script src="{{ '/assets/js/cycle-lemma-mini.js' | relative_url }}"></script>

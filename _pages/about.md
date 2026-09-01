@@ -54,7 +54,7 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
   <a class="demo-card" href="{{ '/rational-catalan/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
       <path d="M5 55 L95 5" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
-      <path d="M5 55 V30 H27.5 V17.5 H50 V12 H72.5 V5 H95" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path class="draw" pathLength="100" d="M5 55 V30 H27.5 V17.5 H50 V12 H72.5 V5 H95" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
     <span class="demo-title">Rational Catalan numbers</span>
     <span class="demo-note">Compute traces and Catalan numbers for any complex reflection group.</span>
@@ -63,9 +63,9 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
   <a class="demo-card" href="{{ '/cayley/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
       <g stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round">
-        <path d="M50 8 L22 28 M50 8 L78 28 M22 28 L12 52 M22 28 L36 52 M78 28 L88 52"/>
+        <path class="draw" pathLength="100" d="M50 8 L22 28 M50 8 L78 28 M22 28 L12 52 M22 28 L36 52 M78 28 L88 52"/>
       </g>
-      <g fill="currentColor">
+      <g class="nodes" fill="currentColor">
         <circle cx="50" cy="8" r="4"/><circle cx="22" cy="28" r="4"/><circle cx="78" cy="28" r="4"/>
         <circle cx="12" cy="52" r="4"/><circle cx="36" cy="52" r="4"/><circle cx="88" cy="52" r="4"/>
       </g>
@@ -77,10 +77,10 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
   <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
       <g stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round">
-        <path d="M20 15 L80 15 M20 15 L20 45 M80 15 L80 45 M20 45 L80 45 M20 15 L80 45"/>
-        <path d="M20 15 Q50 2 80 15"/>
+        <path class="draw" pathLength="100" d="M20 15 L80 15 M20 15 L20 45 M80 15 L80 45 M20 45 L80 45 M20 15 L80 45"/>
+        <path class="draw" pathLength="100" d="M20 15 Q50 2 80 15"/>
       </g>
-      <g fill="currentColor">
+      <g class="nodes" fill="currentColor">
         <circle cx="20" cy="15" r="4"/><circle cx="80" cy="15" r="4"/>
         <circle cx="20" cy="45" r="4"/><circle cx="80" cy="45" r="4"/>
       </g>
