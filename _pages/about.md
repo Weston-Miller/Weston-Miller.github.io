@@ -51,13 +51,19 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
 <p>Each of my papers has an interactive companion that runs its construction on an example you choose.</p>
 
 <div class="demo-strip">
-  <a class="demo-card" href="{{ '/rational-catalan/' | relative_url }}">
+  <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
-      <path d="M5 55 L95 5" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
-      <path class="draw" pathLength="100" d="M5 55 V30 H27.5 V17.5 H50 V12 H72.5 V5 H95" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <g stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round">
+        <path class="draw" pathLength="100" d="M20 15 L80 15 M20 15 L20 45 M80 15 L80 45 M20 45 L80 45 M20 15 L80 45"/>
+        <path class="draw" pathLength="100" d="M20 15 Q50 2 80 15"/>
+      </g>
+      <g class="nodes" fill="currentColor">
+        <circle cx="20" cy="15" r="4"/><circle cx="80" cy="15" r="4"/>
+        <circle cx="20" cy="45" r="4"/><circle cx="80" cy="45" r="4"/>
+      </g>
     </svg>
-    <span class="demo-title">Rational Catalan numbers</span>
-    <span class="demo-note">Compute traces and Catalan numbers for any complex reflection group.</span>
+    <span class="demo-title">Hypersimplex harmonics</span>
+    <span class="demo-note">Draw a loopless multigraph and compute its factorization in the harmonic algebra.</span>
   </a>
 
   <a class="demo-card" href="{{ '/cayley/' | relative_url }}">
@@ -74,19 +80,13 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
     <span class="demo-note">Choose a labelled tree and see its corresponding cyclic embedding, cyclic factorization, and distinguished subword.</span>
   </a>
 
-  <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
+  <a class="demo-card" href="{{ '/rational-catalan/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
-      <g stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round">
-        <path class="draw" pathLength="100" d="M20 15 L80 15 M20 15 L20 45 M80 15 L80 45 M20 45 L80 45 M20 15 L80 45"/>
-        <path class="draw" pathLength="100" d="M20 15 Q50 2 80 15"/>
-      </g>
-      <g class="nodes" fill="currentColor">
-        <circle cx="20" cy="15" r="4"/><circle cx="80" cy="15" r="4"/>
-        <circle cx="20" cy="45" r="4"/><circle cx="80" cy="45" r="4"/>
-      </g>
+      <path d="M5 55 L95 5" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+      <path class="draw" pathLength="100" d="M5 55 V30 H27.5 V17.5 H50 V12 H72.5 V5 H95" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
-    <span class="demo-title">Hypersimplex harmonics</span>
-    <span class="demo-note">Draw a loopless multigraph and compute its factorization in the harmonic algebra.</span>
+    <span class="demo-title">Rational Catalan numbers</span>
+    <span class="demo-note">Compute traces and Catalan numbers for any complex reflection group.</span>
   </a>
 </div>
 </div>
