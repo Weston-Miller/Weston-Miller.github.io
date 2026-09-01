@@ -50,8 +50,6 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
 
 <p>Each of my papers has an interactive companion that runs its construction on an example you choose.</p>
 
-<div id="random-tree" data-n="6" data-href="{{ '/cayley/' | relative_url }}"></div>
-
 <div class="demo-strip">
   <a class="demo-card" href="{{ '/rational-catalan/' | relative_url }}">
     <svg viewBox="0 0 100 60" aria-hidden="true">
@@ -92,5 +90,3 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
   </a>
 </div>
 </div>
-
-<script src="{{ '/assets/js/random-tree.js' | relative_url }}"></script>
