@@ -1296,6 +1296,36 @@ ninja-keys::part(ninja-input-wrapper) {
   clear: both;
 }
 
+// A random labelled tree, drawn by assets/js/random-tree.js on page load.
+// Empty (and takes no space) if JavaScript is off.
+#random-tree {
+  text-align: center;
+  margin: 1.5rem 0;
+  color: var(--global-theme-color);
+
+  .random-tree-figure {
+    display: inline-block;
+    width: 100%;
+    max-width: 320px;
+    color: inherit;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .random-tree-caption {
+    // #random-tree sets the theme colour so the drawing inherits it; the
+    // caption has to opt back out to body text.
+    color: var(--global-text-color);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: 0.4rem 0 0;
+  }
+}
+
 .demo-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1340,5 +1370,29 @@ ninja-keys::part(ninja-input-wrapper) {
       opacity: 0.75;
       line-height: 1.4;
     }
+  }
+}
+
+// Coauthor graph on the research page.
+.coauthor-graph {
+  margin: 1.5rem 0 2rem;
+  color: var(--global-theme-color);
+
+  svg {
+    display: block;
+    width: 100%;
+    max-width: 620px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  figcaption {
+    color: var(--global-text-color);
+    font-size: 0.85rem;
+    opacity: 0.7;
+    line-height: 1.4;
+    max-width: 620px;
+    margin: 0.6rem auto 0;
+    text-align: center;
   }
 }
