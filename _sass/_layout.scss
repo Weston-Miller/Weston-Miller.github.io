@@ -44,6 +44,14 @@ body {
   background-repeat: no-repeat, repeat, repeat;
   background-attachment: scroll, fixed, fixed;
 
+  // background-attachment: fixed is unreliable on touch devices -- iOS Safari
+  // in particular sizes a fixed layer against a viewport it then scales, so the
+  // lattice renders enlarged and judders as the page scrolls. Nothing is lost
+  // by letting it scroll with the content there.
+  @media (hover: none) and (pointer: coarse) {
+    background-attachment: scroll, scroll, scroll;
+  }
+
   // Texture is decoration; drop it when the reader has asked for more contrast,
   // and never spend toner on it.
   @media (prefers-contrast: more) {

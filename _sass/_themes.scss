@@ -166,3 +166,24 @@ html[data-theme-setting="light"] {
     display: block;
   }
 }
+
+// Background texture on small screens.
+//
+// The lattice is the same 30px pitch everywhere, but a phone's measure is ~40
+// characters instead of ~75, so at full strength the dots stop reading as a
+// ground behind the text block and start landing between the words. Same grid,
+// quieter -- and the light dot goes back to 1px, since the 1.5px it needs to
+// register on a wide white page is far too present on a small one.
+//
+// This block must come after the two theme blocks above: a media query adds no
+// specificity, so html[data-theme="dark"] here only wins on source order.
+@media (max-width: 768px) {
+  :root {
+    --global-lattice-color: rgba(0, 0, 0, 0.09);
+    --global-lattice-dot: 1px;
+  }
+
+  html[data-theme="dark"] {
+    --global-lattice-color: rgba(255, 255, 255, 0.08);
+  }
+}
