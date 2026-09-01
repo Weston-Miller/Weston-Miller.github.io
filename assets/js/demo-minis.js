@@ -302,8 +302,11 @@
         const d = bow ? "M " + x1 + " " + y1 + " Q " + mx + " " + my + " " + x2 + " " + y2
                       : "M " + x1 + " " + y1 + " L " + x2 + " " + y2;
         const lit = cls === "factor" && highlight;
+        // pathLength normalises the dash units the draw animation works in;
+        // without it stroke-dasharray:100 paints only the first 100 user units
+        // of the edge and the stroke stops short of the vertex.
         el("path", { class: lit ? "draw factor" : cls, d, fill: "none",
-          "stroke-width": cls === "factor" ? 3 : 2,
+          pathLength: 100, "stroke-width": cls === "factor" ? 3 : 2,
           stroke: lit ? "currentColor" : "var(--global-text-color)",
           opacity: lit ? 1 : 0.35,
           "stroke-linecap": "round" }, svg);
