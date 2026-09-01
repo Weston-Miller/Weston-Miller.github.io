@@ -373,11 +373,15 @@ ul.task-list input[type="checkbox"] {
   text-align: center;
 
   .contact-icons {
-    font-size: 4rem;
+    // Was 4rem. At 64px these were the heaviest mass on the page -- bigger
+    // than the h1, sitting right above the dark footer -- for the least
+    // important content on it. The resting colour was --global-text-color,
+    // i.e. solid black on light, and the theme green only appeared on hover.
+    font-size: 2rem;
 
     a {
       i::before {
-        color: var(--global-text-color);
+        color: var(--global-text-color-light);
         transition-property: all 0.2s ease-in-out;
       }
 
@@ -1293,6 +1297,27 @@ ninja-keys::part(ninja-input-wrapper) {
 // the cards are squeezed into the narrow column left of it.
 .demos-section {
   clear: both;
+}
+
+// Landing-page section rhythm. The page is one column of equal-weight headings
+// with nothing between them, so each section gets a hairline and room above it.
+// Scoped to the about layout: /research/ and /demos/ have their own structure
+// (year headings, per-demo entries) that this would fight with.
+.about-page {
+  .demos-section,
+  article > h2,
+  .social {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--global-divider-color);
+  }
+
+  // The demos section already carries the rule; its own h2 must not repeat it.
+  .demos-section > h2 {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
 }
 
 // Demo strip on the landing page

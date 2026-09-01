@@ -1,9 +1,18 @@
-"AJP":
-  url: https://aapt.scitation.org/journal/ajp
-  color: "#00369f"
+# Rendered by _layouts/bib.liquid into the col-sm-2 gutter beside each entry as
+# a badge. Keys must match the `abbr` field of the .bib entry exactly. Without
+# an entry here the badge still renders, but plain and unlinked; without an
+# `abbr` on the .bib entry the gutter is simply empty, which is what it used to
+# be for every paper on this site.
+# `color` overrides the badge background, which otherwise takes
+# --global-theme-color. arXiv is deliberately grey so a preprint is
+# distinguishable from a published paper at a glance.
 
-"PhysRev":
-  url: https://journals.aps.org/
+"J. Algebra":
+  url: https://www.sciencedirect.com/journal/journal-of-algebra
 
-"Vision":
-  color: "#009f36"
+"Alg. Comb.":
+  url: https://alco.centre-mersenne.org/
+
+"arXiv":
+  url: https://arxiv.org/list/math.CO/recent
+  color: "#6c757d"
