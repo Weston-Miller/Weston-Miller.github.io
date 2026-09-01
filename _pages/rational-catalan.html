@@ -1115,7 +1115,15 @@ function renderStatBars(P){
     name:(el,i)=>`path ${i+1}, ${el.dataset.stat}`});
 }
 
-function setAB(a,b){ S.a=a; S.b=b; recompute(); syncGroupFromAB(); writeHash(); }
+function setAB(a,b){ stopSpin(); S.a=a; S.b=b; recompute(); syncGroupFromAB(); writeHash(); }
+
+/* A spin left running across a parameter change would keep rotating an index
+   into an orbit that no longer exists. */
+function stopSpin(){
+  if(!S.spinning) return;
+  clearTimeout(S.spinning); S.spinning=null;
+  const btn=$("spin"); if(btn) btn.textContent="Spin the orbit";
+}
 
 /* ---------- tabs ---------- */
 function renderTypeAbar(){
@@ -1195,18 +1203,39 @@ $("dinvPrev").onclick=()=>stepDinv(-1);
 $("dinvNext").onclick=()=>stepDinv(1);
 
 $("rotNext").onclick=()=>rotate(1); $("rotPrev").onclick=()=>rotate(-1);
-$("orbNext").onclick=()=>{ S.orbitIdx=(S.orbitIdx+1)%S.orbits.length; syncOrbitToDyck(); renderCycle(); };
-$("orbPrev").onclick=()=>{ S.orbitIdx=(S.orbitIdx-1+S.orbits.length)%S.orbits.length; syncOrbitToDyck(); renderCycle(); };
-$("orbRand").onclick=()=>{ S.orbitIdx=Math.floor(Math.random()*S.orbits.length); syncOrbitToDyck(); renderCycle(); };
+$("orbNext").onclick=()=>{ stopSpin(); S.orbitIdx=(S.orbitIdx+1)%S.orbits.length; syncOrbitToDyck(); renderCycle(); };
+$("orbPrev").onclick=()=>{ stopSpin(); S.orbitIdx=(S.orbitIdx-1+S.orbits.length)%S.orbits.length; syncOrbitToDyck(); renderCycle(); };
+$("orbRand").onclick=()=>{ stopSpin(); S.orbitIdx=Math.floor(Math.random()*S.orbits.length); syncOrbitToDyck(); renderCycle(); };
 
+const reduceMotion = () =>
+  window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* The spin decelerates into the one rotation that stays above the diagonal,
+   rather than turning at a constant rate and then snapping to it: one full
+   turn at speed, then however many more it takes to arrive on the Dyck frame,
+   easing out the whole way. Landing on the answer is the lemma. */
 $("spin").onclick=function(){
-  if(S.spinning){ clearInterval(S.spinning); S.spinning=null; this.textContent="Spin the orbit"; return; }
-  this.textContent="Stop";
   const btn=this;
-  let steps = S.a+S.b;
-  S.spinning=setInterval(()=>{ rotate(1); if(--steps<=0){ clearInterval(S.spinning); S.spinning=null;
-    btn.textContent="Spin the orbit";
-    const orb=S.orbits[S.orbitIdx]; if(orb.dyck.length){ S.rotIdx=orb.dyck[0]; renderCycle(); } } }, 420);
+  if(S.spinning){ clearTimeout(S.spinning); S.spinning=null; btn.textContent="Spin the orbit"; return; }
+
+  const n = S.a+S.b, orb = S.orbits[S.orbitIdx];
+  const target = orb.dyck.length ? orb.dyck[0] : null;   // null if the action is not free
+
+  if(reduceMotion()){                                    // show the result, skip the motion
+    if(target!==null){ S.rotIdx=target; renderCycle(); }
+    return;
+  }
+
+  const extra = target===null ? 0 : ((target - S.rotIdx) % n + n) % n;
+  let left = n + extra;
+  const FAST = 90, SLOW = 460;
+  btn.textContent="Stop";
+  (function step(){
+    rotate(1);
+    if(--left <= 0){ S.spinning=null; btn.textContent="Spin the orbit"; return; }
+    const t = Math.min(1, left/n);                       // 1 early, 0 at the end
+    S.spinning = setTimeout(step, SLOW - (SLOW-FAST)*t);
+  })();
 };
 
 document.addEventListener("keydown", e=>{
