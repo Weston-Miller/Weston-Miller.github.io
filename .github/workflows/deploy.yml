@@ -91,10 +91,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y imagemagick
           pip3 install --upgrade jupyter
-      - name: Refresh currently-reading from Goodreads 📚
-        # Best-effort: the script exits 0 on any network/parse failure and the
-        # committed _data/reading.yml stands in.
-        run: python3 bin/fetch_goodreads.py
+      - name: Refresh live data 📚♟
+        # Best-effort: each script exits 0 on any network/parse failure and the
+        # committed _data/*.yml stands in.
+        run: |
+          python3 bin/fetch_goodreads.py
+          python3 bin/fetch_chess.py
       - name: Install and Build 🔧
         run: |
           export JEKYLL_ENV=production
