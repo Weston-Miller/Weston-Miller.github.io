@@ -50,11 +50,10 @@ nav_order: 3
   <div class="demo-mini" data-kind="lattice"
        data-href="{{ '/ehrhart/' | relative_url }}"
        data-label="A lattice triangle and its second and third dilates"
-       data-caption="One triangle at t = 1, 2, 3. The counts 7, 19, 37 are the values of a quadratic."></div>
+       data-caption="One triangle at m = 1, 2, 3. The counts 7, 19, 37 are the values of a quadratic."></div>
   <div class="demo-entry-body">
-    <h2><a href="{{ '/ehrhart/' | relative_url }}">Ehrhart theory, by hand</a></h2>
-    <p>Not tied to a single paper &mdash; the background the others are built on.
-      Dilate a polytope, count the lattice points, and a polynomial appears. Pick a slice of the cube in two or
+    <h2><a href="{{ '/ehrhart/' | relative_url }}">Ehrhart theory</a></h2>
+    <p>Dilate a polytope, count the lattice points, and a polynomial appears. Pick a slice of the cube in two or
       three dimensions, or draw a lattice polygon of your own, and the app gives you the counting function, the
       <em>h</em>*-vector, the rational form of the Ehrhart series, and a check of Ehrhart&ndash;Macdonald
       reciprocity. Where it can, it also computes the graded <em>q</em>-refinement from

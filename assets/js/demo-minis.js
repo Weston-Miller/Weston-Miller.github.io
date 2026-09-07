@@ -7,7 +7,7 @@
  *   cycle    a lattice path rotated until it stays above the diagonal
  *   tree     a random labelled tree in its cyclic embedding
  *   graph    a loopless multigraph with one of its 2-factors picked out
- *   lattice  a lattice triangle counted at t = 1, 2, 3
+ *   lattice  a lattice triangle counted at m = 1, 2, 3
  *
  * pruferToTree, cyclicEmbedding and layout are copied verbatim from the Cayley
  * demo (_pages/cayley.md); keep them in step if that page changes.
@@ -335,11 +335,11 @@
 
   /* ---------------- lattice polygon and its dilates ---------------- */
 
-  // The picture Ehrhart's theorem is about: one triangle, redrawn at t = 1, 2, 3
+  // The picture Ehrhart's theorem is about: one triangle, redrawn at m = 1, 2, 3
   // with the lattice points it contains. Three dilates is the ceiling -- 4P is
   // already 60-odd dots in a 180px column, and they stop reading as points.
   const EH_VERTS = [[0, 0], [3, 0], [1, 2]];
-  const EH_TMAX = 3;
+  const EH_MMAX = 3;
 
   // Convex and listed counter-clockwise, so "inside or on the boundary" is a
   // sign test on every edge. Boundary points count, which is the whole point.
@@ -355,18 +355,18 @@
     const W = 220, H = 150, pad = 12;
     // The frame is sized for the largest dilate and never moves, so what the eye
     // sees between frames is the triangle growing, not the picture rescaling.
-    const spanX = EH_TMAX * 3, spanY = EH_TMAX * 2;
+    const spanX = EH_MMAX * 3, spanY = EH_MMAX * 2;
     const cell = Math.min((W - 2 * pad) / spanX, (H - 2 * pad) / spanY);
     const ox = (W - cell * spanX) / 2;
     const oy = (H + cell * spanY) / 2;
     const X = (u) => ox + cell * u;
     const Y = (w) => oy - cell * w;
-    let t = EH_TMAX;
+    let m = EH_MMAX;
 
     function render() {
       svg.setAttribute("viewBox", "0 0 " + W + " " + H);
       svg.textContent = "";
-      const v = EH_VERTS.map((p) => [t * p[0], t * p[1]]);
+      const v = EH_VERTS.map((p) => [m * p[0], m * p[1]]);
 
       // Faint dots for the whole visible lattice, kept outside .nodes so they
       // sit still while the counted points pop.
@@ -390,13 +390,13 @@
 
     render();                                      // rest state: the largest dilate
     return function play(finish) {
-      t = 1;
+      m = 1;
       render();
       setTimeout(function () {
-        t = 2;
+        m = 2;
         render();
         setTimeout(function () {
-          t = EH_TMAX;
+          m = EH_MMAX;
           render();
           setTimeout(finish, 1100);
         }, 800);

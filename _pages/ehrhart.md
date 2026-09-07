@@ -115,12 +115,10 @@ nav: false
 </style>
 
 <div class="wrap">
-  <h1>Ehrhart theory, by hand</h1>
+  <h1>Ehrhart theory</h1>
   <p class="lede">
-    Dilate a polytope, count the lattice points, and a polynomial appears. Here are the slices of the
-    cube that are small enough to draw &mdash; the hypersimplices among them, and the rational slices in
-    between, whose counts are quasi-polynomials &mdash; together with a blank grid for a lattice polygon
-    of your own.
+    Dilate a polytope, count the lattice points, and a polynomial appears. You can choose one of the slices of the
+    cube that are small enough to see. Or you can draw your own lattice polygon.
   </p>
 
 <div class="toolbar">
@@ -128,14 +126,14 @@ nav: false
     <select id="eh-shape">
       <optgroup label="slices of the cube">
         <option value="s3">x&#8321;+x&#8322;+x&#8323; = c in [0,1]&sup3; &mdash; 2-dimensional</option>
-        <option value="s4" selected>x&#8321;+&hellip;+x&#8324; = c in [0,1]&#8308; &mdash; 3-dimensional</option>
+        <option value="s4">x&#8321;+&hellip;+x&#8324; = c in [0,1]&#8308; &mdash; 3-dimensional</option>
       </optgroup>
-      <optgroup label="and one more">
-        <option value="poly">lattice polygon &mdash; draw your own</option>
+      <optgroup label="draw your own">
+        <option value="poly" selected>lattice polygon</option>
       </optgroup>
     </select></label>
-  <label id="eh-clab">c = <input type="range" id="eh-c" min="0" max="7" value="6" style="width:120px"><b id="eh-cv" class="mono"></b></label>
-  <label>dilation t = <input type="range" id="eh-t" min="1" max="8" value="2" style="width:120px"><b id="eh-tv" class="mono">2</b></label>
+  <label id="eh-clab" hidden>c = <input type="range" id="eh-c" min="0" max="7" value="6" style="width:120px"><b id="eh-cv" class="mono"></b></label>
+  <label>dilation m = <input type="range" id="eh-m" min="1" max="8" value="2" style="width:120px"><b id="eh-mv" class="mono">2</b></label>
 </div>
 
 <div class="toolbar">
@@ -148,7 +146,7 @@ nav: false
   <span class="msg" id="eh-msg"></span>
 </div>
 
-<div class="toolbar hidden" id="eh-drawbar">
+<div class="toolbar" id="eh-drawbar">
   <label>grid <input type="range" id="eh-grid" min="3" max="10" value="6" style="width:90px"><b id="eh-gridv" class="mono">6</b></label>
   <button class="small" data-preset="triangle">triangle</button>
   <button class="small" data-preset="square">square</button>
@@ -194,7 +192,7 @@ nav: false
 <p class="caption" style="margin-top:1.2rem;border-top:1px solid var(--line);padding-top:.6rem">
   Companion to <i>Graded Ehrhart theory for hypersimplices</i>,
   <a href="https://arxiv.org/abs/2608.27438">arXiv:2608.27438</a>. The algebraic side of the same paper
-  &mdash; matchings, the harmonic algebra, maximal tableaux &mdash; is at
+  (matchings, the harmonic algebra, maximal tableaux) is at
   <a href="/graph-demos/">graph demos</a>. All of the demos are listed
   <a href="/demos/">here</a>.
 </p>
@@ -205,7 +203,11 @@ nav: false
 "use strict";
 const $  = id => document.getElementById(id);
 const NS = "http://www.w3.org/2000/svg";
-const TMAX = 8;              /* rows in the table, and the top of the dilation slider */
+/* Notation follows the paper: m is the dilation and t is the series variable, so the
+   Ehrhart series is sum_m |mP n Z^n| t^m and the graded one is E(q,t).  q is the
+   grading variable throughout, and never the denominator of a rational c -- that is
+   S.q, only ever reached through the shape.                                       */
+const MMAX = 8;              /* rows in the table, and the top of the dilation slider */
 /* Margin around a 2-D picture.  It has to clear the 30px prompt strip along the
    bottom of the unfinished-polygon state, or the y = 0 row of the grid ends up
    underneath it -- and it must be the same number in the renderer and in the
@@ -225,14 +227,16 @@ function frHTML(f){
 }
 const frText = f => f[1]===1 ? String(f[0]) : f[0]+"/"+f[1];
 /* c = rational coefficients indexed by power; up=true prints ascending */
-function polyHTML(c, v, up){
+function polyHTML(c, v, up, step){
+  step = step || 1;                 /* the variable advances by t^step, not by t */
   const parts=[], idx=[];
   for(let j=0;j<c.length;j++) idx.push(up ? j : c.length-1-j);
   for(const j of idx){
     const f=c[j]; if(f[0]===0) continue;
+    const e=j*step;
     const neg=f[0]<0, mag=[Math.abs(f[0]),f[1]];
-    let body = (mag[0]===1 && mag[1]===1 && j>0) ? "" : frHTML(mag);
-    if(j===1) body += v; else if(j>1) body += v+"<sup>"+j+"</sup>";
+    let body = (mag[0]===1 && mag[1]===1 && e>0) ? "" : frHTML(mag);
+    if(e===1) body += v; else if(e>1) body += v+"<sup>"+e+"</sup>";
     parts.push([neg,body]);
   }
   if(!parts.length) return "0";
@@ -342,13 +346,13 @@ function hull2(pts){                                 /* monotone chain, counter-
 }
 
 /* =================================== the shapes ===================================
-   Every shape answers the same questions -- which lattice points does t P contain,
+   Every shape answers the same questions -- which lattice points does m P contain,
    which of them are interior, what dimension is it, and what is its denominator --
    so the Ehrhart code, the panel and both renderers are written once.            */
 function memo(S){
   const c={}, i={};
-  S.count    = t => (t in c) ? c[t] : (c[t] = S.lattice(t).length);
-  S.interior = t => (t in i) ? i[t] : (i[t] = S.lattice(t).filter(x=>S.isInt(x,t)).length);
+  S.count    = m => (m in c) ? c[m] : (c[m] = S.lattice(m).length);
+  S.interior = m => (m in i) ? i[m] : (i[m] = S.lattice(m).filter(x=>S.isInt(x,m)).length);
   return S;
 }
 const NAME3 = { "4,4":"tetrahedron", "6,8":"octahedron", "12,8":"truncated tetrahedron",
@@ -371,18 +375,18 @@ function sliceShape(n, p, q){
     for(let j=start;j<n;j++){ S.push(j); subsets(j+1,S); S.pop(); }
   })(0,[]);
 
-  const placeD = (x,t) => embed(B, x.map(v => v/t - cen));
+  const placeD = (x,m) => embed(B, x.map(v => v/m - cen));
   const S = {
     id:"s"+n, kind:"slice", n, p, q, dim:n-1, cNum:p, cDen:q,
     vertsD: verts.map(v => embed(B, v.map(x => x - cen))),
     placeD,
-    isInt: (x,t) => x.every(v => v>0 && v<t),
-    lattice(t){
-      if((t*p) % q !== 0) return [];                 /* t P misses the lattice entirely */
-      const total = t*p/q, out=[], x=new Array(n).fill(0);
+    isInt: (x,m) => x.every(v => v>0 && v<m),
+    lattice(m){
+      if((m*p) % q !== 0) return [];                 /* m P misses the lattice entirely */
+      const total = m*p/q, out=[], x=new Array(n).fill(0);
       (function rec(i, rem){
-        if(i===n-1){ if(rem>=0 && rem<=t){ x[i]=rem; out.push(x.slice()); } return; }
-        const hi=Math.min(t, rem);
+        if(i===n-1){ if(rem>=0 && rem<=m){ x[i]=rem; out.push(x.slice()); } return; }
+        const hi=Math.min(m, rem);
         for(let v=0; v<=hi; v++){ x[i]=v; rec(i+1, rem-v); }
       })(0, total);
       return out;
@@ -395,13 +399,13 @@ function sliceShape(n, p, q){
 function polyShape(gens, grid){
   const V = hull2(gens);
   const ok = V.length>=3;
-  /* q is in t P iff every edge cross product is >= 0; a zero means the boundary.
+  /* q is in m P iff every edge cross product is >= 0; a zero means the boundary.
      All integer arithmetic, so the boundary/interior split is never a rounding call. */
-  const locate = (t,qx,qy) => {
+  const locate = (m,qx,qy) => {
     let onEdge=false;
     for(let i=0;i<V.length;i++){
       const a=V[i], b=V[(i+1)%V.length];
-      const c=(b[0]-a[0])*(qy-t*a[1]) - (b[1]-a[1])*(qx-t*a[0]);
+      const c=(b[0]-a[0])*(qy-m*a[1]) - (b[1]-a[1])*(qx-m*a[0]);
       if(c<0) return -1;
       if(c===0) onEdge=true;
     }
@@ -410,15 +414,15 @@ function polyShape(gens, grid){
   const S = {
     id:"poly", kind:"poly", dim:2, q:1, ok, V, grid,
     vertsD: V.map(v => [v[0], v[1]]),
-    placeD: (x,t) => [x[0]/t, x[1]/t],
-    isInt: (x,t) => locate(t,x[0],x[1])===1,
-    lattice(t){
+    placeD: (x,m) => [x[0]/m, x[1]/m],
+    isInt: (x,m) => locate(m,x[0],x[1])===1,
+    lattice(m){
       if(!ok) return [];
-      if(t===0) return [[0,0]];
+      if(m===0) return [[0,0]];
       let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
       for(const v of V){ x0=Math.min(x0,v[0]); x1=Math.max(x1,v[0]); y0=Math.min(y0,v[1]); y1=Math.max(y1,v[1]); }
       const out=[];
-      for(let x=t*x0;x<=t*x1;x++) for(let y=t*y0;y<=t*y1;y++) if(locate(t,x,y)>=0) out.push([x,y]);
+      for(let x=m*x0;x<=m*x1;x++) for(let y=m*y0;y<=m*y1;y++) if(locate(m,x,y)>=0) out.push([x,y]);
       return out;
     }
   };
@@ -455,9 +459,9 @@ function geom(S){
   return S._g;
 }
 
-/* i(t) counts lattice points of t P.  For a lattice polytope it is a polynomial of
+/* i(m) counts lattice points of m P.  For a lattice polytope it is a polynomial of
    degree d.  For a rational one with denominator q it is a quasi-polynomial of
-   period q, and here only the constituent t = 0 mod q is nonzero -- t P misses the
+   period q, and here only the constituent m = 0 mod q is nonzero -- m P misses the
    lattice altogether otherwise -- so everything reduces to the lattice polytope qP
    and j(s) = i(qs).  d+1 values determine j; its finite differences at 0 are its
    coefficients in the binomial basis and are integers.                          */
@@ -482,9 +486,9 @@ function ehrhart(S){
            pal: hs.every((v,i)=>v===hs[deg-i]) };
   return S._e;
 }
-function evalPow(pow, t){
+function evalPow(pow, m){
   let acc=fr(0,1), p=1;
-  for(let j=0;j<pow.length;j++){ acc=frAdd(acc, frMul(pow[j], fr(p,1))); p*=t; }
+  for(let j=0;j<pow.length;j++){ acc=frAdd(acc, frMul(pow[j], fr(p,1))); p*=m; }
   return acc;
 }
 
@@ -493,8 +497,8 @@ function evalPow(pow, t){
    q-Ehrhart series of the cube slice P(l,m,n) = {x in [0,m]^n : sum x = l} in
    closed rational form.  Every slice in this page's menu IS one of those: the
    slice of the unit cube at c = p/den, scaled by den, is exactly P(p, den, n),
-   and its k-th dilate is this page's t = k*den.  So there is no linear algebra
-   to do -- the q-coefficient at z^k is a difference of two counts of bounded
+   and its k-th dilate is this page's m = k*den.  So there is no linear algebra
+   to do -- the q-coefficient at t^k is a difference of two counts of bounded
    weak compositions, which telescopes to the ordinary lattice point count at
    q = 1.  BigInt throughout, because the numerator coefficients are alternating
    sums and nothing here is hot enough to care.                                */
@@ -528,13 +532,13 @@ const qzero  = p => !p.some(x => x!==0n);
 const qz     = qzero;
 const qtrim  = a => { const r=a.slice(); while(r.length>1 && r[r.length-1]===0n) r.pop(); return r; };
 
-/* (1 - q^l z)^{n-1} * prod_{j=0}^{ceil(l/m)-1} (1 - q^{jm} z) */
+/* (1 - q^l t)^{n-1} * prod_{j=0}^{ceil(l/b)-1} (1 - q^{jb} t), b the cube bound */
 function denFactors(l,n,m){
   const r = Math.ceil(l/m), f = new Array(n-1).fill(l);
   for(let j=0;j<r;j++) f.push(j*m);
   return f;
 }
-function denZlist(l,n,m){
+function denTlist(l,n,m){
   let D=[[1n]];
   for(const a of denFactors(l,n,m)){
     const nw = new Array(D.length+1).fill(0).map(()=>[]);
@@ -546,9 +550,9 @@ function denZlist(l,n,m){
   }
   return D;
 }
-/* E    = sum_k sum_{d<=k l}     delta(d, k m,     n) q^d z^k
-   Ebar = sum_k sum_{d<=k l - n} delta(d, k m - 2, n) q^d z^k   */
-function seriesZlist(l,n,K,m,interior){
+/* E    = sum_k sum_{d<=k l}     delta(d, k b,     n) q^d t^k
+   Ebar = sum_k sum_{d<=k l - n} delta(d, k b - 2, n) q^d t^k   */
+function seriesTlist(l,n,K,m,interior){
   const A=[];
   for(let k=0;k<=K;k++){
     const top = interior ? k*l-n : k*l, mm = interior ? k*m-2 : k*m, row=[];
@@ -557,9 +561,9 @@ function seriesZlist(l,n,K,m,interior){
   }
   return A;
 }
-function numZlist(l,n,m,interior,margin){
+function numTlist(l,n,m,interior,margin){
   margin = margin===undefined ? 6 : margin;
-  const D=denZlist(l,n,m), degD=D.length-1, K=degD+margin, A=seriesZlist(l,n,K,m,interior);
+  const D=denTlist(l,n,m), degD=D.length-1, K=degD+margin, A=seriesTlist(l,n,K,m,interior);
   const coeff = k => { let acc=[];
     for(let j=0;j<D.length;j++){ const i=k-j; if(i>=0 && i<=K) acc=qadd(acc,qmul(D[j],A[i])); }
     return acc; };
@@ -569,7 +573,7 @@ function numZlist(l,n,m,interior,margin){
                     "the safety margin, so the closed form was not computed");
   return num;
 }
-/* synthetic division by (1 - q^a z): b_k = c_k + q^a b_{k-1} */
+/* synthetic division by (1 - q^a t): b_k = c_k + q^a b_{k-1} */
 function divideFactor(N,a){
   const d=N.length-1;
   if(d<0) return null;
@@ -591,8 +595,8 @@ function reduceDen(nE,nB,l,n,m){
   }
   return { nE, nB, f };
 }
-/* Exact check of q^{n-1} Ebar(z,q) = (-1)^n E(1/z,1/q).  With D = prod (1 - q^a z)
-   over F factors of total q-degree S, D(1/z,1/q) = (-1)^F q^{-S} z^{-F} D(z,q), so
+/* Exact check of q^{n-1} Ebar(t,q) = (-1)^n E(1/t,1/q).  With D = prod (1 - q^a t)
+   over F factors of total q-degree S, D(1/t,1/q) = (-1)^F q^{-S} t^{-F} D(t,q), so
    the identity is the finite coefficient identity below. */
 function recipExact(nE,nB,n,f){
   const F=f.length, S=f.reduce((a,b)=>a+b,0), sgn=((n+F)%2)?-1n:1n;
@@ -608,7 +612,7 @@ function graded(S){
   if(S.kind!=="slice"){ S._gr=null; return null; }
   const l=S.p, m=S.q, n=S.n;
   try{
-    const nE=numZlist(l,n,m,false), nB=numZlist(l,n,m,true), full=denFactors(l,n,m);
+    const nE=numTlist(l,n,m,false), nB=numTlist(l,n,m,true), full=denFactors(l,n,m);
     const red=reduceDen(nE,nB,l,n,m);
     S._gr = { ok:true, l, m, n, full, nE:red.nE, nB:red.nB, f:red.f,
               reduced: red.f.length < full.length,
@@ -637,7 +641,7 @@ const gradedAt = (S,k) => { const row=[];
         Modular reduction is deferred CHUNK updates at a time -- entries stay under
         CHUNK*p^2 = 4.1e15, half of 2^53, so the float64 arithmetic is exact integer
         arithmetic and the reduction itself all but disappears from the profile.
-     3. The denominator is found by searching (deg_q, deg_z) smallest-first.  The
+     3. The denominator is found by searching (deg_q, deg_t) smallest-first.  The
         smallest model that fits is the one that needs the fewest dilations: in every
         case tried, four to seven dilations sufficed where a fixed large deg_q needed
         fourteen.  That is what brings the whole thing inside a browser.
@@ -734,9 +738,9 @@ function confirmSeries(S, Kver){
   return true;
 }
 
-/* ---- the denominator, found by a smallest-first search over (deg_q, deg_z) ----
+/* ---- the denominator, found by a smallest-first search over (deg_q, deg_t) ----
    Finding it is LINEAR, not a search over multisets of (a,b): solve for
-   D(q,z) = sum d_{a,b} q^a z^b with d_{0,0} = 1 killing the tail of both D*E and
+   D(q,t) = sum d_{a,b} q^a t^b with d_{0,0} = 1 killing the tail of both D*E and
    D*Ebar.  Solve mod a prime, lift by centred residues, then verify the lift EXACTLY
    over the integers, so a wrong lift cannot survive.                             */
 const seriesAt = (S,k,e) => (k<0 || k>=S.length || e<0 || e>=S[k].length) ? 0n : S[k][e];
@@ -762,7 +766,7 @@ function solveModP(rows, nun, p){
   piv.forEach((c,i)=>{ x[c]=M[i][nun]%p; });
   return x;
 }
-function mulSeriesZ(D,S,K){
+function mulSeriesT(D,S,K){
   const out=[];
   for(let k=0;k<=K;k++){
     let acc=[];
@@ -771,9 +775,9 @@ function mulSeriesZ(D,S,K){
   }
   return out;
 }
-const tailClean = (D,S,K,deg) => { const P_=mulSeriesZ(D,S,K);
+const tailClean = (D,S,K,deg) => { const P_=mulSeriesT(D,S,K);
   for(let k=deg+1;k<=K;k++) if(!qz(P_[k])) return false; return true; };
-function divFac(D,a,b){                       /* exact division by (1 - q^a z^b) */
+function divFac(D,a,b){                       /* exact division by (1 - q^a t^b) */
   const dd=D.length-1, dq=dd-b;
   if(dq<0) return null;
   const Q=[];
@@ -806,7 +810,7 @@ function recipPoly(N,Nb,d,fac){
 }
 /* The q-degree of Hilb_k grows linearly, and its rate is exactly max(a_i/b_i) over
    the denominator's factors -- measured, not assumed: for the page's own hexagon the
-   observed 20/3 is the 20/3 of its (1 - q^20 z^3) factor.  So a term q^a z^b of D can
+   observed 20/3 is the 20/3 of its (1 - q^20 t^3) factor.  So a term q^a t^b of D can
    only appear with a <= alpha*b, which is what keeps a large deg q affordable: the
    unknowns grow like alpha*B^2/2 instead of (alpha*B)*B. */
 function fitPolyDen(E, Eb, Kfit, Kver, Amax, Bmax){
@@ -878,7 +882,7 @@ const cost = (S,k) => { let s=0;
   for(let j=0;j<=k;j++){ const n=S.count(j); s += 4*RANK_MS_PER_N3*n*n*n; }
   return s; };
 /* Start shallow and go deeper only if the fit fails.  Most polygons are settled by
-   seven dilations; the ones that are not need a denominator of higher z-degree, which
+   seven dilations; the ones that are not need a denominator of higher t-degree, which
    needs more dilations to pin down, and the extra cost is paid only by them. */
 function planFor(S){
   if(!S.ok) return { Kmax:0, K0:0, dc:false, est:0, ok:false };
@@ -899,13 +903,13 @@ function gradedPolygon(S, Kver){
   for(let Kfit=4; Kfit<=Kver-2; Kfit++){
     const fit = fitPolyDen(E, Eb, Kfit, Kver, 40, 6);
     if(!fit) continue;
-    const N=mulSeriesZ(fit.D,E,Kver).slice(0,fit.D.length);
-    const Nb=mulSeriesZ(fit.D,Eb,Kver).slice(0,fit.D.length);
+    const N=mulSeriesT(fit.D,E,Kver).slice(0,fit.D.length);
+    const Nb=mulSeriesT(fit.D,Eb,Kver).slice(0,fit.D.length);
     const confirmed = confirmSeries(S, Kver);
     return { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver, confirmed,
              recip: recipPoly(N,Nb,2,fit.factors) };
   }
-  return { E, Eb, Kver, fail:"no denominator with deg&thinsp;z &le; 6 is consistent with the first "+
+  return { E, Eb, Kver, fail:"no denominator with deg&thinsp;t &le; 6 is consistent with the first "+
                        (Kver-2)+" dilations" };
 }
 
@@ -915,7 +919,7 @@ const circle = (x,y,r,fill,o) =>
   (o!==undefined ? '" opacity="'+o : '')+'"/>';
 
 function render3d(S){
-  const g=geom(S), T=state.T, sc=178/g.R, cx=W/2, cy=H/2;
+  const g=geom(S), M=state.M, sc=178/g.R, cx=W/2, cy=H/2;
   const rv = S.vertsD.map(p => rotate(p, state.yaw, state.pitch));
   const rn = g.FS.map(f => rotate(f.n, state.yaw, state.pitch));   /* rotation is orthogonal */
   const px = p => cx+sc*p[0], py = p => cy-sc*p[1];
@@ -939,16 +943,16 @@ function render3d(S){
   });
 
   let nB=0, nI=0;
-  const drawn = S.lattice(T).map(x => {
-    const inte = S.isInt(x,T);
+  const drawn = S.lattice(M).map(x => {
+    const inte = S.isInt(x,M);
     if(inte) nI++; else nB++;
-    return { p: rotate(S.placeD(x,T), state.yaw, state.pitch), inte };
+    return { p: rotate(S.placeD(x,M), state.yaw, state.pitch), inte };
   }).sort((a,b)=> a.p[2]-b.p[2]);
-  const base = Math.max(1.4, 3.8 - 0.34*T);
+  const base = Math.max(1.4, 3.8 - 0.34*M);
   const dots = drawn.map(d => {
-    const z = d.p[2]/g.R;
-    return circle(px(d.p), py(d.p), base*(1+0.16*z), d.inte?"var(--int)":"var(--accent)",
-                  (0.3+0.7*(z+1)/2).toFixed(2));
+    const dep = d.p[2]/g.R;                       /* depth, not the series variable */
+    return circle(px(d.p), py(d.p), base*(1+0.16*dep), d.inte?"var(--int)":"var(--accent)",
+                  (0.3+0.7*(dep+1)/2).toFixed(2));
   }).join("");
 
   return { svg:
@@ -975,7 +979,7 @@ function fit(bbox, m){
 const gridFit = grid => fit([0,grid,0,grid], PAD);
 
 function render2d(S){
-  const T=state.T, poly=(S.kind==="poly");
+  const M=state.M, poly=(S.kind==="poly");
   if(poly && !S.ok){
     /* An unfinished polygon still has to show the picks -- otherwise the first two
        clicks look like they did nothing.  The prompt sits along the bottom on its
@@ -1002,20 +1006,20 @@ function render2d(S){
   if(poly){
     F = gridFit(S.grid);
     ghosts = gridGhosts(F,S.grid); picks = rings(state.gens,F) + cursorMark(F);
-    step = F.S/T;
+    step = F.S/M;
   } else {
     let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
     S.vertsD.forEach(p=>{ x0=Math.min(x0,p[0]); x1=Math.max(x1,p[0]); y0=Math.min(y0,p[1]); y1=Math.max(y1,p[1]); });
     F = fit([x0,x1,y0,y1], PAD);
-    step = F.S*Math.SQRT2/T;                        /* nearest lattice step is e_i - e_j */
+    step = F.S*Math.SQRT2/M;                        /* nearest lattice step is e_i - e_j */
   }
   const sx = x => F.ox + F.S*x, sy = y => F.oy - F.S*y;
   const outline = g.outline.map(i => sx(S.vertsD[i][0]).toFixed(1)+","+sy(S.vertsD[i][1]).toFixed(1));
 
   let nB=0, nI=0, dots="";
   const r = Math.max(1.0, Math.min(5, 0.14*step));
-  S.lattice(T).forEach(x => {
-    const p = S.placeD(x,T), inte = S.isInt(x,T);
+  S.lattice(M).forEach(x => {
+    const p = S.placeD(x,M), inte = S.isInt(x,M);
     if(inte) nI++; else nB++;
     dots += circle(sx(p[0]), sy(p[1]), r, inte?"var(--int)":"var(--accent)");
   });
@@ -1040,12 +1044,12 @@ function cursorMark(F){
 
 /* =================================== readouts =================================== */
 const rfrac = (a,b) => '<span class="rfrac"><span class="num">'+a+'</span><span class="den">'+b+'</span></span>';
-const zpow  = k => k===0 ? "" : (k===1 ? "z" : "z<sup>"+k+"</sup>");
+const tpow  = k => k===0 ? "" : (k===1 ? "t" : "t<sup>"+k+"</sup>");
 
 function readouts(S, counts){
-  const T=state.T, poly=(S.kind==="poly"), q=S.q;
+  const M=state.M, poly=(S.kind==="poly"), q=S.q;
   $("eh-name").innerHTML = shapeName(S);
-  $("eh-counthead").innerHTML = "Lattice points of t&thinsp;P";
+  $("eh-counthead").innerHTML = "Lattice points of m&thinsp;P";
 
   if(poly && !S.ok){
     const n = state.gens.length;
@@ -1067,36 +1071,36 @@ function readouts(S, counts){
   const E = ehrhart(S), d = E.d;
   $("eh-count").innerHTML = counts.total.toLocaleString();
   $("eh-split").innerHTML = counts.total===0
-    ? "t&thinsp;P has no lattice points at all &mdash; " + q + " does not divide " + T
+    ? "m&thinsp;P has no lattice points at all &mdash; " + q + " does not divide " + M
     : '<span class="swatch" style="background:var(--accent)"></span>'+counts.nB.toLocaleString()+' on the boundary &middot; '+
       '<span class="swatch" style="background:var(--int)"></span>'+counts.nI.toLocaleString()+' interior';
 
-  let rows='<tr><th>t</th><th>points</th><th>interior</th></tr>';
-  for(let t=0;t<=TMAX;t++){
-    const c=S.count(t);
-    rows += '<tr data-t="'+t+'" class="'+(t>=1?"pick ":"")+(c===0&&t>0?"zero ":"")+(t===T?"cur":"")+'"'+
-            (t>=1?' title="show this dilation"':'')+'><td>'+t+'</td><td>'+c.toLocaleString()+
-            '</td><td>'+S.interior(t).toLocaleString()+'</td></tr>';
+  let rows='<tr><th>m</th><th>points</th><th>interior</th></tr>';
+  for(let m=0;m<=MMAX;m++){
+    const c=S.count(m);
+    rows += '<tr data-m="'+m+'" class="'+(m>=1?"pick ":"")+(c===0&&m>0?"zero ":"")+(m===M?"cur":"")+'"'+
+            (m>=1?' title="show this dilation"':'')+'><td>'+m+'</td><td>'+c.toLocaleString()+
+            '</td><td>'+S.interior(m).toLocaleString()+'</td></tr>';
   }
   $("eh-table").innerHTML = rows;
 
-  const v = q===1 ? "t" : "s";
+  const v = q===1 ? "m" : "s";
   const binTerms = E.bin.map((c,j)=> c===0 ? null :
       (j===0 ? String(c) : (c===1?"":c)+"C("+v+","+j+")")).filter(Boolean);
   $("eh-ehr").innerHTML =
-    (q===1 ? "" : 'i(t) = 0 unless '+q+' | t, and<br>') +
-    'i(' + (q===1?"t":q+"s") + ') = ' + polyHTML(E.pow, v) + '<br>' +
+    (q===1 ? "" : 'i(m) = 0 unless '+q+' | m, and<br>') +
+    'i(' + (q===1?"m":q+"s") + ') = ' + polyHTML(E.pow, v) + '<br>' +
     '<span style="color:var(--muted)">&nbsp;&nbsp;&nbsp;&nbsp;= ' + binTerms.join(" + ") + '</span>';
 
   const terms=[];
   for(let s=0;s<=d+1;s++){
     const val=S.count(q*s), k=q*s;
-    terms.push(s===0 ? String(val) : (val===1?"":val.toLocaleString())+zpow(k));
+    terms.push(s===0 ? String(val) : (val===1?"":val.toLocaleString())+tpow(k));
   }
   $("eh-series").innerHTML =
-    '&sum;<sub>t&ge;0</sub> |t&thinsp;P &cap; Z<sup>'+(S.n||S.dim)+'</sup>| z<sup>t</sup> = ' +
-    rfrac(polyHTML(E.hs.map(h=>fr(h,1)), q===1?"z":"z<sup>"+q+"</sup>", true),
-          '(1 &minus; '+(q===1?"z":"z<sup>"+q+"</sup>")+')<sup>'+(d+1)+'</sup>') +
+    '&sum;<sub>m&ge;0</sub> |m&thinsp;P &cap; Z<sup>'+(S.n||S.dim)+'</sup>| t<sup>m</sup> = ' +
+    rfrac(polyHTML(E.hs.map(h=>fr(h,1)), "t", true, q),
+          '(1 &minus; '+(q===1?"t":"t<sup>"+q+"</sup>")+')<sup>'+(d+1)+'</sup>') +
     '<br><span style="color:var(--muted)">= ' + terms.join(" + ") + ' + &ctdot;</span>';
 
   /* volume.  For q > 1 the h*-vector belongs to the lattice polytope qP, so the
@@ -1122,19 +1126,19 @@ function readouts(S, counts){
   for(let s=1;s<=d+1;s++) if(S.interior(q*s)>0){ firstInt=q*s; break; }
   $("eh-gor").innerHTML =
     'deg h* = ' + E.deg + ', so the codegree is ' + (d+1) + ' &minus; ' + E.deg + ' = ' + E.codeg +
-    ' and the first dilate with an interior point is t = ' + (E.codeg*q) +
+    ' and the first dilate with an interior point is m = ' + (E.codeg*q) +
     (firstInt===E.codeg*q ? ' &mdash; which is what the interior column says.'
                           : ' &mdash; but the column says ' + firstInt + '!') +
     (E.pal ? ' h* is palindromic, so ' + (q===1?"P":q+"P") + ' is <b>Gorenstein</b>.'
            : ' h* is not palindromic, so it is not Gorenstein.');
 
-  const s0 = (T%q===0 && T>0) ? T/q : Math.max(1, Math.floor(T/q));
+  const s0 = (M%q===0 && M>0) ? M/q : Math.max(1, Math.floor(M/q));
   const rec = evalPow(E.pow, -s0), recVal = Math.round(((d%2)?-1:1)*rec[0]/rec[1]);
   const obs = S.interior(q*s0);
   $("eh-recip").innerHTML =
     '<b>Reciprocity.</b> (&minus;1)<sup>'+d+'</sup>&thinsp;i(&minus;'+(q===1?s0:q+"&middot;"+s0)+') = ' + recVal +
     ', which is exactly the ' + obs.toLocaleString() + ' interior point' + (obs===1?"":"s") +
-    ' at t = ' + (q*s0) + (recVal===obs ? '.' : ' &mdash; mismatch!');
+    ' at m = ' + (q*s0) + (recVal===obs ? '.' : ' &mdash; mismatch!');
 
   gradedReadout(S);
   $("eh-remark").innerHTML = remark(S,E);
@@ -1142,7 +1146,7 @@ function readouts(S, counts){
     '<span class="swatch" style="background:var(--accent)"></span>boundary points &middot; ' +
     '<span class="swatch" style="background:var(--int)"></span>interior points &middot; ' +
     (poly ? 'click a grey grid point to add or drop a vertex, or focus the picture and use the arrow ' +
-            'keys and Enter. The polygon keeps its size and the lattice gets finer as t grows, which ' +
+            'keys and Enter. The polygon keeps its size and the lattice gets finer as m grows, which ' +
             'is the same picture as dilating it.'
           : (S.dim===3 ? 'the solid is drawn at a fixed size, so dilating shows up as a finer lattice ' +
                          'rather than a bigger polytope. Drag to rotate, or focus it and use the arrow keys.'
@@ -1166,31 +1170,31 @@ function denHTML(f){
   const cnt={};
   f.forEach(a=>{ cnt[a]=(cnt[a]||0)+1; });
   return Object.keys(cnt).map(Number).sort((a,b)=>a-b).map(a=>{
-    const base = a===0 ? "(1 &minus; z)" : "(1 &minus; q"+(a===1?"":"<sup>"+a+"</sup>")+"z)";
+    const base = a===0 ? "(1 &minus; t)" : "(1 &minus; q"+(a===1?"":"<sup>"+a+"</sup>")+"t)";
     return base + (cnt[a]>1 ? "<sup>"+cnt[a]+"</sup>" : "");
   }).join("");
 }
 function gradedReadout(S){
   const box = $("eh-graded");
   if(S.kind!=="slice"){ gradedPolyReadout(S, box); return; }
-  const G = graded(S), den = S.q, T = state.T;
+  const G = graded(S), den = S.q, M = state.M;
   const Pn = 'P(' + S.p + ',' + S.q + ',' + S.n + ')';
   let h = '<div class="head">Graded Ehrhart series</div>' +
     '<p class="caption" style="margin:0 0 .5rem">Orbit harmonics grades the lattice points of the ' +
     'k-th dilate of ' + Pn + ' = {x &isin; [0,' + S.q + ']<sup>' + S.n + '</sup> : &sum;x = ' + S.p +
     '}' + (den===1 ? '' : ', which is ' + den + 'P') + ', giving a q-analogue of the count that ' +
     'collapses to the middle column at q = 1' +
-    (den===1 ? '' : '. Here z<sup>k</sup> is the dilate t = ' + den + 'k') + '.</p>';
+    (den===1 ? '' : '. Here t<sup>k</sup> is the dilate m = ' + den + 'k') + '.</p>';
 
-  if(T % den === 0){
-    const k = T/den, row = gradedAt(S,k);
-    const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(T));
+  if(M % den === 0){
+    const k = M/den, row = gradedAt(S,k);
+    const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(M));
     h += '<div class="mono" style="line-height:1.8">Hilb(' + (k===1?"":k+"&thinsp;") + Pn + '; q) = ' + qpHTML(row) +
          '<br><span style="color:var(--muted)">&nbsp;&nbsp;at q = 1: ' + sum.toString() +
-         (sum===want ? ' <span class="ok">= i(' + T + ')</span>' : ' <span class="bad">&ne; i(' + T + ')</span>') +
+         (sum===want ? ' <span class="ok">= i(' + M + ')</span>' : ' <span class="bad">&ne; i(' + M + ')</span>') +
          '</span></div>';
   } else {
-    h += '<div class="caption">t = ' + T + ' is not a multiple of ' + den +
+    h += '<div class="caption">m = ' + M + ' is not a multiple of ' + den +
          ', so this dilate has no lattice points and nothing to grade.</div>';
   }
 
@@ -1199,25 +1203,26 @@ function gradedReadout(S){
     box.innerHTML = h;
     return;
   }
-  h += '<hr class="sep"><div class="mono" style="line-height:1.7">E(q,z) = ' +
-       rfrac('N(q,z)', denHTML(G.f)) + '&nbsp;&nbsp;&nbsp;&nbsp;' +
+  h += '<hr class="sep"><div class="mono" style="line-height:1.7">E(q,t) = ' +
+       rfrac('N(q,t)', denHTML(G.f)) + '&nbsp;&nbsp;&nbsp;&nbsp;' +
        '<span style="color:var(--muted)">interior:</span>&nbsp;' +
-       '&#274;(q,z) = ' + rfrac('N&#772;(q,z)', denHTML(G.f)) + '</div>';
+       '&#274;(q,t) = ' + rfrac('N&#772;(q,t)', denHTML(G.f)) + '</div>';
   if(G.reduced)
     h += '<div class="caption">Predicted denominator ' + denHTML(G.full) + '; one factor cancels ' +
-         'against both numerators' + (G.half ? ', which is the reduction predicted when n &ge; 3 and 2&#8467; = nm'
+         'against both numerators' + (G.half ? ', which is the reduction predicted when n &ge; 3 and ' +
+                                                   '2&#8467; = ' + S.n + '&middot;' + den
                                              : ' &mdash; and that reduction was <b>not</b> predicted') + '.</div>';
   const rows = Math.max(G.nE.length, G.nB.length);
-  let t = '<table class="wide"><tr><th>z<sup>k</sup></th><th>N(q,z)</th><th>N&#772;(q,z)</th></tr>';
+  let tb = '<table class="wide"><tr><th>t<sup>k</sup></th><th>N(q,t)</th><th>N&#772;(q,t)</th></tr>';
   for(let k=0;k<rows;k++){
     const a = (k<G.nE.length && !qzero(G.nE[k])) ? qpHTML(G.nE[k]) : "";
     const b = (k<G.nB.length && !qzero(G.nB[k])) ? qpHTML(G.nB[k]) : "";
-    if(a || b) t += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
+    if(a || b) tb += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
   }
-  h += '<div class="scroll">' + t + '</table></div>';
+  h += '<div class="scroll">' + tb + '</table></div>';
   /* At q = 1 the graded fraction has to become the h*-fraction printed above.  The
-     reduced denominator has F factors and (1-z)^{d+1} is what the ungraded series
-     wants, so N(1,z) must be h*(z) times (1-z)^{F-d-1}. */
+     reduced denominator has F factors and (1-t)^{d+1} is what the ungraded series
+     wants, so N(1,t) must be h*(t) times (1-t)^{F-d-1}. */
   const E1 = ehrhart(S), F = G.f.length, extra = F - (S.dim+1);
   let want = E1.hs.map(BigInt);
   for(let i=0;i<extra;i++) want = qadd(want.concat([0n]), qshift(want.map(x=>-x),1));
@@ -1225,12 +1230,12 @@ function gradedReadout(S){
   while(got.length>1 && got[got.length-1]===0n) got.pop();
   while(want.length>1 && want[want.length-1]===0n) want.pop();
   const q1ok = got.length===want.length && got.every((v,i)=>v===want[i]);
-  h += '<div class="caption">At q = 1: N(1,z) = ' + qpHTML(got,"z") + ' = h*(z)' +
-       (extra>0 ? '(1 &minus; z)' + (extra>1 ? '<sup>'+extra+'</sup>' : '') : '') +
+  h += '<div class="caption">At q = 1: N(1,t) = ' + qpHTML(got,"t") + ' = h*(t)' +
+       (extra>0 ? '(1 &minus; t)' + (extra>1 ? '<sup>'+extra+'</sup>' : '') : '') +
        (q1ok ? ' <span class="ok">&check;</span>, so the fraction above is what this one becomes.'
              : ' <span class="bad">&mdash; mismatch</span>.') + '</div>';
   h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
-       'q<sup>' + (S.n-1) + '</sup>&#274;(z,q) = (&minus;1)<sup>' + S.n + '</sup>E(1/z,1/q) ' +
+       'q<sup>' + (S.n-1) + '</sup>&#274;(t,q) = (&minus;1)<sup>' + S.n + '</sup>E(1/t,1/q) ' +
        (G.recip ? '<span class="ok">holds exactly</span>' : '<span class="bad">FAILS</span>') +
        ', checked coefficient by coefficient on the numerators rather than numerically.' +
        (G.nonneg ? ' Every coefficient of N is non-negative.' : ' N has a negative coefficient.') +
@@ -1238,7 +1243,7 @@ function gradedReadout(S){
   box.innerHTML = h;
 }
 
-/* ---- denominator of the form prod (1 - q^a z^b), as HTML ---- */
+/* ---- denominator of the form prod (1 - q^a t^b), as HTML ---- */
 function den2HTML(fac){
   const cnt={};
   fac.forEach(([a,b])=>{ const k=a+","+b; cnt[k]=(cnt[k]||0)+1; });
@@ -1248,8 +1253,8 @@ function den2HTML(fac){
     }).map(k=>{
       const pr=k.split(",").map(Number), a=pr[0], b=pr[1];
       const qq = a===0 ? "" : (a===1 ? "q" : "q<sup>"+a+"</sup>");
-      const zz = b===1 ? "z" : "z<sup>"+b+"</sup>";
-      return "(1 &minus; "+qq+zz+")" + (cnt[k]>1 ? "<sup>"+cnt[k]+"</sup>" : "");
+      const tt = b===1 ? "t" : "t<sup>"+b+"</sup>";
+      return "(1 &minus; "+qq+tt+")" + (cnt[k]>1 ? "<sup>"+cnt[k]+"</sup>" : "");
     }).join("");
 }
 const NOW_CAP = 900;      /* points we will grade without being asked */
@@ -1260,7 +1265,7 @@ function gradedPolyReadout(S, box){
     box.innerHTML = h + '<p class="caption" style="margin:0">Draw a polygon and this fills in.</p>';
     return;
   }
-  const T = state.T, Z = S.lattice(T), fast = downClosedHilb(Z);
+  const M = state.M, Z = S.lattice(M), fast = downClosedHilb(Z);
   h += '<p class="caption" style="margin:0 0 .5rem">A slice of the cube has a closed formula for ' +
        'this; a polygon does not, so the graded pieces come from the orbit-harmonics ideal, one ' +
        'dilate at a time. ' +
@@ -1274,15 +1279,15 @@ function gradedPolyReadout(S, box){
     let row=null;
     try { row = fast || hilbertOf(Z); } catch(err){ row = null; }
     if(row){
-      const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(T));
-      h += '<div class="mono" style="line-height:1.8">Hilb(' + (T===1?"":T+"&thinsp;") + 'P; q) = ' +
+      const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(M));
+      h += '<div class="mono" style="line-height:1.8">Hilb(' + (M===1?"":M+"&thinsp;") + 'P; q) = ' +
            qpHTML(row) + '<br><span style="color:var(--muted)">&nbsp;&nbsp;at q = 1: ' + sum.toString() +
-           (sum===want ? ' <span class="ok">= i(' + T + ')</span>'
-                       : ' <span class="bad">&ne; i(' + T + ')</span>') + '</span></div>';
+           (sum===want ? ' <span class="ok">= i(' + M + ')</span>'
+                       : ' <span class="bad">&ne; i(' + M + ')</span>') + '</span></div>';
     }
   } else {
-    h += '<div class="caption">' + Z.length.toLocaleString() + ' points at t = ' + T +
-         ' &mdash; past the point where grading a single dilate is quick. Lower t, or draw a smaller polygon.</div>';
+    h += '<div class="caption">' + Z.length.toLocaleString() + ' points at m = ' + M +
+         ' &mdash; past the point where grading a single dilate is quick. Lower m, or draw a smaller polygon.</div>';
   }
 
   h += '<hr class="sep">';
@@ -1312,32 +1317,32 @@ function gradedPolyReadout(S, box){
          (G.Kver < HARD_KMAX || (G.Bmax||0) < 12
            ? '<button id="eh-gp-more">search harder</button>' +
              '<span class="caption" style="margin-left:.6rem">deg&thinsp;q up to 72 and ' +
-             'deg&thinsp;z up to 12, out to ' + (HARD_KMAX+1) + ' dilations, reusing what is ' +
+             'deg&thinsp;t up to 12, out to ' + (HARD_KMAX+1) + ' dilations, reusing what is ' +
              'already computed' + (more > 2000 ? '; perhaps another ' + Math.round(more/1000) +
              ' seconds' : '') + '.</span>'
            : '<div class="caption" style="margin:0">That was the widest search available here. ' +
              'The same method with numpy behind it goes further offline.</div>');
   } else {
     const d2 = den2HTML(G.factors);
-    h += '<div class="mono" style="line-height:1.7">E(q,z) = ' + rfrac('N(q,z)', d2) +
-         '&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">interior:</span>&nbsp; &#274;(q,z) = ' +
-         rfrac('N&#772;(q,z)', d2) + '</div>';
-    let t='<table class="wide"><tr><th>z<sup>k</sup></th><th>N(q,z)</th><th>N&#772;(q,z)</th></tr>';
+    h += '<div class="mono" style="line-height:1.7">E(q,t) = ' + rfrac('N(q,t)', d2) +
+         '&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">interior:</span>&nbsp; &#274;(q,t) = ' +
+         rfrac('N&#772;(q,t)', d2) + '</div>';
+    let tb='<table class="wide"><tr><th>t<sup>k</sup></th><th>N(q,t)</th><th>N&#772;(q,t)</th></tr>';
     for(let k=0;k<Math.max(G.N.length,G.Nb.length);k++){
       const a=(k<G.N.length && !qz(G.N[k])) ? qpHTML(G.N[k]) : "";
       const b=(k<G.Nb.length && !qz(G.Nb[k])) ? qpHTML(G.Nb[k]) : "";
-      if(a||b) t += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
+      if(a||b) tb += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
     }
-    h += '<div class="scroll">' + t + '</table></div>';
+    h += '<div class="scroll">' + tb + '</table></div>';
     h += '<div class="caption">Denominator <b>found by fitting</b>, not derived: it is the smallest ' +
-         '(deg&thinsp;q, deg&thinsp;z) consistent with the first ' + G.Kfit + ' dilations, and it was ' +
+         '(deg&thinsp;q, deg&thinsp;t) consistent with the first ' + G.Kfit + ' dilations, and it was ' +
          'then checked against ' + (G.Kver-G.Kfit) + ' further one' +
          ((G.Kver-G.Kfit)===1 ? '' : 's') + ' it had not seen. ' +
          (G.confirmed ? 'Every Hilbert function behind it was recomputed over a second prime and agreed.'
                       : '<span class="bad">The second prime disagreed &mdash; do not trust this.</span>') +
          '</div>';
     h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
-         'q<sup>2</sup>&#274;(z,q) = &minus;E(1/z,1/q) ' +
+         'q<sup>2</sup>&#274;(t,q) = &minus;E(1/t,1/q) ' +
          (G.recip ? '<span class="ok">holds exactly</span>, checked coefficient by coefficient on the numerators.'
                   : '<span class="bad">FAILS</span> &mdash; the series is rational but not reciprocal. ' +
                     'Worth reproducing in Macaulay2 before trusting it.') + '</div>';
@@ -1374,8 +1379,8 @@ function runGraded(S, E, Eb, target0, hardMax, Amax, Bmax, btn){
         for(let Kfit=4; Kfit<=target-1; Kfit++){
           const fit = fitPolyDen(E, Eb, Kfit, target, Amax, Bmax);
           if(!fit) continue;
-          const N=mulSeriesZ(fit.D,E,target).slice(0,fit.D.length);
-          const Nb=mulSeriesZ(fit.D,Eb,target).slice(0,fit.D.length);
+          const N=mulSeriesT(fit.D,E,target).slice(0,fit.D.length);
+          const Nb=mulSeriesT(fit.D,Eb,target).slice(0,fit.D.length);
           out = { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver:target,
                   recip: recipPoly(N,Nb,2,fit.factors) };
           break;
@@ -1388,7 +1393,7 @@ function runGraded(S, E, Eb, target0, hardMax, Amax, Bmax, btn){
             return;
           }
           finish({ E, Eb, Kver:target, Amax, Bmax,
-                   fail:"no denominator with deg&thinsp;q &le; "+Amax+" and deg&thinsp;z &le; "+Bmax+
+                   fail:"no denominator with deg&thinsp;q &le; "+Amax+" and deg&thinsp;t &le; "+Bmax+
                         " is consistent with the first "+(target-1)+" dilations" });
           return;
         }
@@ -1413,14 +1418,14 @@ $("eh-graded").addEventListener("click", e => {
     const G = S._gp;
     if(!G || !G.E) return;
     /* resume where the first attempt stopped: retry the same depth with a wider
-       (deg q, deg z) first, then keep deepening */
+       (deg q, deg t) first, then keep deepening */
     runGraded(S, G.E, G.Eb, G.Kver, HARD_KMAX, 72, 12, e.target);
   }
 });
 
 function remark(S,E){
   if(S.kind==="poly")
-    return 'Every lattice polygon has i(t) = At<sup>2</sup> + (b/2)t + 1 with A its area and b its ' +
+    return 'Every lattice polygon has i(m) = Am<sup>2</sup> + (b/2)m + 1 with A its area and b its ' +
       'boundary points, so h* = (1, A + b/2 &minus; 2, A &minus; b/2 + 1) and the last entry is the ' +
       'interior count &mdash; reciprocity and Pick’s theorem are the same statement. h* = (1, k, 1) ' +
       'means exactly one interior point, so hunting for a palindromic h* here is hunting for the ' +
@@ -1429,9 +1434,9 @@ function remark(S,E){
   const here = S.q===1
     ? 'c is an integer, so this slice is a lattice polytope &mdash; the hypersimplex &Delta;(' +
       S.n + ',' + S.p + '). Move c off an integer and the vertices pick up a denominator, ' +
-      't&thinsp;P starts missing the lattice, and i(t) becomes a quasi-polynomial.'
-    : 'Its vertices have denominator ' + S.q + ', so t&thinsp;P meets the lattice only when ' + S.q +
-      ' divides t, and i(t) is a quasi-polynomial of period ' + S.q + ' whose other constituents ' +
+      'm&thinsp;P starts missing the lattice, and i(m) becomes a quasi-polynomial.'
+    : 'Its vertices have denominator ' + S.q + ', so m&thinsp;P meets the lattice only when ' + S.q +
+      ' divides m, and i(m) is a quasi-polynomial of period ' + S.q + ' whose other constituents ' +
       'all vanish. Everything here is therefore the Ehrhart data of the lattice polytope ' + S.q +
       'P. At an integer c the slice is a hypersimplex instead.';
   return 'This is the slice of the cube ' + cube + ' at x<sub>1</sub>+&hellip;+x<sub>' + S.n +
@@ -1452,7 +1457,7 @@ const PRESETS = {
   square:  [[1,1],[5,1],[5,5],[1,5]],
   hex:     [[2,1],[4,1],[5,3],[4,5],[2,5],[1,3]]
 };
-const state = { shape:"s4", ci:{s3:5, s4:7}, T:2, yaw:1.18, pitch:0.56,
+const state = { shape:"poly", ci:{s3:5, s4:7}, M:2, yaw:1.18, pitch:0.56,
                 gens:PRESETS.hex.slice(), grid:6, cur:[0,0], undo:[] };
 
 let cache = { sig:null, S:null };
@@ -1508,15 +1513,15 @@ $("eh-shape").addEventListener("change", e => {
   syncChrome(); draw();
 });
 $("eh-c").addEventListener("input", e => { state.ci[state.shape]=+e.target.value; syncChrome(); draw(); });
-$("eh-t").addEventListener("input", e => setT(+e.target.value));
-function setT(t){
-  state.T = Math.max(1, Math.min(TMAX, t));
-  $("eh-t").value = state.T; $("eh-tv").textContent = state.T;
+$("eh-m").addEventListener("input", e => setM(+e.target.value));
+function setM(m){
+  state.M = Math.max(1, Math.min(MMAX, m));
+  $("eh-m").value = state.M; $("eh-mv").textContent = state.M;
   draw();
 }
 $("eh-table").addEventListener("click", e => {          /* click a row to jump the picture */
   const tr = e.target.closest ? e.target.closest("tr") : null;
-  if(tr && tr.classList.contains("pick")) setT(+tr.getAttribute("data-t"));
+  if(tr && tr.classList.contains("pick")) setM(+tr.getAttribute("data-m"));
 });
 $("eh-reset").addEventListener("click", ()=>{ const v=VIEW(); state.yaw=v[0]; state.pitch=v[1]; draw(); });
 $("eh-grid").addEventListener("input", e => {
@@ -1620,7 +1625,7 @@ stage.addEventListener("keydown", e => {
 /* ============================== link and SVG export ============================== */
 function say(t){ $("eh-msg").innerHTML = t; setTimeout(()=>{ $("eh-msg").textContent=""; }, 2600); }
 function stateHash(){
-  const p = ["sh="+state.shape, "t="+state.T];
+  const p = ["sh="+state.shape, "m="+state.M];
   if(state.shape==="poly"){
     p.push("n="+state.grid);
     p.push("g="+state.gens.map(g=>g[0]+"."+g[1]).join("-"));
@@ -1634,8 +1639,8 @@ function applyHash(){
   h.split("&").forEach(kv=>{ const i=kv.indexOf("="); if(i>0) q[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1)); });
   if(!/^(s3|s4|poly)$/.test(q.sh||"")) return false;
   state.shape = q.sh;
-  const t = Math.round(+q.t);
-  if(Number.isFinite(t) && t>=1 && t<=TMAX) state.T = t;
+  const m = Math.round(+q.m);
+  if(Number.isFinite(m) && m>=1 && m<=MMAX) state.M = m;
   if(q.sh==="poly"){
     const n = Math.round(+q.n);
     if(Number.isFinite(n) && n>=3 && n<=10) state.grid = n;
@@ -1682,7 +1687,7 @@ $("eh-svg").addEventListener("click", ()=>{
   s = '<?xml version="1.0" encoding="UTF-8"?>\n' + s;
   const name = (state.shape==="poly" ? "polygon"
               : "slice-"+state.shape.slice(1)+"-c"+frText(CS[state.shape][state.ci[state.shape]]).replace("/","-"))
-              + "-t" + state.T + ".svg";
+              + "-m" + state.M + ".svg";
   const url = URL.createObjectURL(new Blob([s], {type:"image/svg+xml"}));
   const a = document.createElement("a");
   a.href = url; a.download = name;
@@ -1694,7 +1699,7 @@ $("eh-svg").addEventListener("click", ()=>{
 /* ==================================== boot ==================================== */
 function syncUI(){
   $("eh-shape").value = state.shape;
-  $("eh-t").value = state.T; $("eh-tv").textContent = state.T;
+  $("eh-m").value = state.M; $("eh-mv").textContent = state.M;
   $("eh-grid").value = state.grid; $("eh-gridv").textContent = state.grid;
   syncChrome();
 }

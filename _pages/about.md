@@ -84,8 +84,8 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
         <circle cx="36" cy="8" r="3.4"/>
       </g>
     </svg>
-    <span class="demo-title">Ehrhart theory, by hand</span>
-    <span class="demo-note">Dilate a polytope or draw your own lattice polygon and watch its counting polynomial appear.</span>
+    <span class="demo-title">Ehrhart theory</span>
+    <span class="demo-note">Draw your own lattice polygon and watch its counting polynomial appear.</span>
   </a>
 </div>
 </div>
