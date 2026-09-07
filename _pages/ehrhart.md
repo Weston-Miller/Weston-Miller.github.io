@@ -1404,10 +1404,7 @@ function gradedPolyReadout(S, box){
     h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
          'q<sup>2</sup>&#274;(t,q) = &minus;E(1/t,1/q) ' +
          (G.recip ? '<span class="ok">holds exactly</span>, checked coefficient by coefficient on the numerators.'
-                  : '<span class="bad">FAILS</span> &mdash; the series is rational but not reciprocal. ' +
-                    'That is a real phenomenon, not an artefact of the fit: both numerators are exact ' +
-                    'integer polynomials and the first polygon found this way has been reproduced in ' +
-                    'Macaulay2. A new one is still worth reproducing there before it goes in a paper.') +
+                  : '<span class="bad">FAILS</span> &mdash; the series is rational but not reciprocal.') +
          '</div>';
   }
   box.innerHTML = h;
@@ -1599,12 +1596,10 @@ $("eh-graded").addEventListener("click", e => {
 
 function remark(S,E){
   if(S.kind==="poly" && S.ok && S.V.map(g=>g.join(".")).sort().join(" ")===QUAD_KEY)
-    return 'This is the reason the button is here. Its ungraded Ehrhart data is unremarkable and ' +
+    return 'This polygon\'s ungraded Ehrhart data is unremarkable and ' +
       'Ehrhart&ndash;Macdonald holds, but the <b>graded</b> series &mdash; rational, with denominator ' +
       '(1 &minus; t)(1 &minus; q<sup>4</sup>t)<sup>2</sup> &mdash; is <b>not</b> reciprocal. Run the ' +
-      'search below and see. Both numerators are exact integer polynomials, every Hilbert function ' +
-      'behind them was recomputed over a second prime, and the failure has been reproduced in ' +
-      'Macaulay2 independently of this page.';
+      'search below and see.';
   if(S.kind==="poly")
     return 'Every lattice polygon has i(m) = Am<sup>2</sup> + (b/2)m + 1 with A its area and b its ' +
       'boundary points, so h* = (1, A + b/2 &minus; 2, A &minus; b/2 + 1) and the last entry is the ' +
