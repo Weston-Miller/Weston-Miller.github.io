@@ -624,7 +624,8 @@ const gradedAt = (S,k) => { const row=[];
         new rows leave a block already zero at every earlier pivot, so reducing
         against it is a forward substitution and each basis row is written once.
         Modular reduction is deferred CHUNK updates at a time -- entries stay under
-        CHUNK*p^2 < 2^53, so the float64 arithmetic is exact integer arithmetic.
+        CHUNK*p^2 = 4.1e15, half of 2^53, so the float64 arithmetic is exact integer
+        arithmetic and the reduction itself all but disappears from the profile.
      3. The denominator is found by searching (deg_q, deg_z) smallest-first.  The
         smallest model that fits is the one that needs the fewest dilations: in every
         case tried, four to seven dilations sufficed where a fixed large deg_q needed
@@ -633,7 +634,7 @@ const gradedAt = (S,k) => { const row=[];
    Two primes are run and the answer is refused if they disagree: a single prime can
    only undercount a rank, which would move a unit of Hilbert function to a later
    degree while the total still came out right.                                    */
-const HP1 = 1000003, HP2 = 999983, HPF = 1000003, HCHUNK = 256;
+const HP1 = 1000003, HP2 = 999983, HPF = 1000003, HCHUNK = 4096;
 const SYM8 = [[1,0,0,1],[-1,0,0,1],[1,0,0,-1],[-1,0,0,-1],[0,1,1,0],[0,-1,1,0],[0,1,-1,0],[0,-1,-1,0]];
 
 function downClosedHilb(Z){
@@ -1408,7 +1409,7 @@ const CS = {
 const PRESETS = {
   triangle:[[0,0],[4,0],[1,4]],
   square:  [[1,1],[5,1],[5,5],[1,5]],
-  hex:     [[2,0],[4,1],[5,3],[4,5],[2,6],[0,3]]
+  hex:     [[2,1],[4,1],[5,3],[4,5],[2,5],[1,3]]
 };
 const state = { shape:"s4", ci:{s3:5, s4:7}, T:2, yaw:1.18, pitch:0.56,
                 gens:PRESETS.hex.slice(), grid:6, cur:[0,0], kb:false, undo:[] };
