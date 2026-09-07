@@ -701,12 +701,25 @@ function hilbRank(Z, p){
   while(hilb.length && hilb[hilb.length-1]===0) hilb.pop();
   return hilb.map(v=>BigInt(v));
 }
-function hilbertOf(Z){
+/* One prime while searching, the second only to confirm an answer.  A single prime
+   can only UNDERcount a rank, which would move a unit of Hilbert function to a later
+   degree while the total still came out right -- so one prime is not trustworthy on
+   its own, but it is trustworthy enough to explore with, and confirming at the end
+   costs the second pass only when there is something to confirm. */
+function hilbertOf(Z, p){
   const fast = downClosedHilb(Z);
   if(fast) return fast;
-  const a = hilbRank(Z, HP1), b = hilbRank(Z, HP2);
-  if(a.join(",") !== b.join(",")) throw new Error("the two primes disagreed");
-  return a;
+  return hilbRank(Z, p || HP1);
+}
+function confirmSeries(S, Kver){
+  for(let k=0;k<=Kver;k++){
+    const Z=S.lattice(k);
+    if(downClosedHilb(Z)) continue;
+    const Zi=Z.filter(pt=>S.isInt(pt,k));
+    if(hilbRank(Z,HP2).join(",") !== hilbertOf(Z,HP1).join(",")) return false;
+    if(Zi.length && hilbRank(Zi,HP2).join(",") !== hilbertOf(Zi,HP1).join(",")) return false;
+  }
+  return true;
 }
 
 /* ---- the denominator, found by a smallest-first search over (deg_q, deg_z) ----
@@ -779,21 +792,39 @@ function recipPoly(N,Nb,d,fac){
     if(co(Nb,k,e-d) !== sgn*co(N,Bt-k,Sq-e)) return false;
   return true;
 }
+/* The q-degree of Hilb_k grows linearly, and its rate is exactly max(a_i/b_i) over
+   the denominator's factors -- measured, not assumed: for the page's own hexagon the
+   observed 20/3 is the 20/3 of its (1 - q^20 z^3) factor.  So a term q^a z^b of D can
+   only appear with a <= alpha*b, which is what keeps a large deg q affordable: the
+   unknowns grow like alpha*B^2/2 instead of (alpha*B)*B. */
 function fitPolyDen(E, Eb, Kfit, Kver, Amax, Bmax){
+  let alpha = 1;
+  for(let k=1;k<E.length;k++) if(E[k].length>1) alpha = Math.max(alpha, (E[k].length-1)/k);
   const cands=[];
-  for(let A=1;A<=Amax;A++) for(let B=3;B<=Bmax;B++) cands.push([(A+1)*(B+1),A,B]);
+  for(let B=3;B<=Bmax;B++){
+    const A = Math.min(Amax, Math.ceil(alpha*B)+2);
+    const cols=[];
+    for(let b=0;b<=B;b++){
+      const hi = Math.min(A, Math.ceil(alpha*b)+2);
+      for(let a=0;a<=hi;a++) cols.push([a,b]);
+    }
+    cands.push([cols.length, A, B, cols]);
+  }
   cands.sort((u,v)=>u[0]-v[0]);
-  for(const [,A,B] of cands){
+  for(const [,A,B,cols] of cands){
     if(B>=Kfit) continue;
-    const nun=(A+1)*(B+1), idx=(a,b)=>b*(A+1)+a, rows=[];
+    const nun=cols.length, pos={};
+    cols.forEach((ab,i)=>{ pos[ab[0]+","+ab[1]]=i; });
+    const idx=(a,b)=>{ const v=pos[a+","+b]; return v===undefined ? -1 : v; };
+    const rows=[];
     for(const S of [E,Eb]){
       let em=0; S.forEach(r=>{ if(r.length>em) em=r.length; }); em+=A+1;
       for(let k=B+1;k<=Kfit;k++) for(let e=0;e<=em;e++){
         const row=new Float64Array(nun+1); let any=false;
-        for(let b=0;b<=B;b++) for(let a=0;a<=A;a++){
-          const v=Number(seriesAt(S,k-b,e-a));
+        for(let c=0;c<cols.length;c++){
+          const a=cols[c][0], b=cols[c][1], v=Number(seriesAt(S,k-b,e-a));
           if(v){ if(a===0&&b===0){ let t=(row[nun]-v)%HPF; if(t<0) t+=HPF; row[nun]=t; }
-                 else { row[idx(a,b)]=((v%HPF)+HPF)%HPF; any=true; } }
+                 else { row[c]=((v%HPF)+HPF)%HPF; any=true; } }
         }
         if(any || row[nun]) rows.push(row);
       }
@@ -805,7 +836,8 @@ function fitPolyDen(E, Eb, Kfit, Kver, Amax, Bmax){
     const D=[];
     for(let b=0;b<=B;b++){
       const row=[];
-      for(let a=0;a<=A;a++) row.push((a===0&&b===0) ? 1n : cen(x[idx(a,b)]));
+      for(let a=0;a<=A;a++){ const c=idx(a,b);
+        row.push((a===0&&b===0) ? 1n : (c<0 ? 0n : cen(x[c]))); }
       D.push(qtrim(row));
     }
     while(D.length>1 && qz(D[D.length-1])) D.pop();
@@ -821,6 +853,30 @@ function fitPolyDen(E, Eb, Kfit, Kver, Amax, Bmax){
    the expensive part, so it is computed once and then fitted at increasing Kfit -- the
    smallest model that fits needs the fewest dilations, and stopping at the first one
    that also survives verification is what keeps this inside a browser. */
+/* How far to go.  The Hilbert data is the whole cost and it grows like N^3, so the
+   number of dilations is chosen from the polygon's own size against a time budget --
+   measured at 4.4e-10 ms per N^3 in this kernel.  A polygon whose lattice points are
+   an order ideal costs nothing at any size, so it simply gets more dilations. */
+/* 1e-6 ms per N^3 per pass, calibrated against this kernel in a browser; the whole
+   job is four passes -- the polytope and its interior, each over two primes.  The
+   budget is generous because the work is opt-in and runs one dilation per tick, so
+   the page stays responsive whatever it costs. */
+const RANK_MS_PER_N3 = 1.0e-6, RANK_BUDGET_MS = 30000;
+const cost = (S,k) => { let s=0;
+  for(let j=0;j<=k;j++){ const n=S.count(j); s += 4*RANK_MS_PER_N3*n*n*n; }
+  return s; };
+/* Start shallow and go deeper only if the fit fails.  Most polygons are settled by
+   seven dilations; the ones that are not need a denominator of higher z-degree, which
+   needs more dilations to pin down, and the extra cost is paid only by them. */
+function planFor(S){
+  if(!S.ok) return { Kmax:0, K0:0, dc:false, est:0, ok:false };
+  if(downClosedHilb(S.lattice(1)))
+    return { Kmax:14, K0:14, dc:true, est:0, ok:true, top:S.count(14) };
+  let Kmax=0;
+  for(let k=6;k<=13;k++){ if(cost(S,k) > RANK_BUDGET_MS) break; Kmax=k; }
+  const K0 = Math.min(Kmax, 7);
+  return { Kmax, K0, dc:false, est:cost(S,Kmax), ok:Kmax>=6, top:S.count(Kmax||6) };
+}
 function gradedPolygon(S, Kver){
   const E=[], Eb=[];
   for(let k=0;k<=Kver;k++){
@@ -828,16 +884,17 @@ function gradedPolygon(S, Kver){
     E.push(hilbertOf(Z));
     Eb.push(hilbertOf(Z.filter(pt=>S.isInt(pt,k))));
   }
-  for(let Kfit=4; Kfit<Kver; Kfit++){
-    const fit = fitPolyDen(E, Eb, Kfit, Kver, 14, 5);
+  for(let Kfit=4; Kfit<=Kver-2; Kfit++){
+    const fit = fitPolyDen(E, Eb, Kfit, Kver, 40, 6);
     if(!fit) continue;
     const N=mulSeriesZ(fit.D,E,Kver).slice(0,fit.D.length);
     const Nb=mulSeriesZ(fit.D,Eb,Kver).slice(0,fit.D.length);
-    return { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver,
+    const confirmed = confirmSeries(S, Kver);
+    return { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver, confirmed,
              recip: recipPoly(N,Nb,2,fit.factors) };
   }
-  return { E, Eb, fail:"no denominator with deg&thinsp;q &le; 14 and deg&thinsp;z &le; 5 is "+
-                       "consistent with the first "+(Kver-1)+" dilations" };
+  return { E, Eb, Kver, fail:"no denominator with deg&thinsp;z &le; 6 is consistent with the first "+
+                       (Kver-2)+" dilations" };
 }
 
 /* ================================== rendering ================================== */
@@ -1178,7 +1235,6 @@ function den2HTML(fac){
     }).join("");
 }
 const NOW_CAP = 900;      /* points we will grade without being asked */
-const FIT_KV  = 7;        /* dilations the closed-form search verifies on */
 
 function gradedPolyReadout(S, box){
   let h = '<div class="head">Graded Ehrhart series</div>';
@@ -1212,13 +1268,22 @@ function gradedPolyReadout(S, box){
   }
 
   h += '<hr class="sep">';
-  const G = S._gp;
-  if(!G){
-    const big = S.count(FIT_KV);
+  const G = S._gp, plan = planFor(S);
+  if(!G && !plan.ok){
+    h += '<div class="note plain" style="margin-bottom:0">This polygon is too big to grade here: ' +
+         'even seven dilations would need ' + S.count(6).toLocaleString() + ' points at the top, and ' +
+         'the rank computation grows like the cube of that. The numbers are still reachable offline ' +
+         '&mdash; the same method with numpy behind it handles this size in seconds. Shrink the ' +
+         'polygon, or move it into the standard position if it happens to be anti-blocking.</div>';
+  } else if(!G){
     h += '<button id="eh-gp-run">find the closed rational form</button>' +
-         '<span class="caption" style="margin-left:.6rem">needs the first ' + FIT_KV +
-         ' dilations' + (fast ? ' &mdash; instant here' : ', up to ' + big.toLocaleString() +
-         ' points' + (big>1400 ? '. This one is large; expect a few seconds.' : '.')) + '</span>';
+         '<span class="caption" style="margin-left:.6rem">starts at ' + (plan.K0+1) + ' dilations' +
+         (plan.dc ? ' &mdash; instant here, the lattice points are an order ideal'
+                  : ' and goes deeper only if it has to, up to ' + (plan.Kmax+1) + ' and ' +
+                    plan.top.toLocaleString() + ' points; ' +
+                    (plan.est<2000 ? 'a second or two at worst' :
+                     'about ' + Math.round(plan.est/1000) + ' seconds at worst') +
+                    ', one dilation at a time') + '.</span>';
   } else if(G.err){
     h += '<div class="note plain" style="margin-bottom:0">' + G.err + '</div>';
   } else if(G.fail){
@@ -1238,7 +1303,11 @@ function gradedPolyReadout(S, box){
     h += '<div class="scroll">' + t + '</table></div>';
     h += '<div class="caption">Denominator <b>found by fitting</b>, not derived: it is the smallest ' +
          '(deg&thinsp;q, deg&thinsp;z) consistent with the first ' + G.Kfit + ' dilations, and it was ' +
-         'then checked against ' + (G.Kver-G.Kfit) + ' further ones it had not seen.</div>';
+         'then checked against ' + (G.Kver-G.Kfit) + ' further one' +
+         ((G.Kver-G.Kfit)===1 ? '' : 's') + ' it had not seen. ' +
+         (G.confirmed ? 'Every Hilbert function behind it was recomputed over a second prime and agreed.'
+                      : '<span class="bad">The second prime disagreed &mdash; do not trust this.</span>') +
+         '</div>';
     h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
          'q<sup>2</sup>&#274;(z,q) = &minus;E(1/z,1/q) ' +
          (G.recip ? '<span class="ok">holds exactly</span>, checked coefficient by coefficient on the numerators.'
@@ -1247,15 +1316,64 @@ function gradedPolyReadout(S, box){
   }
   box.innerHTML = h;
 }
+/* One dilation per tick.  The individual ranks are bounded by the plan, so the page
+   keeps painting and can say how far along it is instead of locking up. */
 $("eh-graded").addEventListener("click", e => {
   if(!e.target || e.target.id !== "eh-gp-run") return;
-  const S = shape();
+  const S = shape(), plan = planFor(S);
+  const bar = document.createElement("div");
+  bar.className = "caption"; bar.id = "eh-gp-prog"; bar.style.marginTop = ".4rem";
   e.target.disabled = true; e.target.textContent = "computing…";
-  setTimeout(()=>{                       /* let the button repaint before we block */
-    try { S._gp = gradedPolygon(S, FIT_KV); }
-    catch(err){ S._gp = { err: err.message }; }
-    draw();
-  }, 30);
+  e.target.parentNode.insertBefore(bar, e.target.nextSibling);
+  const E=[], Eb=[];
+  let k=0, target=plan.K0;
+  const say = t => { bar.innerHTML = t; };
+  const finish = out => { S._gp = out; draw(); };
+  const step = () => {
+    try {
+      if(k <= target){
+        const Z = S.lattice(k);
+        E.push(hilbertOf(Z));
+        Eb.push(hilbertOf(Z.filter(pt => S.isInt(pt,k))));
+        k++;
+        say("dilation " + k + " of " + (target+1) + "…");
+        setTimeout(step, 0);
+        return;
+      }
+      say("fitting the denominator…");
+      setTimeout(()=>{
+        let out = null;
+        for(let Kfit=4; Kfit<=target-1; Kfit++){
+          const fit = fitPolyDen(E, Eb, Kfit, target, 40, 8);
+          if(!fit) continue;
+          const N=mulSeriesZ(fit.D,E,target).slice(0,fit.D.length);
+          const Nb=mulSeriesZ(fit.D,Eb,target).slice(0,fit.D.length);
+          out = { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver:target,
+                  recip: recipPoly(N,Nb,2,fit.factors) };
+          break;
+        }
+        if(!out){
+          if(target < plan.Kmax){                 /* go deeper, keeping what we have */
+            target = Math.min(plan.Kmax, target+2);
+            say("no fit yet &mdash; going out to " + (target+1) + " dilations…");
+            setTimeout(step, 0);
+            return;
+          }
+          finish({ E, Eb, Kver:target,
+                   fail:"no denominator with deg&thinsp;z &le; 8 is consistent with the first "+
+                        (target-1)+" dilations, which is as far as this polygon's size allows here" });
+          return;
+        }
+        say("confirming over a second prime…");
+        setTimeout(()=>{
+          try { out.confirmed = confirmSeries(S, target); }
+          catch(err){ out.confirmed = false; }
+          finish(out);
+        }, 0);
+      }, 0);
+    } catch(err){ finish({ err: err.message }); }
+  };
+  setTimeout(step, 0);
 });
 
 function remark(S,E){
