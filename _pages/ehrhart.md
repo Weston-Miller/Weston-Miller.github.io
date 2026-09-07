@@ -195,7 +195,8 @@ nav: false
   Companion to <i>Graded Ehrhart theory for hypersimplices</i>,
   <a href="https://arxiv.org/abs/2608.27438">arXiv:2608.27438</a>. The algebraic side of the same paper
   &mdash; matchings, the harmonic algebra, maximal tableaux &mdash; is at
-  <a href="/graph-demos/">graph demos</a>.
+  <a href="/graph-demos/">graph demos</a>. All of the demos are listed
+  <a href="/demos/">here</a>.
 </p>
 </div><!-- /.wrap -->
 

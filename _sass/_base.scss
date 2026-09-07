@@ -1484,7 +1484,9 @@ ninja-keys::part(ninja-input-wrapper) {
 
         // Must come after the shorthand above: `animation:` resets
         // animation-delay, so a delay set anywhere else is discarded.
-        @for $i from 1 through 6 {
+        // Eight covers the largest icon (the Ehrhart triangle's 7 points);
+        // a card with fewer vertices simply leaves the tail unmatched.
+        @for $i from 1 through 8 {
           &:nth-child(#{$i}) {
             animation-delay: 0.42s + 0.07 * $i;
           }

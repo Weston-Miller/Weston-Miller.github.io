@@ -28,7 +28,7 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
 <div class="demos-section">
 <h2><a href="{{ '/demos/' | relative_url }}" style="color: inherit">demos</a></h2>
 
-<p>Each of my papers has an interactive companion that runs its construction on an example you choose.</p>
+<p>Each of my papers has an interactive companion that runs its construction on an example you choose, and one more for the lattice-point counting they all sit on.</p>
 
 <div class="demo-strip">
   <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
@@ -67,6 +67,25 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
     </svg>
     <span class="demo-title">Rational Catalan numbers</span>
     <span class="demo-note">Compute traces and Catalan numbers for any complex reflection group.</span>
+  </a>
+
+  <a class="demo-card" href="{{ '/ehrhart/' | relative_url }}">
+    <svg viewBox="0 0 100 60" aria-hidden="true">
+      <g fill="var(--global-text-color)" opacity="0.28">
+        <circle cx="14" cy="52" r="1.4"/><circle cx="36" cy="52" r="1.4"/><circle cx="58" cy="52" r="1.4"/><circle cx="80" cy="52" r="1.4"/>
+        <circle cx="14" cy="30" r="1.4"/><circle cx="36" cy="30" r="1.4"/><circle cx="58" cy="30" r="1.4"/><circle cx="80" cy="30" r="1.4"/>
+        <circle cx="14" cy="8" r="1.4"/><circle cx="36" cy="8" r="1.4"/><circle cx="58" cy="8" r="1.4"/><circle cx="80" cy="8" r="1.4"/>
+      </g>
+      <path class="draw" pathLength="100" d="M14 52 L80 52 L36 8 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <g class="nodes" fill="currentColor">
+        <circle cx="14" cy="52" r="3.4"/><circle cx="36" cy="52" r="3.4"/>
+        <circle cx="58" cy="52" r="3.4"/><circle cx="80" cy="52" r="3.4"/>
+        <circle cx="36" cy="30" r="3.4"/><circle cx="58" cy="30" r="3.4"/>
+        <circle cx="36" cy="8" r="3.4"/>
+      </g>
+    </svg>
+    <span class="demo-title">Ehrhart theory, by hand</span>
+    <span class="demo-note">Dilate a polytope or draw your own lattice polygon and watch its counting polynomial appear.</span>
   </a>
 </div>
 </div>

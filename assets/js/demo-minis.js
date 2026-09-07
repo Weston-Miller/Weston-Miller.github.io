@@ -4,9 +4,10 @@
  * animates itself once when scrolled into view, and again on hover. All three
  * are miniatures of the full demos they sit beside:
  *
- *   cycle  a lattice path rotated until it stays above the diagonal
- *   tree   a random labelled tree in its cyclic embedding
- *   graph  a loopless multigraph with one of its 2-factors picked out
+ *   cycle    a lattice path rotated until it stays above the diagonal
+ *   tree     a random labelled tree in its cyclic embedding
+ *   graph    a loopless multigraph with one of its 2-factors picked out
+ *   lattice  a lattice triangle counted at t = 1, 2, 3
  *
  * pruferToTree, cyclicEmbedding and layout are copied verbatim from the Cayley
  * demo (_pages/cayley.md); keep them in step if that page changes.
@@ -332,9 +333,80 @@
     };
   }
 
+  /* ---------------- lattice polygon and its dilates ---------------- */
+
+  // The picture Ehrhart's theorem is about: one triangle, redrawn at t = 1, 2, 3
+  // with the lattice points it contains. Three dilates is the ceiling -- 4P is
+  // already 60-odd dots in a 180px column, and they stop reading as points.
+  const EH_VERTS = [[0, 0], [3, 0], [1, 2]];
+  const EH_TMAX = 3;
+
+  // Convex and listed counter-clockwise, so "inside or on the boundary" is a
+  // sign test on every edge. Boundary points count, which is the whole point.
+  function inTriangle(a, b, v) {
+    for (let i = 0; i < v.length; i++) {
+      const p = v[i], q = v[(i + 1) % v.length];
+      if ((q[0] - p[0]) * (b - p[1]) - (q[1] - p[1]) * (a - p[0]) < 0) return false;
+    }
+    return true;
+  }
+
+  function latticeMini(host, svg) {
+    const W = 220, H = 150, pad = 12;
+    // The frame is sized for the largest dilate and never moves, so what the eye
+    // sees between frames is the triangle growing, not the picture rescaling.
+    const spanX = EH_TMAX * 3, spanY = EH_TMAX * 2;
+    const cell = Math.min((W - 2 * pad) / spanX, (H - 2 * pad) / spanY);
+    const ox = (W - cell * spanX) / 2;
+    const oy = (H + cell * spanY) / 2;
+    const X = (u) => ox + cell * u;
+    const Y = (w) => oy - cell * w;
+    let t = EH_TMAX;
+
+    function render() {
+      svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+      svg.textContent = "";
+      const v = EH_VERTS.map((p) => [t * p[0], t * p[1]]);
+
+      // Faint dots for the whole visible lattice, kept outside .nodes so they
+      // sit still while the counted points pop.
+      const ghosts = el("g", { opacity: 0.28 }, svg);
+      for (let a = 0; a <= spanX; a++)
+        for (let b = 0; b <= spanY; b++)
+          el("circle", { cx: X(a), cy: Y(b), r: 1.6,
+            fill: "var(--global-text-color)" }, ghosts);
+
+      let d = "M " + X(v[0][0]) + " " + Y(v[0][1]);
+      for (let i = 1; i < v.length; i++) d += " L " + X(v[i][0]) + " " + Y(v[i][1]);
+      el("path", { class: "draw", pathLength: 100, d: d + " Z", fill: "none",
+        stroke: "currentColor", "stroke-width": 2.5, "stroke-linejoin": "round" }, svg);
+
+      const nodes = el("g", { class: "nodes" }, svg);
+      for (let a = 0; a <= spanX; a++)
+        for (let b = 0; b <= spanY; b++)
+          if (inTriangle(a, b, v))
+            el("circle", { cx: X(a), cy: Y(b), r: 3.6, fill: "currentColor" }, nodes);
+    }
+
+    render();                                      // rest state: the largest dilate
+    return function play(finish) {
+      t = 1;
+      render();
+      setTimeout(function () {
+        t = 2;
+        render();
+        setTimeout(function () {
+          t = EH_TMAX;
+          render();
+          setTimeout(finish, 1100);
+        }, 800);
+      }, 800);
+    };
+  }
+
   /* ---------------- wiring ---------------- */
 
-  const KINDS = { cycle: cycleMini, tree: treeMini, graph: graphMini };
+  const KINDS = { cycle: cycleMini, tree: treeMini, graph: graphMini, lattice: latticeMini };
 
   function setup(host, index) {
     const build = KINDS[host.dataset.kind];

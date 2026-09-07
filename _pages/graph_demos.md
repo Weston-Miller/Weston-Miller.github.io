@@ -221,7 +221,8 @@ nav: false
     <p class="desc">The graded <em>q</em>-Ehrhart series of the cube slice
       P<sub>&#8467;,m,n</sub> in closed rational form, its interior series, and an exact
       <em>q</em>-reciprocity check. Uses &#8467;, m and n; taking m = 1 gives the hypersimplex
-      &Delta;<sub>&#8467;,n</sub>.</p>
+      &Delta;<sub>&#8467;,n</sub>. To see these slices drawn, and the ungraded theory they
+      refine, go to <a href="/ehrhart/">Ehrhart theory, by hand</a>.</p>
     <div class="runbar">
       <button class="run primary" data-run="ehrhart">Compute series</button>
       <button class="stop" data-stop="ehrhart" hidden>Stop</button>
