@@ -514,6 +514,8 @@ const qmul = (a,b) => { if(!a.length||!b.length) return [];
   return r; };
 const qshift = (p,a) => new Array(a).fill(0n).concat(p);
 const qzero  = p => !p.some(x => x!==0n);
+const qz     = qzero;
+const qtrim  = a => { const r=a.slice(); while(r.length>1 && r[r.length-1]===0n) r.pop(); return r; };
 
 /* (1 - q^l z)^{n-1} * prod_{j=0}^{ceil(l/m)-1} (1 - q^{jm} z) */
 function denFactors(l,n,m){
@@ -609,6 +611,234 @@ function graded(S){
 const gradedAt = (S,k) => { const row=[];
   for(let d=0; d<=k*S.p; d++) row.push(qdelta(d, k*S.q, S.n));
   return row; };
+
+/* ===================== graded data for a polygon you draw =====================
+   A cube slice has a closed form; a general lattice polygon does not, and its graded
+   pieces have to come out of the orbit-harmonics ideal one dilate at a time.  Three
+   things make that affordable here:
+
+     1. If the lattice points are an order ideal of N^2 -- P anti-blocking, possibly
+        after one of the eight lattice symmetries -- the Hilbert function is just the
+        point count by coordinate sum.  No linear algebra at all, at any size.
+     2. Otherwise it is a rank computation over F_p.  The basis is never re-reduced:
+        new rows leave a block already zero at every earlier pivot, so reducing
+        against it is a forward substitution and each basis row is written once.
+        Modular reduction is deferred CHUNK updates at a time -- entries stay under
+        CHUNK*p^2 < 2^53, so the float64 arithmetic is exact integer arithmetic.
+     3. The denominator is found by searching (deg_q, deg_z) smallest-first.  The
+        smallest model that fits is the one that needs the fewest dilations: in every
+        case tried, four to seven dilations sufficed where a fixed large deg_q needed
+        fourteen.  That is what brings the whole thing inside a browser.
+
+   Two primes are run and the answer is refused if they disagree: a single prime can
+   only undercount a rank, which would move a unit of Hilbert function to a later
+   degree while the total still came out right.                                    */
+const HP1 = 1000003, HP2 = 999983, HPF = 1000003, HCHUNK = 256;
+const SYM8 = [[1,0,0,1],[-1,0,0,1],[1,0,0,-1],[-1,0,0,-1],[0,1,1,0],[0,-1,1,0],[0,1,-1,0],[0,-1,-1,0]];
+
+function downClosedHilb(Z){
+  if(!Z.length) return [];
+  for(const [a,b,c,d] of SYM8){
+    let mnx=Infinity, mny=Infinity;
+    const W = Z.map(q=>{ const u=a*q[0]+b*q[1], v=c*q[0]+d*q[1];
+      if(u<mnx) mnx=u; if(v<mny) mny=v; return [u,v]; });
+    const S = new Set();
+    for(const q of W) S.add((q[0]-mnx)+","+(q[1]-mny));
+    let ok=true;
+    for(const key of S){
+      const pr=key.split(","), i=+pr[0], j=+pr[1];
+      if((i>0 && !S.has((i-1)+","+j)) || (j>0 && !S.has(i+","+(j-1)))){ ok=false; break; }
+    }
+    if(!ok) continue;
+    const h=[];
+    for(const key of S){ const pr=key.split(","), e=(+pr[0])+(+pr[1]);
+      while(h.length<=e) h.push(0n); h[e]+=1n; }
+    return h;
+  }
+  return null;
+}
+function hilbRank(Z, p){
+  const N=Z.length; if(!N) return [];
+  const x=new Float64Array(N), y=new Float64Array(N);
+  for(let i=0;i<N;i++){ x[i]=((Z[i][0]%p)+p)%p; y[i]=((Z[i][1]%p)+p)%p; }
+  const xp=[new Float64Array(N).fill(1)], yp=[new Float64Array(N).fill(1)];
+  const R=[], piv=[], lead=[], hilb=[];
+  const red = v => { for(let t=0;t<N;t++){ let m=v[t]%p; if(m<0) m+=p; v[t]=m; } };
+  let k=0;
+  while(piv.length<N){
+    while(xp.length<=k){
+      const a=xp[xp.length-1], na=new Float64Array(N);
+      for(let t=0;t<N;t++) na[t]=(a[t]*x[t])%p; xp.push(na);
+      const b=yp[yp.length-1], nb=new Float64Array(N);
+      for(let t=0;t<N;t++) nb[t]=(b[t]*y[t])%p; yp.push(nb);
+    }
+    let added=0;
+    for(let i=0;i<=k;i++){
+      const j=k-i;
+      let skip=false;
+      for(let l=0;l<lead.length;l++) if(lead[l][0]<=i && lead[l][1]<=j){ skip=true; break; }
+      if(skip) continue;
+      const v=new Float64Array(N), A=xp[i], Bp=yp[j];
+      for(let t=0;t<N;t++) v[t]=(A[t]*Bp[t])%p;
+      let acc=0;
+      for(let r=0;r<piv.length;r++){
+        let c=v[piv[r]]%p; if(c<0) c+=p;
+        if(c){ const row=R[r]; for(let t=0;t<N;t++) v[t]-=c*row[t]; }
+        if(++acc>=HCHUNK){ red(v); acc=0; }
+      }
+      red(v);
+      let pv=-1; for(let t=0;t<N;t++) if(v[t]!==0){ pv=t; break; }
+      if(pv<0){ lead.push([i,j]); continue; }
+      let inv=1, base=v[pv], e=p-2;
+      while(e){ if(e&1) inv=(inv*base)%p; base=(base*base)%p; e>>=1; }
+      for(let t=0;t<N;t++) v[t]=(v[t]*inv)%p;
+      R.push(v); piv.push(pv); added++;
+      if(piv.length>=N) break;
+    }
+    hilb.push(added); k++;
+    if(k > 8*Math.sqrt(N)+60) throw new Error("runaway");
+  }
+  while(hilb.length && hilb[hilb.length-1]===0) hilb.pop();
+  return hilb.map(v=>BigInt(v));
+}
+function hilbertOf(Z){
+  const fast = downClosedHilb(Z);
+  if(fast) return fast;
+  const a = hilbRank(Z, HP1), b = hilbRank(Z, HP2);
+  if(a.join(",") !== b.join(",")) throw new Error("the two primes disagreed");
+  return a;
+}
+
+/* ---- the denominator, found by a smallest-first search over (deg_q, deg_z) ----
+   Finding it is LINEAR, not a search over multisets of (a,b): solve for
+   D(q,z) = sum d_{a,b} q^a z^b with d_{0,0} = 1 killing the tail of both D*E and
+   D*Ebar.  Solve mod a prime, lift by centred residues, then verify the lift EXACTLY
+   over the integers, so a wrong lift cannot survive.                             */
+const seriesAt = (S,k,e) => (k<0 || k>=S.length || e<0 || e>=S[k].length) ? 0n : S[k][e];
+function solveModP(rows, nun, p){
+  const M = rows, piv=[]; let r=0;
+  for(let c=0;c<nun && r<M.length;c++){
+    let sel=-1;
+    for(let i=r;i<M.length;i++) if(M[i][c]%p!==0){ sel=i; break; }
+    if(sel<0) continue;
+    const tmp=M[r]; M[r]=M[sel]; M[sel]=tmp;
+    let inv=1, base=M[r][c]%p, e=p-2;
+    while(e){ if(e&1) inv=(inv*base)%p; base=(base*base)%p; e>>=1; }
+    for(let j=c;j<=nun;j++) M[r][j]=(M[r][j]*inv)%p;
+    for(let i=0;i<M.length;i++){
+      if(i===r) continue;
+      const f=M[i][c]%p;
+      if(f){ for(let j=c;j<=nun;j++){ let v=(M[i][j]-f*M[r][j])%p; if(v<0) v+=p; M[i][j]=v; } }
+    }
+    piv.push(c); r++;
+  }
+  for(let i=r;i<M.length;i++) if(M[i][nun]%p!==0) return null;      /* inconsistent */
+  const x=new Array(nun).fill(0);
+  piv.forEach((c,i)=>{ x[c]=M[i][nun]%p; });
+  return x;
+}
+function mulSeriesZ(D,S,K){
+  const out=[];
+  for(let k=0;k<=K;k++){
+    let acc=[];
+    for(let b=0;b<D.length;b++) if(k-b>=0 && k-b<S.length) acc=qadd(acc, qmul(D[b], S[k-b]));
+    out.push(qtrim(acc));
+  }
+  return out;
+}
+const tailClean = (D,S,K,deg) => { const P_=mulSeriesZ(D,S,K);
+  for(let k=deg+1;k<=K;k++) if(!qz(P_[k])) return false; return true; };
+function divFac(D,a,b){                       /* exact division by (1 - q^a z^b) */
+  const dd=D.length-1, dq=dd-b;
+  if(dq<0) return null;
+  const Q=[];
+  for(let k=0;k<=dq;k++) Q.push(qtrim(qadd(D[k]||[], k-b>=0 ? qshift(Q[k-b],a) : [])));
+  for(let k=dq+1;k<=dd;k++)
+    if(!qz(qadd(D[k]||[], (k-b>=0 && k-b<=dq) ? qshift(Q[k-b],a) : []))) return null;
+  while(Q.length>1 && qz(Q[Q.length-1])) Q.pop();
+  return Q;
+}
+function peelFactors(D,A,Bmax){
+  const f=[]; let cur=D.map(r=>r.slice()), guard=0;
+  while(cur.length>1 && guard++<40){
+    let hit=null;
+    for(let b=1;b<=Bmax && !hit;b++) for(let a=0;a<=A;a++){
+      const q=divFac(cur,a,b); if(q){ hit=[a,b,q]; break; } }
+    if(!hit) return {f, rest:cur};
+    f.push([hit[0],hit[1]]); cur=hit[2];
+  }
+  return {f, rest:cur};
+}
+function recipPoly(N,Nb,d,fac){
+  const F=fac.length, Sq=fac.reduce((s,q)=>s+q[0],0), Bt=fac.reduce((s,q)=>s+q[1],0);
+  const sgn=((d+1+F)%2)?-1n:1n;
+  const co=(X,k,e)=>(k<0||k>=X.length||e<0||e>=X[k].length)?0n:X[k][e];
+  let em=Sq; N.concat(Nb).forEach(r=>{ if(r.length>em) em=r.length; });
+  em += d+2;
+  for(let k=0;k<=Math.max(N.length,Nb.length,Bt)+1;k++) for(let e=0;e<=em;e++)
+    if(co(Nb,k,e-d) !== sgn*co(N,Bt-k,Sq-e)) return false;
+  return true;
+}
+function fitPolyDen(E, Eb, Kfit, Kver, Amax, Bmax){
+  const cands=[];
+  for(let A=1;A<=Amax;A++) for(let B=3;B<=Bmax;B++) cands.push([(A+1)*(B+1),A,B]);
+  cands.sort((u,v)=>u[0]-v[0]);
+  for(const [,A,B] of cands){
+    if(B>=Kfit) continue;
+    const nun=(A+1)*(B+1), idx=(a,b)=>b*(A+1)+a, rows=[];
+    for(const S of [E,Eb]){
+      let em=0; S.forEach(r=>{ if(r.length>em) em=r.length; }); em+=A+1;
+      for(let k=B+1;k<=Kfit;k++) for(let e=0;e<=em;e++){
+        const row=new Float64Array(nun+1); let any=false;
+        for(let b=0;b<=B;b++) for(let a=0;a<=A;a++){
+          const v=Number(seriesAt(S,k-b,e-a));
+          if(v){ if(a===0&&b===0){ let t=(row[nun]-v)%HPF; if(t<0) t+=HPF; row[nun]=t; }
+                 else { row[idx(a,b)]=((v%HPF)+HPF)%HPF; any=true; } }
+        }
+        if(any || row[nun]) rows.push(row);
+      }
+    }
+    if(!rows.length) continue;
+    const x=solveModP(rows,nun,HPF);
+    if(!x) continue;
+    const cen=v=>{ v=((v%HPF)+HPF)%HPF; return BigInt(v>HPF/2 ? v-HPF : v); };
+    const D=[];
+    for(let b=0;b<=B;b++){
+      const row=[];
+      for(let a=0;a<=A;a++) row.push((a===0&&b===0) ? 1n : cen(x[idx(a,b)]));
+      D.push(qtrim(row));
+    }
+    while(D.length>1 && qz(D[D.length-1])) D.pop();
+    const deg=D.length-1;
+    if(!tailClean(D,E,Kver,deg) || !tailClean(D,Eb,Kver,deg)) continue;
+    const pl=peelFactors(D,A,Bmax);
+    if(pl.rest.length>1 || pl.rest[0].length!==1 || pl.rest[0][0]!==1n) continue;
+    return { D, factors:pl.f, A, B };
+  }
+  return null;
+}
+/* The whole pipeline for one drawn polygon, cached on the shape.  The Hilbert data is
+   the expensive part, so it is computed once and then fitted at increasing Kfit -- the
+   smallest model that fits needs the fewest dilations, and stopping at the first one
+   that also survives verification is what keeps this inside a browser. */
+function gradedPolygon(S, Kver){
+  const E=[], Eb=[];
+  for(let k=0;k<=Kver;k++){
+    const Z=S.lattice(k);
+    E.push(hilbertOf(Z));
+    Eb.push(hilbertOf(Z.filter(pt=>S.isInt(pt,k))));
+  }
+  for(let Kfit=4; Kfit<Kver; Kfit++){
+    const fit = fitPolyDen(E, Eb, Kfit, Kver, 14, 5);
+    if(!fit) continue;
+    const N=mulSeriesZ(fit.D,E,Kver).slice(0,fit.D.length);
+    const Nb=mulSeriesZ(fit.D,Eb,Kver).slice(0,fit.D.length);
+    return { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver,
+             recip: recipPoly(N,Nb,2,fit.factors) };
+  }
+  return { E, Eb, fail:"no denominator with deg&thinsp;q &le; 14 and deg&thinsp;z &le; 5 is "+
+                       "consistent with the first "+(Kver-1)+" dilations" };
+}
 
 /* ================================== rendering ================================== */
 const circle = (x,y,r,fill,o) =>
@@ -867,15 +1097,7 @@ function denHTML(f){
 }
 function gradedReadout(S){
   const box = $("eh-graded");
-  if(S.kind!=="slice"){
-    box.innerHTML =
-      '<div class="head">Graded Ehrhart series</div>' +
-      '<p class="caption" style="margin:0">Not available for a polygon you draw. For a slice of the ' +
-      'cube the graded count has a closed combinatorial form, which is why it costs nothing here; a ' +
-      'general lattice polytope has no such formula, and its graded pieces have to come from the ' +
-      'orbit-harmonics ideal one dilate at a time.</p>';
-    return;
-  }
+  if(S.kind!=="slice"){ gradedPolyReadout(S, box); return; }
   const G = graded(S), den = S.q, T = state.T;
   const Pn = 'P(' + S.p + ',' + S.q + ',' + S.n + ')';
   let h = '<div class="head">Graded Ehrhart series</div>' +
@@ -940,6 +1162,101 @@ function gradedReadout(S){
        '</div>';
   box.innerHTML = h;
 }
+
+/* ---- denominator of the form prod (1 - q^a z^b), as HTML ---- */
+function den2HTML(fac){
+  const cnt={};
+  fac.forEach(([a,b])=>{ const k=a+","+b; cnt[k]=(cnt[k]||0)+1; });
+  return Object.keys(cnt).sort((u,v)=>{
+      const A=u.split(",").map(Number), B=v.split(",").map(Number);
+      return A[1]-B[1] || A[0]-B[0];
+    }).map(k=>{
+      const pr=k.split(",").map(Number), a=pr[0], b=pr[1];
+      const qq = a===0 ? "" : (a===1 ? "q" : "q<sup>"+a+"</sup>");
+      const zz = b===1 ? "z" : "z<sup>"+b+"</sup>";
+      return "(1 &minus; "+qq+zz+")" + (cnt[k]>1 ? "<sup>"+cnt[k]+"</sup>" : "");
+    }).join("");
+}
+const NOW_CAP = 900;      /* points we will grade without being asked */
+const FIT_KV  = 7;        /* dilations the closed-form search verifies on */
+
+function gradedPolyReadout(S, box){
+  let h = '<div class="head">Graded Ehrhart series</div>';
+  if(!S.ok){
+    box.innerHTML = h + '<p class="caption" style="margin:0">Draw a polygon and this fills in.</p>';
+    return;
+  }
+  const T = state.T, Z = S.lattice(T), fast = downClosedHilb(Z);
+  h += '<p class="caption" style="margin:0 0 .5rem">A slice of the cube has a closed formula for ' +
+       'this; a polygon does not, so the graded pieces come from the orbit-harmonics ideal, one ' +
+       'dilate at a time. ' +
+       (fast ? 'The lattice points of this one are an order ideal &mdash; P is anti-blocking, up to a ' +
+               'lattice symmetry &mdash; and then the Hilbert function is just the point count by ' +
+               'coordinate sum, so it costs nothing at any size.'
+             : 'This one is not anti-blocking, so each dilate needs a rank computation over a finite ' +
+               'field. Two primes are run and the answer refused if they disagree.') + '</p>';
+
+  if(fast || Z.length <= NOW_CAP){
+    let row=null;
+    try { row = fast || hilbertOf(Z); } catch(err){ row = null; }
+    if(row){
+      const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(T));
+      h += '<div class="mono" style="line-height:1.8">Hilb(' + (T===1?"":T+"&thinsp;") + 'P; q) = ' +
+           qpHTML(row) + '<br><span style="color:var(--muted)">&nbsp;&nbsp;at q = 1: ' + sum.toString() +
+           (sum===want ? ' <span class="ok">= i(' + T + ')</span>'
+                       : ' <span class="bad">&ne; i(' + T + ')</span>') + '</span></div>';
+    }
+  } else {
+    h += '<div class="caption">' + Z.length.toLocaleString() + ' points at t = ' + T +
+         ' &mdash; past the point where grading a single dilate is quick. Lower t, or draw a smaller polygon.</div>';
+  }
+
+  h += '<hr class="sep">';
+  const G = S._gp;
+  if(!G){
+    const big = S.count(FIT_KV);
+    h += '<button id="eh-gp-run">find the closed rational form</button>' +
+         '<span class="caption" style="margin-left:.6rem">needs the first ' + FIT_KV +
+         ' dilations' + (fast ? ' &mdash; instant here' : ', up to ' + big.toLocaleString() +
+         ' points' + (big>1400 ? '. This one is large; expect a few seconds.' : '.')) + '</span>';
+  } else if(G.err){
+    h += '<div class="note plain" style="margin-bottom:0">' + G.err + '</div>';
+  } else if(G.fail){
+    h += '<div class="note plain" style="margin-bottom:0">' + G.fail + '. That is a budget, not a ' +
+         'verdict &mdash; a bigger search or more dilations may still find one.</div>';
+  } else {
+    const d2 = den2HTML(G.factors);
+    h += '<div class="mono" style="line-height:1.7">E(q,z) = ' + rfrac('N(q,z)', d2) +
+         '&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">interior:</span>&nbsp; &#274;(q,z) = ' +
+         rfrac('N&#772;(q,z)', d2) + '</div>';
+    let t='<table class="wide"><tr><th>z<sup>k</sup></th><th>N(q,z)</th><th>N&#772;(q,z)</th></tr>';
+    for(let k=0;k<Math.max(G.N.length,G.Nb.length);k++){
+      const a=(k<G.N.length && !qz(G.N[k])) ? qpHTML(G.N[k]) : "";
+      const b=(k<G.Nb.length && !qz(G.Nb[k])) ? qpHTML(G.Nb[k]) : "";
+      if(a||b) t += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
+    }
+    h += '<div class="scroll">' + t + '</table></div>';
+    h += '<div class="caption">Denominator <b>found by fitting</b>, not derived: it is the smallest ' +
+         '(deg&thinsp;q, deg&thinsp;z) consistent with the first ' + G.Kfit + ' dilations, and it was ' +
+         'then checked against ' + (G.Kver-G.Kfit) + ' further ones it had not seen.</div>';
+    h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
+         'q<sup>2</sup>&#274;(z,q) = &minus;E(1/z,1/q) ' +
+         (G.recip ? '<span class="ok">holds exactly</span>, checked coefficient by coefficient on the numerators.'
+                  : '<span class="bad">FAILS</span> &mdash; the series is rational but not reciprocal. ' +
+                    'Worth reproducing in Macaulay2 before trusting it.') + '</div>';
+  }
+  box.innerHTML = h;
+}
+$("eh-graded").addEventListener("click", e => {
+  if(!e.target || e.target.id !== "eh-gp-run") return;
+  const S = shape();
+  e.target.disabled = true; e.target.textContent = "computing…";
+  setTimeout(()=>{                       /* let the button repaint before we block */
+    try { S._gp = gradedPolygon(S, FIT_KV); }
+    catch(err){ S._gp = { err: err.message }; }
+    draw();
+  }, 30);
+});
 
 function remark(S,E){
   if(S.kind==="poly")
