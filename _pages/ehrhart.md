@@ -119,6 +119,7 @@ nav: false
   <p class="lede">
     Dilate a polytope, count the lattice points, and a polynomial appears. You can choose one of the slices of the
     cube that are small enough to see. Or you can draw your own lattice polygon.
+    Email me if you find any errors or want some specific function added.
   </p>
 
 <div class="toolbar">
