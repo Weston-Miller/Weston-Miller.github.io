@@ -99,9 +99,9 @@ nav: false
   <h1>Ehrhart theory, by hand</h1>
   <p class="lede">
     Dilate a polytope, count the lattice points, and a polynomial appears. Here are the slices of the
-    cube that are small enough to draw &mdash; the hypersimplices among them &mdash; a family that shows
-    why none of this is just Pick&rsquo;s theorem in disguise, and a blank grid for a lattice polygon of
-    your own.
+    cube that are small enough to draw &mdash; the hypersimplices among them, and the rational slices in
+    between, whose counts are quasi-polynomials &mdash; together with a blank grid for a lattice polygon
+    of your own.
   </p>
 
 <div class="toolbar">
@@ -111,13 +111,11 @@ nav: false
         <option value="s3">x&#8321;+x&#8322;+x&#8323; = c in [0,1]&sup3; &mdash; 2-dimensional</option>
         <option value="s4" selected>x&#8321;+&hellip;+x&#8324; = c in [0,1]&#8308; &mdash; 3-dimensional</option>
       </optgroup>
-      <optgroup label="and two others">
-        <option value="reeve">Reeve simplex T&#8341; &mdash; 3-dimensional</option>
+      <optgroup label="and one more">
         <option value="poly">lattice polygon &mdash; draw your own</option>
       </optgroup>
     </select></label>
   <label id="eh-clab">c = <input type="range" id="eh-c" min="0" max="7" value="6" style="width:120px"><b id="eh-cv" class="mono"></b></label>
-  <label id="eh-hlab" hidden>h = <input type="range" id="eh-h" min="1" max="8" value="4" style="width:110px"><b id="eh-hv" class="mono">4</b></label>
   <label>dilation t = <input type="range" id="eh-t" min="1" max="8" value="2" style="width:120px"><b id="eh-tv" class="mono">2</b></label>
 </div>
 
@@ -136,7 +134,6 @@ nav: false
   <button class="small" data-preset="triangle">triangle</button>
   <button class="small" data-preset="square">square</button>
   <button class="small" data-preset="hex">hexagon</button>
-  <button class="small" data-preset="reeve">a thin one</button>
   <button class="small" id="eh-undo">undo</button>
   <button class="small" id="eh-clear">clear</button>
 </div>
@@ -264,7 +261,7 @@ const embed = (B,y) => B.map(b => b.reduce((s,c,i)=>s+c*y[i], 0));
    triple, keep the planes with all the other vertices on one side, dedupe by the
    set of vertices lying on the plane.  V is at most 12 here, so the cubic loop is
    nothing, and it runs once per shape rather than once per frame.  Doing it this
-   way means slices, the Reeve simplex and anything added later share one path
+   way means slices, polygons and anything added later share one path
    instead of each carrying its own combinatorics. */
 function facets3(P){
   const n=P.length, out=[], seen={}, eps=1e-7;
@@ -370,36 +367,6 @@ function sliceShape(n, p, q){
   return memo(S);
 }
 
-/* --- the Reeve simplex T_h = conv{0, e1, e2, (1,1,h)} ---
-   Four lattice points however large h is, and normalized volume h.  It is the
-   standard witness that Pick's theorem has no three-dimensional analogue.      */
-function reeveShape(h){
-  const V = [[0,0,0],[1,0,0],[0,1,0],[1,1,h]];
-  const cen = [0.5, 0.5, h/4];
-  /* T_h is h times taller than it is wide.  Drawing coordinates put its long axis
-     up the screen rather than into the page -- along the depth axis it foreshortens
-     to a line and there is nothing to look at.  This is still an isometry: the
-     three axes are only permuted. */
-  const D = v => [v[0]-cen[0], v[2]-cen[2], v[1]-cen[1]];
-  /* t T_h = { z >= 0, z <= h x, z <= h y, h(x+y) - z <= h t } */
-  const slack = (x,t) => [ x[2], h*x[0]-x[2], h*x[1]-x[2], h*t - h*(x[0]+x[1]) + x[2] ];
-  const S = {
-    id:"reeve", kind:"reeve", h, dim:3, q:1,
-    vertsD: V.map(D),
-    placeD: (x,t) => D([x[0]/t, x[1]/t, x[2]/t]),
-    view: [0.85, 0.10],
-    isInt: (x,t) => slack(x,t).every(s => s>0),
-    lattice(t){
-      const out=[];
-      for(let x=0;x<=t;x++) for(let y=0;y<=t;y++) for(let z=0;z<=t*h;z++){
-        if(slack([x,y,z],t).every(s => s>=0)) out.push([x,y,z]);
-      }
-      return out;
-    }
-  };
-  return memo(S);
-}
-
 /* --- a lattice polygon the reader draws --- */
 function polyShape(gens, grid){
   const V = hull2(gens);
@@ -435,7 +402,6 @@ function polyShape(gens, grid){
 }
 
 function shapeName(S){
-  if(S.kind==="reeve") return "T" + sub(S.h) + ", a lattice simplex with 4 lattice points";
   if(S.kind==="poly")  return S.ok ? (NAME2[S.V.length] || S.V.length+"-gon") : "no polygon yet";
   const nv = S.vertsD.length;
   let nm;
@@ -445,7 +411,6 @@ function shapeName(S){
   else if(S.dim===2 && nv===6 && 2*S.cNum===S.n*S.cDen) nm = "regular hexagon";
   return nm;
 }
-const sub = n => String(n).split("").map(d=>"&#832"+d+";").join("");
 
 /* geometry and Ehrhart data are both cached on the shape: a drag redraws the
    picture 60 times a second and neither of these depends on the viewing angle */
@@ -691,10 +656,6 @@ function readouts(S, counts){
     volTail = 'so P has area ' + frHTML(fr(E.normVol,2)) + '. That is Pick’s theorem: with ' + I1 +
       ' interior point' + (I1===1?"":"s") + ' and ' + b1 + ' on the boundary, area = ' + I1 + ' + ' +
       b1 + '/2 &minus; 1 = ' + frHTML(fr(E.normVol,2)) + '.';
-  } else if(S.kind==="reeve"){
-    volTail = 'so vol T' + sub(S.h) + ' = ' + frHTML(fr(E.normVol,6)) + ' &mdash; and yet t = 1 has ' +
-      'only its 4 vertices, however far you push h. In the plane that could not happen: Pick ties ' +
-      'area to the lattice points. In three dimensions nothing does.';
   } else if(q===1){
     volTail = 'so vol P = ' + frHTML(fr(E.normVol, scale)) + ', and ' + E.normVol + ' = A(' +
       (S.n-1) + ',' + (S.p-1) + '), an Eulerian number.';
@@ -742,18 +703,19 @@ function remark(S,E){
       'interior count &mdash; reciprocity and Pick’s theorem are the same statement. h* = (1, k, 1) ' +
       'means exactly one interior point, so hunting for a palindromic h* here is hunting for the ' +
       'sixteen reflexive polygons.';
-  if(S.kind==="reeve")
-    return 'T<sub>h</sub> = conv{0, e<sub>1</sub>, e<sub>2</sub>, (1,1,h)} has exactly four lattice ' +
-      'points for every h &mdash; its vertices &mdash; and normalized volume h. Slide h and watch the ' +
-      'volume run away while the t = 1 row never moves off 4. Its h* is (1, 0, h&minus;1), which for ' +
-      'h &gt; 2 has a gap in the middle: h*-vectors need not be unimodal.';
-  const cube = "["+"0,1]<sup>"+S.n+"</sup>";
+  const cube = "[0,1]<sup>"+S.n+"</sup>";
+  const here = S.q===1
+    ? 'c is an integer, so this slice is a lattice polytope &mdash; the hypersimplex &Delta;(' +
+      S.n + ',' + S.p + '). Move c off an integer and the vertices pick up a denominator, ' +
+      't&thinsp;P starts missing the lattice, and i(t) becomes a quasi-polynomial.'
+    : 'Its vertices have denominator ' + S.q + ', so t&thinsp;P meets the lattice only when ' + S.q +
+      ' divides t, and i(t) is a quasi-polynomial of period ' + S.q + ' whose other constituents ' +
+      'all vanish. Everything here is therefore the Ehrhart data of the lattice polytope ' + S.q +
+      'P. At an integer c the slice is a hypersimplex instead.';
   return 'This is the slice of the cube ' + cube + ' at x<sub>1</sub>+&hellip;+x<sub>' + S.n +
-    '</sub> = ' + frText([S.cNum,S.cDen]) + '. At an integer c the slice is a lattice polytope, the ' +
-    'hypersimplex &Delta;(' + S.n + ',c); at any other c its vertices have denominator ' + S.q +
-    ', so t&thinsp;P meets the lattice only when ' + S.q + ' divides t and i(t) is a quasi-polynomial ' +
-    'of that period. Slicing at c and at ' + S.n + '&minus;c gives the same polytope reflected, so ' +
-    'only c &le; ' + S.n + '/2 is offered. Grading these counts is what the paper is about.';
+    '</sub> = ' + frText([S.cNum,S.cDen]) + '. ' + here + ' Slicing at c and at ' + S.n +
+    '&nbsp;&minus;&nbsp;c gives the same polytope reflected, so only c &le; ' +
+    frText(fr(S.n,2)) + ' is offered. Grading these counts is what the paper is about.';
 }
 
 /* ============================== state and plumbing ============================== */
@@ -766,16 +728,14 @@ const CS = {
 const PRESETS = {
   triangle:[[0,0],[4,0],[1,4]],
   square:  [[1,1],[5,1],[5,5],[1,5]],
-  hex:     [[2,0],[4,1],[5,3],[4,5],[2,6],[0,3]],
-  reeve:   [[0,0],[6,1],[3,5]]
+  hex:     [[2,0],[4,1],[5,3],[4,5],[2,6],[0,3]]
 };
-const state = { shape:"s4", ci:{s3:5, s4:7}, h:4, T:2, yaw:1.18, pitch:0.56,
+const state = { shape:"s4", ci:{s3:5, s4:7}, T:2, yaw:1.18, pitch:0.56,
                 gens:PRESETS.hex.slice(), grid:6, cur:[0,0], kb:false, undo:[] };
 
 let cache = { sig:null, S:null };
 function signature(){
   if(state.shape==="poly")  return "poly|"+state.grid+"|"+state.gens.map(g=>g.join(".")).join(",");
-  if(state.shape==="reeve") return "reeve|"+state.h;
   const c = CS[state.shape][state.ci[state.shape]];
   return state.shape+"|"+c[0]+"/"+c[1];
 }
@@ -784,7 +744,6 @@ function shape(){
   if(cache.sig !== s){
     cache.sig = s;
     if(state.shape==="poly")       cache.S = polyShape(state.gens, state.grid);
-    else if(state.shape==="reeve") cache.S = reeveShape(state.h);
     else { const c = CS[state.shape][state.ci[state.shape]];
            cache.S = sliceShape(+state.shape.slice(1), c[0], c[1]); }
   }
@@ -805,10 +764,9 @@ const push = () => { state.undo.push(state.gens.map(g=>g.slice())); if(state.und
 const stage = $("eh-stage");
 function syncChrome(){
   const S3 = state.shape==="s3", S4 = state.shape==="s4";
-  const three = (state.shape==="s4" || state.shape==="reeve");
+  const three = (state.shape==="s4");
   const poly  = state.shape==="poly";
   $("eh-clab").hidden = !(S3||S4);
-  $("eh-hlab").hidden = state.shape!=="reeve";
   $("eh-spin").hidden = !three;
   $("eh-reset").hidden = !three;
   $("eh-drawbar").classList.toggle("hidden", !poly);
@@ -828,7 +786,6 @@ $("eh-shape").addEventListener("change", e => {
   syncChrome(); draw();
 });
 $("eh-c").addEventListener("input", e => { state.ci[state.shape]=+e.target.value; syncChrome(); draw(); });
-$("eh-h").addEventListener("input", e => { state.h=+e.target.value; $("eh-hv").textContent=state.h; draw(); });
 $("eh-t").addEventListener("input", e => setT(+e.target.value));
 function setT(t){
   state.T = Math.max(1, Math.min(TMAX, t));
@@ -947,8 +904,7 @@ function stateHash(){
   if(state.shape==="poly"){
     p.push("n="+state.grid);
     p.push("g="+state.gens.map(g=>g[0]+"."+g[1]).join("-"));
-  } else if(state.shape==="reeve") p.push("h="+state.h);
-  else p.push("c="+state.ci[state.shape]);
+  } else p.push("c="+state.ci[state.shape]);
   return "#"+p.join("&");
 }
 function applyHash(){
@@ -956,7 +912,7 @@ function applyHash(){
   if(!h) return false;
   const q={};
   h.split("&").forEach(kv=>{ const i=kv.indexOf("="); if(i>0) q[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1)); });
-  if(!/^(s3|s4|reeve|poly)$/.test(q.sh||"")) return false;
+  if(!/^(s3|s4|poly)$/.test(q.sh||"")) return false;
   state.shape = q.sh;
   const t = Math.round(+q.t);
   if(Number.isFinite(t) && t>=1 && t<=TMAX) state.T = t;
@@ -966,9 +922,6 @@ function applyHash(){
     const g = (q.g||"").split("-").filter(Boolean).map(s=>s.split(".").map(Number));
     if(g.every(p => p.length===2 && p.every(v=>Number.isInteger(v) && v>=0 && v<=state.grid)))
       state.gens = g;
-  } else if(q.sh==="reeve"){
-    const hh = Math.round(+q.h);
-    if(Number.isFinite(hh) && hh>=1 && hh<=8) state.h = hh;
   } else {
     const c = Math.round(+q.c);
     if(Number.isFinite(c) && c>=0 && c<CS[q.sh].length) state.ci[q.sh] = c;
@@ -1008,7 +961,6 @@ $("eh-svg").addEventListener("click", ()=>{
        .replace('>', '><rect width="100%" height="100%" fill="'+c["--bg"]+'"/>');
   s = '<?xml version="1.0" encoding="UTF-8"?>\n' + s;
   const name = (state.shape==="poly" ? "polygon"
-              : state.shape==="reeve" ? "reeve-h"+state.h
               : "slice-"+state.shape.slice(1)+"-c"+frText(CS[state.shape][state.ci[state.shape]]).replace("/","-"))
               + "-t" + state.T + ".svg";
   const url = URL.createObjectURL(new Blob([s], {type:"image/svg+xml"}));
@@ -1023,7 +975,6 @@ $("eh-svg").addEventListener("click", ()=>{
 function syncUI(){
   $("eh-shape").value = state.shape;
   $("eh-t").value = state.T; $("eh-tv").textContent = state.T;
-  $("eh-h").value = state.h; $("eh-hv").textContent = state.h;
   $("eh-grid").value = state.grid; $("eh-gridv").textContent = state.grid;
   syncChrome();
 }
