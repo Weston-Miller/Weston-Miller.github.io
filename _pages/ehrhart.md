@@ -415,35 +415,40 @@ function sliceShape(n, p, q){
 }
 
 /* --- a lattice polygon the reader draws --- */
+/* Where (qx,qy) sits relative to m*conv(V): -1 outside, 0 on the boundary, 1 inside.
+   Every edge cross product must be >= 0, and a zero means the boundary.  All integer
+   arithmetic, so the split is never a rounding call.
+   These two are free functions rather than closures inside polyShape because the
+   Worker needs them and must not be handed a shape object -- it gets the hull and
+   enumerates for itself, from this source. */
+function hullLocate(V,m,qx,qy){
+  let onEdge=false;
+  for(let i=0;i<V.length;i++){
+    const a=V[i], b=V[(i+1)%V.length];
+    const c=(b[0]-a[0])*(qy-m*a[1]) - (b[1]-a[1])*(qx-m*a[0]);
+    if(c<0) return -1;
+    if(c===0) onEdge=true;
+  }
+  return onEdge ? 0 : 1;
+}
+function hullLattice(V,m){
+  if(V.length<3) return [];
+  if(m===0) return [[0,0]];
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  for(const v of V){ x0=Math.min(x0,v[0]); x1=Math.max(x1,v[0]); y0=Math.min(y0,v[1]); y1=Math.max(y1,v[1]); }
+  const out=[];
+  for(let x=m*x0;x<=m*x1;x++) for(let y=m*y0;y<=m*y1;y++) if(hullLocate(V,m,x,y)>=0) out.push([x,y]);
+  return out;
+}
 function polyShape(gens, grid){
   const V = hull2(gens);
   const ok = V.length>=3;
-  /* q is in m P iff every edge cross product is >= 0; a zero means the boundary.
-     All integer arithmetic, so the boundary/interior split is never a rounding call. */
-  const locate = (m,qx,qy) => {
-    let onEdge=false;
-    for(let i=0;i<V.length;i++){
-      const a=V[i], b=V[(i+1)%V.length];
-      const c=(b[0]-a[0])*(qy-m*a[1]) - (b[1]-a[1])*(qx-m*a[0]);
-      if(c<0) return -1;
-      if(c===0) onEdge=true;
-    }
-    return onEdge ? 0 : 1;
-  };
   const S = {
     id:"poly", kind:"poly", dim:2, q:1, ok, V, grid,
     vertsD: V.map(v => [v[0], v[1]]),
     placeD: (x,m) => [x[0]/m, x[1]/m],
-    isInt: (x,m) => locate(m,x[0],x[1])===1,
-    lattice(m){
-      if(!ok) return [];
-      if(m===0) return [[0,0]];
-      let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
-      for(const v of V){ x0=Math.min(x0,v[0]); x1=Math.max(x1,v[0]); y0=Math.min(y0,v[1]); y1=Math.max(y1,v[1]); }
-      const out=[];
-      for(let x=m*x0;x<=m*x1;x++) for(let y=m*y0;y<=m*y1;y++) if(locate(m,x,y)>=0) out.push([x,y]);
-      return out;
-    }
+    isInt: (x,m) => hullLocate(V,m,x[0],x[1])===1,
+    lattice(m){ return ok ? hullLattice(V,m) : []; }
   };
   return memo(S);
 }
@@ -917,25 +922,6 @@ function planFor(S){
   for(let k=6;k<=13;k++){ if(cost(S,k) > RANK_BUDGET_MS) break; Kmax=k; }
   const K0 = Math.min(Kmax, 7);
   return { Kmax, K0, dc:false, est:cost(S,Kmax), ok:Kmax>=6, top:S.count(Kmax||6) };
-}
-function gradedPolygon(S, Kver){
-  const E=[], Eb=[];
-  for(let k=0;k<=Kver;k++){
-    const Z=S.lattice(k);
-    E.push(hilbertOf(Z));
-    Eb.push(hilbertOf(Z.filter(pt=>S.isInt(pt,k))));
-  }
-  for(let Kfit=4; Kfit<=Kver-2; Kfit++){
-    const fit = fitPolyDen(E, Eb, Kfit, Kver, 40, 6);
-    if(!fit) continue;
-    const N=mulSeriesT(fit.D,E,Kver).slice(0,fit.D.length);
-    const Nb=mulSeriesT(fit.D,Eb,Kver).slice(0,fit.D.length);
-    const confirmed = confirmSeries(S, Kver);
-    return { E, Eb, D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver, confirmed,
-             recip: recipPoly(N,Nb,2,fit.factors) };
-  }
-  return { E, Eb, Kver, fail:"no denominator with deg&thinsp;t &le; 6 is consistent with the first "+
-                       (Kver-2)+" dilations" };
 }
 
 /* ================================== rendering ================================== */
@@ -1431,14 +1417,127 @@ function gradedPolyReadout(S, box){
    runner serves the first attempt and the deeper retry; the retry resumes from the
    dilations already computed rather than starting over. */
 const HARD_KMAX = 16;
+/* ---------------------------- the Worker ----------------------------
+   The whole search moves off the main thread.  There is exactly one copy of the
+   numerical code: the worker's source is built by asking these very functions for
+   their own text, so the thing that runs in the worker cannot drift from the thing
+   that runs here.  Anything added to the search has to be listed below or the worker
+   throws ReferenceError on its first call -- which is noisy, and better than silently
+   running a stale copy.
+   The worker gets the hull and enumerates lattice points itself; handing it a shape
+   would mean sending methods, which structured clone cannot do.  BigInt survives
+   structured clone, so the Hilbert data crosses in both directions unchanged, and a
+   deeper retry resumes from the dilations already computed instead of redoing them. */
+function GRADED_WORKER_MAIN(){
+  onmessage = function(ev){
+    const d = ev.data, V = d.V;
+    let E = d.E || [], Eb = d.Eb || [], target = d.K0;
+    const interior = (Z,k) => Z.filter(pt => hullLocate(V,k,pt[0],pt[1])===1);
+    try{
+      for(;;){
+        while(E.length <= target){
+          const k = E.length, Z = hullLattice(V,k);
+          E.push(hilbertOf(Z));
+          Eb.push(hilbertOf(interior(Z,k)));
+          postMessage({ type:"progress", stage:"dilate", k:E.length, target:target+1 });
+        }
+        postMessage({ type:"progress", stage:"fit" });
+        let out = null;
+        for(let Kfit=4; Kfit<=target-1; Kfit++){
+          const fit = fitPolyDen(E, Eb, Kfit, target, d.Amax, d.Bmax);
+          if(!fit) continue;
+          const N  = mulSeriesT(fit.D, E,  target).slice(0, fit.D.length);
+          const Nb = mulSeriesT(fit.D, Eb, target).slice(0, fit.D.length);
+          out = { D:fit.D, factors:fit.factors, N, Nb, Kfit, Kver:target,
+                  recip: recipPoly(N, Nb, 2, fit.factors) };
+          break;
+        }
+        if(out){
+          postMessage({ type:"progress", stage:"confirm" });
+          let ok = true;
+          for(let k=0;k<=target && ok;k++){
+            const Z = hullLattice(V,k);
+            if(downClosedHilb(Z)) continue;
+            const Zi = interior(Z,k);
+            if(hilbRank(Z,HP2).join(",") !== hilbertOf(Z,HP1).join(",")) ok=false;
+            else if(Zi.length && hilbRank(Zi,HP2).join(",") !== hilbertOf(Zi,HP1).join(",")) ok=false;
+          }
+          out.confirmed = ok; out.E = E; out.Eb = Eb;
+          postMessage({ type:"done", out });
+          return;
+        }
+        if(target >= d.Kmax){
+          postMessage({ type:"done", out:{ E, Eb, Kver:target, Amax:d.Amax, Bmax:d.Bmax, failed:true } });
+          return;
+        }
+        target = Math.min(d.Kmax, target+2);
+        postMessage({ type:"progress", stage:"deeper", target:target+1 });
+      }
+    } catch(err){
+      postMessage({ type:"done", out:{ err: String((err && err.message) || err) } });
+    }
+  };
+}
+let WORKER_URL = null;
+function workerURL(){
+  if(WORKER_URL) return WORKER_URL;
+  const src = [
+    "const HP1="+HP1+", HP2="+HP2+", HPF="+HPF+", HCHUNK="+HCHUNK+";",
+    "const SYM8="+JSON.stringify(SYM8)+";",
+    "const qadd="+qadd+";", "const qmul="+qmul+";", "const qshift="+qshift+";",
+    "const qzero="+qzero+";", "const qz=qzero;", "const qtrim="+qtrim+";",
+    "const seriesAt="+seriesAt+";", "const tailClean="+tailClean+";",
+    String(hullLocate), String(hullLattice),
+    String(downClosed), String(downClosedHilb), String(hilbRank), String(hilbertOf),
+    String(solveModP), String(mulSeriesT), String(divFac), String(peelFactors),
+    String(recipPoly), String(fitPolyDen),
+    "(" + GRADED_WORKER_MAIN + ")();"
+  ].join("\n");
+  WORKER_URL = URL.createObjectURL(new Blob([src], {type:"text/javascript"}));
+  return WORKER_URL;
+}
+
 function runGraded(S, E, Eb, target0, hardMax, Amax, Bmax, btn){
   const bar = document.createElement("div");
   bar.className = "caption"; bar.id = "eh-gp-prog"; bar.style.marginTop = ".4rem";
-  btn.disabled = true; btn.textContent = "computing…";
+  btn.disabled = true; btn.textContent = "computing\u2026";
   btn.parentNode.insertBefore(bar, btn.nextSibling);
-  let k = E.length, target = target0;
   const say = t => { bar.innerHTML = t; };
   const finish = out => { S._gp = out; draw(); };
+  const failMsg = (a,b,kv) => "no denominator with deg&thinsp;q &le; "+a+" and deg&thinsp;t &le; "+b+
+                              " is consistent with the first "+(kv-1)+" dilations";
+  let w = null, settled = false;
+  try { w = new Worker(workerURL()); } catch(err){ w = null; }
+  if(!w){ runGradedInline(S, E, Eb, target0, hardMax, Amax, Bmax, say, finish, failMsg); return; }
+  w.onmessage = ev => {
+    const d = ev.data;
+    if(d.type === "progress"){
+      if(d.stage === "dilate")      say("dilation " + d.k + " of " + d.target + "\u2026");
+      else if(d.stage === "fit")    say("fitting the denominator&hellip;");
+      else if(d.stage === "deeper") say("no fit yet &mdash; going out to " + d.target + " dilations&hellip;");
+      else                          say("confirming over a second prime&hellip;");
+      return;
+    }
+    settled = true; w.terminate();
+    const out = d.out;
+    if(out.failed) out.fail = failMsg(out.Amax, out.Bmax, out.Kver);
+    finish(out);
+  };
+  /* A worker can fail late -- a blocked blob: URL, or a browser that refuses one --
+     so the fallback restarts in-page rather than leaving the reader with a spinner. */
+  w.onerror = () => {
+    if(settled) return;
+    settled = true; w.terminate();
+    say("finishing on the main thread&hellip;");
+    runGradedInline(S, E, Eb, target0, hardMax, Amax, Bmax, say, finish, failMsg);
+  };
+  w.postMessage({ V:S.V, E, Eb, K0:target0, Kmax:hardMax, Amax, Bmax });
+}
+
+/* The original in-page path, kept verbatim as the fallback: one dilation per tick so
+   the page keeps painting when there is no worker to take the work. */
+function runGradedInline(S, E, Eb, target0, hardMax, Amax, Bmax, say, finish, failMsg){
+  let k = E.length, target = target0;
   const step = () => {
     try {
       if(k <= target){
@@ -1469,9 +1568,7 @@ function runGraded(S, E, Eb, target0, hardMax, Amax, Bmax, btn){
             setTimeout(step, 0);
             return;
           }
-          finish({ E, Eb, Kver:target, Amax, Bmax,
-                   fail:"no denominator with deg&thinsp;q &le; "+Amax+" and deg&thinsp;t &le; "+Bmax+
-                        " is consistent with the first "+(target-1)+" dilations" });
+          finish({ E, Eb, Kver:target, Amax, Bmax, fail: failMsg(Amax, Bmax, target) });
           return;
         }
         say("confirming over a second prime&hellip;");
