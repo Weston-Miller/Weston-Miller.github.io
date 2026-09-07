@@ -61,6 +61,7 @@ nav: false
 #eh-app .stage.draw{cursor:crosshair;}
 #eh-app .stage svg{display:block; margin:0 auto; width:100%; height:auto;}
 #eh-app .stage:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--radius);}
+#eh-app .stage:not(:focus) .kbcur{display:none;}
 #eh-app .caption{font-size:.82rem; color:var(--muted); margin:.4rem 0;}
 #eh-app .head{font-size:.78rem; letter-spacing:.05em; font-weight:600; color:var(--muted);
   margin:0 0 .45rem;}
@@ -1024,12 +1025,16 @@ function render2d(S){
     ghosts + dots + picks,
     nB, nI, total:nB+nI };
 }
-/* the keyboard cursor for the drawing grid, drawn only while the stage has focus */
+/* The keyboard cursor for the drawing grid.  It is always drawn and hidden by CSS
+   unless the stage has focus -- NOT redrawn on focus.  Rebuilding the SVG from a
+   focus handler swallows the click that caused the focus: the mousedown lands on a
+   node that is gone by mouseup, and no click event is dispatched at all.  That is why
+   the first click after touching anything else used to do nothing. */
 function cursorMark(F){
-  if(state.shape!=="poly" || !state.kb) return "";
+  if(state.shape!=="poly") return "";
   const x=F.ox+F.S*state.cur[0], y=F.oy-F.S*state.cur[1];
-  return '<rect x="'+(x-8).toFixed(1)+'" y="'+(y-8).toFixed(1)+'" width="16" height="16" rx="3" '+
-         'fill="none" stroke="var(--int)" stroke-width="1.6" stroke-dasharray="3 3"/>';
+  return '<rect class="kbcur" x="'+(x-8).toFixed(1)+'" y="'+(y-8).toFixed(1)+'" width="16" '+
+         'height="16" rx="3" fill="none" stroke="var(--int)" stroke-width="1.6" stroke-dasharray="3 3"/>';
 }
 
 /* =================================== readouts =================================== */
@@ -1447,7 +1452,7 @@ const PRESETS = {
   hex:     [[2,1],[4,1],[5,3],[4,5],[2,5],[1,3]]
 };
 const state = { shape:"s4", ci:{s3:5, s4:7}, T:2, yaw:1.18, pitch:0.56,
-                gens:PRESETS.hex.slice(), grid:6, cur:[0,0], kb:false, undo:[] };
+                gens:PRESETS.hex.slice(), grid:6, cur:[0,0], undo:[] };
 
 let cache = { sig:null, S:null };
 function signature(){
@@ -1589,8 +1594,6 @@ stage.addEventListener("click", e => {
                Math.round((F.oy - (e.clientY-box.top)*u)/F.S)];
   toggleAt(state.cur[0], state.cur[1]);
 });
-stage.addEventListener("focus", ()=>{ state.kb=true;  if(state.shape==="poly") draw(false); });
-stage.addEventListener("blur",  ()=>{ state.kb=false; if(state.shape==="poly") draw(false); });
 stage.addEventListener("keydown", e => {
   const S=shape();
   if(S.dim===3){
@@ -1604,12 +1607,12 @@ stage.addEventListener("keydown", e => {
   if(state.shape!=="poly") return;
   const m = {ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]}[e.key];
   if(m){
-    e.preventDefault(); state.kb=true;
+    e.preventDefault();
     state.cur = [Math.max(0,Math.min(state.grid,state.cur[0]+m[0])),
                  Math.max(0,Math.min(state.grid,state.cur[1]+m[1]))];
     draw(false);
   } else if(e.key==="Enter" || e.key===" "){
-    e.preventDefault(); state.kb=true; toggleAt(state.cur[0], state.cur[1]);
+    e.preventDefault(); toggleAt(state.cur[0], state.cur[1]);
   }
 });
 
