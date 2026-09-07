@@ -274,8 +274,14 @@ sass:
 # Jekyll Minifier
 # -----------------------------------------------------------------------------
 
+# The uglifier the minifier shells out to parses ES6 but not ES2020, so a page whose
+# inline script uses BigInt literals (0n, 1n) dies at build time with
+# "Unexpected token: name (n)".  /ehrhart/ needs BigInt: the graded numerator
+# coefficients are alternating sums that overflow a double.  Excluding a page skips
+# compression for it and nothing else.
 jekyll-minifier:
-  exclude: ["robots.txt", "assets/js/search/*.js", "rational-catalan/index.html"]
+  exclude:
+    ["robots.txt", "assets/js/search/*.js", "rational-catalan/index.html", "ehrhart/index.html"]
   uglifier_args:
     harmony: true
 

@@ -22,7 +22,7 @@
  * ranks are right -- so the harness runs that comparison itself instead, which is the
  * failure that would actually matter.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -392,6 +392,37 @@ ctx = "the non-reciprocal quadrilateral";
 eq(hull(API.PRESETS.quad).length, 4, "still a quadrilateral");
 eq(runWorker(hull(API.PRESETS.quad), 7, 12, 40, 8).factors.map((f) => f.join("^")).join(" "),
   "0^1 4^1 4^1", "denominator is still (1-t)(1-q^4 t)^2");
+
+/* --- 7. the build will actually survive this page --- */
+
+/* The minifier shells out to a uglifier that parses ES6 but not ES2020, so a page
+   whose inline script uses a BigInt literal dies at build time with
+   "Unexpected token: name (n)" -- and only on a production build, which means only
+   in CI, after a push.  Any page that needs BigInt has to be excluded from
+   compression; this makes that a one-second local failure instead. */
+ctx = "minifier exclusions";
+const config = readFileSync(join(ROOT, "_config.yml"), "utf8");
+const minifierExcludes = (/^jekyll-minifier:\s*\n(?:[ \t]+.*\n|\s*\n)*/m.exec(config) || [""])[0];
+
+const stripped = (src) =>
+  src.replace(/\/\*[\s\S]*?\*\//g, " ")          /* block comments */
+     .replace(/^\s*\/\/.*$/gm, " ")               /* line comments */
+     .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')         /* strings */
+     .replace(/'(?:[^'\\\n]|\\.)*'/g, "''");
+
+for (const name of readdirSync(join(ROOT, "_pages"))) {
+  const src = readFileSync(join(ROOT, "_pages", name), "utf8");
+  const scripts = [...src.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join("\n");
+  if (!scripts) continue;
+  const usesBigInt = /(^|[^.\w])\d+n\b/.test(stripped(scripts)) || /\bBigInt\s*\(/.test(stripped(scripts));
+  if (!usesBigInt) continue;
+  const perma = /^permalink:\s*(\S+)/m.exec(src);
+  ok(perma, name + " uses BigInt but has no permalink to exclude");
+  const dest = perma[1].replace(/^\//, "").replace(/\/$/, "") + "/index.html";
+  ok(minifierExcludes.includes(dest),
+    name + " uses BigInt, so " + dest + " must be in the jekyll-minifier exclude list in " +
+    "_config.yml or the production build fails on it");
+}
 
 ctx = "";
 console.log(`ok — ${checks} checks over ${SLICES.length} slices and ${POLYS.length} polygons`);
