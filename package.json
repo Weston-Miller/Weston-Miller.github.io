@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "check:ehrhart": "node bin/check_ehrhart.mjs"
+  },
   "devDependencies": {
     "@shopify/prettier-plugin-liquid": "1.4.0",
     "prettier": "3.1.1"
