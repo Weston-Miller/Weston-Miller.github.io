@@ -174,6 +174,11 @@ const $  = id => document.getElementById(id);
 const NS = "http://www.w3.org/2000/svg";
 const TMAX = 8;              /* rows in the table, and the top of the slider */
 const GRID = 6;              /* the drawing board is the lattice points of [0,GRID]^2 */
+/* Margin around a 2-D picture.  It has to clear the 30px prompt strip along the
+   bottom of the unfinished-polygon state, or the y = 0 row of the grid ends up
+   underneath it -- and it must be the same number in the renderer and in the
+   click handler, or clicks land on the wrong lattice point. */
+const PAD = 40;
 
 /* ============================ exact small rationals ============================
    Ehrhart coefficients here have degree <= 3 and tiny denominators, so machine
@@ -461,13 +466,26 @@ function render2d(M){
   let world, step, outline=[], ghosts="", picks="";
   if(draw){
     if(!M.ok){
-      /* the message needs its own ground: a grid dot landing in a word gap reads
-         as a stray comma */
-      return { svg: gridGhosts(fit([0,GRID,0,GRID],W,H,26)) +
-        '<rect x="'+(W/2-170)+'" y="'+(H/2-15)+'" width="340" height="24" fill="var(--surface)"/>'+
-        '<text x="'+(W/2)+'" y="'+(H/2+4)+'" text-anchor="middle" fill="var(--muted)" '+
-        'font-size="14">pick at least three points that are not in a line</text>',
-        nB:0, nI:0, total:0, invalid:true };
+      /* An unfinished polygon still has to show the picks -- otherwise the first
+         two clicks look like they did nothing at all.  The prompt sits along the
+         bottom on its own strip, clear of the grid: a grid dot landing in a word
+         gap reads as a stray comma, and a centred message covers the picks. */
+      const F0 = fit([0,GRID,0,GRID], W, H, PAD);
+      const seg = (M.V.length === 2)
+        ? '<line x1="'+(F0.ox+F0.S*M.V[0][0]).toFixed(1)+'" y1="'+(F0.oy-F0.S*M.V[0][1]).toFixed(1)+
+          '" x2="'+(F0.ox+F0.S*M.V[1][0]).toFixed(1)+'" y2="'+(F0.oy-F0.S*M.V[1][1]).toFixed(1)+
+          '" stroke="var(--edge)" stroke-width="1.4" stroke-dasharray="5 4" opacity=".6"/>'
+        : "";
+      const n = state.gens.length;
+      const msg = n===0 ? "click three grid points to start a polygon"
+                : n===1 ? "one vertex so far \u2014 two more to go"
+                : n===2 ? "two vertices so far \u2014 one more, off this line"
+                :         "all of these are in a line \u2014 add one off it";
+      return { svg: gridGhosts(F0) + seg + rings(state.gens, F0) +
+        '<rect x="0" y="'+(H-30)+'" width="'+W+'" height="30" fill="var(--surface)"/>'+
+        '<text x="'+(W/2)+'" y="'+(H-11)+'" text-anchor="middle" fill="var(--muted)" '+
+        'font-size="13">'+msg+'</text>',
+        nB:0, nI:0, total:n, invalid:true };
     }
     world=[0,GRID,0,GRID];
   } else {
@@ -476,13 +494,12 @@ function render2d(M){
     V.forEach(p=>{ x0=Math.min(x0,p[0]); x1=Math.max(x1,p[0]); y0=Math.min(y0,p[1]); y1=Math.max(y1,p[1]); });
     world=[x0,x1,y0,y1];
   }
-  const F = fit(world, W, H, 26);
+  const F = fit(world, W, H, PAD);
   const sx = x => F.ox + F.S*x, sy = y => F.oy - F.S*y;
 
   if(draw){
     ghosts = gridGhosts(F);
-    picks = state.gens.map(g => '<circle cx="'+sx(g[0]).toFixed(1)+'" cy="'+sy(g[1]).toFixed(1)+
-      '" r="6" fill="none" stroke="var(--accent)" stroke-width="1.6"/>').join("");
+    picks = rings(state.gens, F);
     outline = M.V.map(v => sx(v[0]).toFixed(1)+","+sy(v[1]).toFixed(1));
     step = F.S/T;
   } else {
@@ -510,6 +527,10 @@ function render2d(M){
     ghosts + dots + picks,
     nB, nI, total:nB+nI };
 }
+function rings(gens, F){
+  return gens.map(g => '<circle cx="'+(F.ox+F.S*g[0]).toFixed(1)+'" cy="'+(F.oy-F.S*g[1]).toFixed(1)+
+    '" r="6" fill="var(--surface)" fill-opacity=".65" stroke="var(--accent)" stroke-width="1.6"/>').join("");
+}
 function gridGhosts(F){
   let g="";
   for(let x=0;x<=GRID;x++) for(let y=0;y<=GRID;y++)
@@ -534,8 +555,10 @@ function readouts(M, counts){
 
   $("hs-num").hidden = poly && !M.ok;
   if(poly && !M.ok){
+    const n = state.gens.length;
     $("hs-count").innerHTML = "&mdash;";
-    $("hs-split").innerHTML = "";
+    $("hs-split").innerHTML = n===0 ? "no vertices picked yet"
+      : n + " vertex" + (n===1?"":"es") + " picked, no polygon yet";
     $("hs-recip").innerHTML = "Pick three points that are not collinear and everything here fills in.";
     $("hs-remark").innerHTML = "A lattice polygon is the convex hull of finitely many points of " +
       "Z<sup>2</sup>. Click the grid to build one.";
@@ -703,7 +726,7 @@ stage.addEventListener("click", e => {
   const box = svg.getBoundingClientRect();
   /* the viewBox is uniformly scaled to the element, so one ratio converts both axes */
   const u = W/box.width;
-  const F = fit([0,GRID,0,GRID], W, H, 26);
+  const F = fit([0,GRID,0,GRID], W, H, PAD);
   const gx = Math.round(((e.clientX-box.left)*u - F.ox)/F.S);
   const gy = Math.round((F.oy - (e.clientY-box.top)*u)/F.S);
   if(gx<0 || gy<0 || gx>GRID || gy>GRID) return;
