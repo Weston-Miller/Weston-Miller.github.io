@@ -92,6 +92,17 @@ nav: false
 #eh-app .rfrac .num{display:block; border-bottom:1px solid currentColor; padding:0 .35em .1em;}
 #eh-app .rfrac .den{display:block; padding:.1em .35em 0;}
 #eh-app .msg{font-size:.82rem; color:var(--accent); margin-left:.2rem;}
+#eh-app table.wide{border-collapse:collapse; font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:.8rem; width:100%; margin-top:.3rem;}
+#eh-app table.wide th{font-weight:600; color:var(--muted); text-align:left; padding:3px 8px;
+  border-bottom:1px solid var(--line); font-family:inherit; white-space:nowrap;}
+#eh-app table.wide th:first-child, #eh-app table.wide td:first-child{text-align:right; width:2.5em;}
+#eh-app table.wide th:nth-child(2), #eh-app table.wide td:nth-child(2){width:46%;}
+#eh-app table.wide td{padding:3px 8px; vertical-align:top;}
+#eh-app table.wide tr:nth-child(even) td{background:var(--panel);}
+#eh-app .scroll{overflow-x:auto;}
+#eh-app .ok{color:var(--accent); font-weight:600;}
+#eh-app .bad{color:var(--global-highlight-color,#b71c1c); font-weight:600;}
 @media print{ #eh-app .toolbar{display:none !important;} #eh-app .panel{border:none; padding:0;} }
 </style>
 
@@ -165,6 +176,8 @@ nav: false
     </div>
   </div>
 </div>
+
+<div class="panel" id="eh-graded" style="margin-top:1rem"></div>
 
 <div class="note" id="eh-remark"></div>
 
@@ -464,6 +477,139 @@ function evalPow(pow, t){
   return acc;
 }
 
+/* ============================ graded Ehrhart series ============================
+   Ported from the demos-src block of /graph-demos/, which computes the graded
+   q-Ehrhart series of the cube slice P(l,m,n) = {x in [0,m]^n : sum x = l} in
+   closed rational form.  Every slice in this page's menu IS one of those: the
+   slice of the unit cube at c = p/den, scaled by den, is exactly P(p, den, n),
+   and its k-th dilate is this page's t = k*den.  So there is no linear algebra
+   to do -- the q-coefficient at z^k is a difference of two counts of bounded
+   weak compositions, which telescopes to the ordinary lattice point count at
+   q = 1.  BigInt throughout, because the numerator coefficients are alternating
+   sums and nothing here is hot enough to care.                                */
+const _CB = new Map();
+function bi(n,k){                                  /* binomial, BigInt */
+  if(k<0 || n<0 || k>n) return 0n;
+  let r=1n; const K=BigInt(k), N=BigInt(n);
+  for(let i=0n;i<K;i++) r = r*(N-i)/(i+1n);
+  return r;
+}
+function comps(d,m,n){        /* #{weak compositions of d into n parts, each <= m} */
+  if(d<0 || m<0 || n<=0) return 0n;
+  const key = d+","+m+","+n, hit=_CB.get(key);
+  if(hit!==undefined) return hit;
+  let tot=0n; const step=m+1;
+  for(let j=0;j*step<=d;j++){ if(j>n) break;
+    tot += (j%2?-1n:1n) * bi(n,j) * bi(d-j*step+n-1, n-1); }
+  if(_CB.size>200000) _CB.clear();
+  _CB.set(key,tot); return tot;
+}
+const qdelta = (d,m,n) => comps(d,m,n) - comps(d-1,m,n);
+const qadd = (a,b) => { const L=Math.max(a.length,b.length), r=new Array(L).fill(0n);
+  for(let i=0;i<a.length;i++) r[i]+=a[i];
+  for(let i=0;i<b.length;i++) r[i]+=b[i]; return r; };
+const qmul = (a,b) => { if(!a.length||!b.length) return [];
+  const r=new Array(a.length+b.length-1).fill(0n);
+  for(let i=0;i<a.length;i++) if(a[i]) for(let j=0;j<b.length;j++) r[i+j]+=a[i]*b[j];
+  return r; };
+const qshift = (p,a) => new Array(a).fill(0n).concat(p);
+const qzero  = p => !p.some(x => x!==0n);
+
+/* (1 - q^l z)^{n-1} * prod_{j=0}^{ceil(l/m)-1} (1 - q^{jm} z) */
+function denFactors(l,n,m){
+  const r = Math.ceil(l/m), f = new Array(n-1).fill(l);
+  for(let j=0;j<r;j++) f.push(j*m);
+  return f;
+}
+function denZlist(l,n,m){
+  let D=[[1n]];
+  for(const a of denFactors(l,n,m)){
+    const nw = new Array(D.length+1).fill(0).map(()=>[]);
+    for(let k=0;k<D.length;k++){
+      nw[k]   = qadd(nw[k],   D[k]);
+      nw[k+1] = qadd(nw[k+1], qshift(D[k].map(x=>-x), a));
+    }
+    D=nw;
+  }
+  return D;
+}
+/* E    = sum_k sum_{d<=k l}     delta(d, k m,     n) q^d z^k
+   Ebar = sum_k sum_{d<=k l - n} delta(d, k m - 2, n) q^d z^k   */
+function seriesZlist(l,n,K,m,interior){
+  const A=[];
+  for(let k=0;k<=K;k++){
+    const top = interior ? k*l-n : k*l, mm = interior ? k*m-2 : k*m, row=[];
+    if(top>=0) for(let d=0;d<=top;d++) row.push(qdelta(d,mm,n));
+    A.push(row);
+  }
+  return A;
+}
+function numZlist(l,n,m,interior,margin){
+  margin = margin===undefined ? 6 : margin;
+  const D=denZlist(l,n,m), degD=D.length-1, K=degD+margin, A=seriesZlist(l,n,K,m,interior);
+  const coeff = k => { let acc=[];
+    for(let j=0;j<D.length;j++){ const i=k-j; if(i>=0 && i<=K) acc=qadd(acc,qmul(D[j],A[i])); }
+    return acc; };
+  const num=[]; for(let k=0;k<=degD;k++) num.push(coeff(k));
+  for(let k=degD+1;k<=K;k++) if(!qzero(coeff(k)))
+    throw new Error("the numerator degree exceeded the predicted denominator degree by more than " +
+                    "the safety margin, so the closed form was not computed");
+  return num;
+}
+/* synthetic division by (1 - q^a z): b_k = c_k + q^a b_{k-1} */
+function divideFactor(N,a){
+  const d=N.length-1;
+  if(d<0) return null;
+  if(d===0) return qzero(N[0]) ? [] : null;
+  const Q=[]; let prev=[];
+  for(let k=0;k<d;k++){ const bk=qadd(N[k]||[], qshift(prev,a)); Q.push(bk); prev=bk; }
+  if(!qzero(qadd(N[d]||[], qshift(Q[Q.length-1],a)))) return null;
+  while(Q.length>1 && qzero(Q[Q.length-1])) Q.pop();
+  return Q;
+}
+function reduceDen(nE,nB,l,n,m){
+  const f=denFactors(l,n,m);
+  let changed=true;
+  while(changed){ changed=false;
+    for(let i=0;i<f.length;i++){
+      const qE=divideFactor(nE,f[i]), qB=divideFactor(nB,f[i]);
+      if(qE && qB){ nE=qE; nB=qB; f.splice(i,1); changed=true; break; }
+    }
+  }
+  return { nE, nB, f };
+}
+/* Exact check of q^{n-1} Ebar(z,q) = (-1)^n E(1/z,1/q).  With D = prod (1 - q^a z)
+   over F factors of total q-degree S, D(1/z,1/q) = (-1)^F q^{-S} z^{-F} D(z,q), so
+   the identity is the finite coefficient identity below. */
+function recipExact(nE,nB,n,f){
+  const F=f.length, S=f.reduce((a,b)=>a+b,0), sgn=((n+F)%2)?-1n:1n;
+  const co=(N,k,e)=>(k<0||k>=N.length||e<0||e>=N[k].length)?0n:N[k][e];
+  const emax = Math.max.apply(null, nE.map(r=>r.length).concat(nB.map(r=>r.length), [S])) + n + 2;
+  const kmax = Math.max(nE.length, nB.length, F) + 1;
+  for(let k=0;k<=kmax;k++) for(let e=0;e<=emax;e++)
+    if(co(nB,k,e-(n-1)) !== sgn*co(nE,F-k,S-e)) return false;
+  return true;
+}
+function graded(S){
+  if(S._gr!==undefined) return S._gr;
+  if(S.kind!=="slice"){ S._gr=null; return null; }
+  const l=S.p, m=S.q, n=S.n;
+  try{
+    const nE=numZlist(l,n,m,false), nB=numZlist(l,n,m,true), full=denFactors(l,n,m);
+    const red=reduceDen(nE,nB,l,n,m);
+    S._gr = { ok:true, l, m, n, full, nE:red.nE, nB:red.nB, f:red.f,
+              reduced: red.f.length < full.length,
+              half: (n>=3 && 2*l===n*m),
+              recip: recipExact(red.nE, red.nB, n, red.f),
+              nonneg: red.nE.every(r=>r.every(c=>c>=0n)) };
+  }catch(err){ S._gr = { ok:false, error: err.message }; }
+  return S._gr;
+}
+/* Hilbert series of the k-th dilate, straight from the coefficient formula */
+const gradedAt = (S,k) => { const row=[];
+  for(let d=0; d<=k*S.p; d++) row.push(qdelta(d, k*S.q, S.n));
+  return row; };
+
 /* ================================== rendering ================================== */
 const circle = (x,y,r,fill,o) =>
   '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(2)+'" fill="'+fill+
@@ -608,6 +754,7 @@ function readouts(S, counts){
     $("eh-remark").innerHTML = "A lattice polygon is the convex hull of finitely many points of " +
       "Z<sup>2</sup>. Click the grid, or focus the picture and use the arrow keys and Enter.";
     $("eh-legend").innerHTML = "Click a grey grid point to place a vertex.";
+    gradedReadout(S);
     return;
   }
   $("eh-num").hidden = false;
@@ -684,6 +831,7 @@ function readouts(S, counts){
     ', which is exactly the ' + obs.toLocaleString() + ' interior point' + (obs===1?"":"s") +
     ' at t = ' + (q*s0) + (recVal===obs ? '.' : ' &mdash; mismatch!');
 
+  gradedReadout(S);
   $("eh-remark").innerHTML = remark(S,E);
   $("eh-legend").innerHTML =
     '<span class="swatch" style="background:var(--accent)"></span>boundary points &middot; ' +
@@ -694,6 +842,103 @@ function readouts(S, counts){
           : (S.dim===3 ? 'the solid is drawn at a fixed size, so dilating shows up as a finer lattice ' +
                          'rather than a bigger polytope. Drag to rotate, or focus it and use the arrow keys.'
                        : 'the polygon is drawn at a fixed size, so dilating shows up as a finer lattice.'));
+}
+
+function qpHTML(poly, v){                    /* a polynomial with BigInt coefficients */
+  v = v || "q";
+  const terms=[];
+  poly.forEach((c,e)=>{
+    if(c===0n) return;
+    const neg = c<0n, a = neg ? -c : c;
+    let mono = (a===1n && e>0) ? "" : a.toString();
+    if(e===1) mono += v; else if(e>1) mono += v+"<sup>"+e+"</sup>";
+    terms.push([neg,mono]);
+  });
+  if(!terms.length) return "0";
+  return terms.map((t,i)=> (i===0 ? (t[0]?"&minus;":"") : (t[0]?" &minus; ":" + ")) + t[1]).join("");
+}
+function denHTML(f){
+  const cnt={};
+  f.forEach(a=>{ cnt[a]=(cnt[a]||0)+1; });
+  return Object.keys(cnt).map(Number).sort((a,b)=>a-b).map(a=>{
+    const base = a===0 ? "(1 &minus; z)" : "(1 &minus; q"+(a===1?"":"<sup>"+a+"</sup>")+"z)";
+    return base + (cnt[a]>1 ? "<sup>"+cnt[a]+"</sup>" : "");
+  }).join("");
+}
+function gradedReadout(S){
+  const box = $("eh-graded");
+  if(S.kind!=="slice"){
+    box.innerHTML =
+      '<div class="head">Graded Ehrhart series</div>' +
+      '<p class="caption" style="margin:0">Not available for a polygon you draw. For a slice of the ' +
+      'cube the graded count has a closed combinatorial form, which is why it costs nothing here; a ' +
+      'general lattice polytope has no such formula, and its graded pieces have to come from the ' +
+      'orbit-harmonics ideal one dilate at a time.</p>';
+    return;
+  }
+  const G = graded(S), den = S.q, T = state.T;
+  const Pn = 'P(' + S.p + ',' + S.q + ',' + S.n + ')';
+  let h = '<div class="head">Graded Ehrhart series</div>' +
+    '<p class="caption" style="margin:0 0 .5rem">Orbit harmonics grades the lattice points of the ' +
+    'k-th dilate of ' + Pn + ' = {x &isin; [0,' + S.q + ']<sup>' + S.n + '</sup> : &sum;x = ' + S.p +
+    '}' + (den===1 ? '' : ', which is ' + den + 'P') + ', giving a q-analogue of the count that ' +
+    'collapses to the middle column at q = 1' +
+    (den===1 ? '' : '. Here z<sup>k</sup> is the dilate t = ' + den + 'k') + '.</p>';
+
+  if(T % den === 0){
+    const k = T/den, row = gradedAt(S,k);
+    const sum = row.reduce((a,b)=>a+b, 0n), want = BigInt(S.count(T));
+    h += '<div class="mono" style="line-height:1.8">Hilb(' + (k===1?"":k+"&thinsp;") + Pn + '; q) = ' + qpHTML(row) +
+         '<br><span style="color:var(--muted)">&nbsp;&nbsp;at q = 1: ' + sum.toString() +
+         (sum===want ? ' <span class="ok">= i(' + T + ')</span>' : ' <span class="bad">&ne; i(' + T + ')</span>') +
+         '</span></div>';
+  } else {
+    h += '<div class="caption">t = ' + T + ' is not a multiple of ' + den +
+         ', so this dilate has no lattice points and nothing to grade.</div>';
+  }
+
+  if(!G.ok){
+    h += '<div class="note plain" style="margin-bottom:0">' + G.error + '.</div>';
+    box.innerHTML = h;
+    return;
+  }
+  h += '<hr class="sep"><div class="mono" style="line-height:1.7">E(q,z) = ' +
+       rfrac('N(q,z)', denHTML(G.f)) + '&nbsp;&nbsp;&nbsp;&nbsp;' +
+       '<span style="color:var(--muted)">interior:</span>&nbsp;' +
+       '&#274;(q,z) = ' + rfrac('N&#772;(q,z)', denHTML(G.f)) + '</div>';
+  if(G.reduced)
+    h += '<div class="caption">Predicted denominator ' + denHTML(G.full) + '; one factor cancels ' +
+         'against both numerators' + (G.half ? ', which is the reduction predicted when n &ge; 3 and 2&#8467; = nm'
+                                             : ' &mdash; and that reduction was <b>not</b> predicted') + '.</div>';
+  const rows = Math.max(G.nE.length, G.nB.length);
+  let t = '<table class="wide"><tr><th>z<sup>k</sup></th><th>N(q,z)</th><th>N&#772;(q,z)</th></tr>';
+  for(let k=0;k<rows;k++){
+    const a = (k<G.nE.length && !qzero(G.nE[k])) ? qpHTML(G.nE[k]) : "";
+    const b = (k<G.nB.length && !qzero(G.nB[k])) ? qpHTML(G.nB[k]) : "";
+    if(a || b) t += '<tr><td>'+k+'</td><td>'+(a||"0")+'</td><td>'+(b||"0")+'</td></tr>';
+  }
+  h += '<div class="scroll">' + t + '</table></div>';
+  /* At q = 1 the graded fraction has to become the h*-fraction printed above.  The
+     reduced denominator has F factors and (1-z)^{d+1} is what the ungraded series
+     wants, so N(1,z) must be h*(z) times (1-z)^{F-d-1}. */
+  const E1 = ehrhart(S), F = G.f.length, extra = F - (S.dim+1);
+  let want = E1.hs.map(BigInt);
+  for(let i=0;i<extra;i++) want = qadd(want.concat([0n]), qshift(want.map(x=>-x),1));
+  const got = G.nE.map(r => r.reduce((a,b)=>a+b, 0n));
+  while(got.length>1 && got[got.length-1]===0n) got.pop();
+  while(want.length>1 && want[want.length-1]===0n) want.pop();
+  const q1ok = got.length===want.length && got.every((v,i)=>v===want[i]);
+  h += '<div class="caption">At q = 1: N(1,z) = ' + qpHTML(got,"z") + ' = h*(z)' +
+       (extra>0 ? '(1 &minus; z)' + (extra>1 ? '<sup>'+extra+'</sup>' : '') : '') +
+       (q1ok ? ' <span class="ok">&check;</span>, so the fraction above is what this one becomes.'
+             : ' <span class="bad">&mdash; mismatch</span>.') + '</div>';
+  h += '<div class="note quiet" style="margin-bottom:0"><b>q-reciprocity.</b> ' +
+       'q<sup>' + (S.n-1) + '</sup>&#274;(z,q) = (&minus;1)<sup>' + S.n + '</sup>E(1/z,1/q) ' +
+       (G.recip ? '<span class="ok">holds exactly</span>' : '<span class="bad">FAILS</span>') +
+       ', checked coefficient by coefficient on the numerators rather than numerically.' +
+       (G.nonneg ? ' Every coefficient of N is non-negative.' : ' N has a negative coefficient.') +
+       '</div>';
+  box.innerHTML = h;
 }
 
 function remark(S,E){
