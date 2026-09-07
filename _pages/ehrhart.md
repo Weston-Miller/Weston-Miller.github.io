@@ -117,8 +117,8 @@ nav: false
 <div class="wrap">
   <h1>Ehrhart theory</h1>
   <p class="lede">
-    Dilate a polytope, count the lattice points, and a polynomial appears. You can choose one of the slices of the
-    cube that are small enough to see. Or you can draw your own lattice polygon.
+    Dilate a polytope, count the lattice points, and a polynomial appears. Draw your own lattice polygon
+    below, or choose one of the slices of the cube that are small enough to see.
     Email me if you find any errors or want some specific function added.
   </p>
 
@@ -152,6 +152,7 @@ nav: false
   <button class="small" data-preset="triangle">triangle</button>
   <button class="small" data-preset="square">square</button>
   <button class="small" data-preset="hex">hexagon</button>
+  <button class="small" data-preset="quad" title="rational, but its q-Ehrhart series is not reciprocal">non-reciprocal</button>
   <button class="small" id="eh-undo">undo</button>
   <button class="small" id="eh-clear">clear</button>
 </div>
@@ -1098,11 +1099,29 @@ function readouts(S, counts){
     const val=S.count(q*s), k=q*s;
     terms.push(s===0 ? String(val) : (val===1?"":val.toLocaleString())+tpow(k));
   }
+  /* The interior series is the same numerator read backwards.  Ehrhart-Macdonald says
+     sum_{m>=1} i(m)- t^m = (-1)^{d+1} E(1/t), and with E = h*(t)/(1-t)^{d+1} that is
+     exactly sum_j h*_j t^{d+1-j} over the same denominator -- so printing it costs
+     nothing and turns reciprocity from a spot check into something you can see.  For
+     q > 1 everything lives in t^q, so the exponents scale with it and the constant
+     term is 0: no dilate below q has an interior point, or any point at all. */
+  const den1 = '(1 &minus; '+(q===1?"t":"t<sup>"+q+"</sup>")+')<sup>'+(d+1)+'</sup>';
+  const hsInt = new Array(d+2).fill(0);
+  E.hs.forEach((h,j) => { hsInt[d+1-j] = h; });
+  const iTerms=[];
+  for(let s=1;s<=d+1;s++){
+    const val=S.interior(q*s);
+    if(val) iTerms.push((val===1?"":val.toLocaleString())+tpow(q*s));
+  }
   $("eh-series").innerHTML =
     '&sum;<sub>m&ge;0</sub> |m&thinsp;P &cap; Z<sup>'+(S.n||S.dim)+'</sup>| t<sup>m</sup> = ' +
-    rfrac(polyHTML(E.hs.map(h=>fr(h,1)), "t", true, q),
-          '(1 &minus; '+(q===1?"t":"t<sup>"+q+"</sup>")+')<sup>'+(d+1)+'</sup>') +
-    '<br><span style="color:var(--muted)">= ' + terms.join(" + ") + ' + &ctdot;</span>';
+    rfrac(polyHTML(E.hs.map(h=>fr(h,1)), "t", true, q), den1) +
+    '<br><span style="color:var(--muted)">= ' + terms.join(" + ") + ' + &ctdot;</span>' +
+    '<hr class="sep" style="margin:.55rem 0">' +
+    '<span style="color:var(--muted)">interior:</span> ' +
+    '&sum;<sub>m&ge;1</sub> |int(m&thinsp;P) &cap; Z<sup>'+(S.n||S.dim)+'</sup>| t<sup>m</sup> = ' +
+    rfrac(polyHTML(hsInt.map(h=>fr(h,1)), "t", true, q), den1) +
+    (iTerms.length ? '<br><span style="color:var(--muted)">= ' + iTerms.join(" + ") + ' + &ctdot;</span>' : '');
 
   /* volume.  For q > 1 the h*-vector belongs to the lattice polytope qP, so the
      volume of P itself is that normalized volume over q^d d!. */
@@ -1139,7 +1158,8 @@ function readouts(S, counts){
   $("eh-recip").innerHTML =
     '<b>Reciprocity.</b> (&minus;1)<sup>'+d+'</sup>&thinsp;i(&minus;'+(q===1?s0:q+"&middot;"+s0)+') = ' + recVal +
     ', which is exactly the ' + obs.toLocaleString() + ' interior point' + (obs===1?"":"s") +
-    ' at m = ' + (q*s0) + (recVal===obs ? '.' : ' &mdash; mismatch!');
+    ' at m = ' + (q*s0) + (recVal===obs ? '.' : ' &mdash; mismatch!') +
+    ' The same statement is the second fraction above: its numerator is h* written backwards.';
 
   gradedReadout(S);
   $("eh-remark").innerHTML = remark(S,E);
@@ -1346,7 +1366,10 @@ function gradedPolyReadout(S, box){
          'q<sup>2</sup>&#274;(t,q) = &minus;E(1/t,1/q) ' +
          (G.recip ? '<span class="ok">holds exactly</span>, checked coefficient by coefficient on the numerators.'
                   : '<span class="bad">FAILS</span> &mdash; the series is rational but not reciprocal. ' +
-                    'Worth reproducing in Macaulay2 before trusting it.') + '</div>';
+                    'That is a real phenomenon, not an artefact of the fit: both numerators are exact ' +
+                    'integer polynomials and the first polygon found this way has been reproduced in ' +
+                    'Macaulay2. A new one is still worth reproducing there before it goes in a paper.') +
+         '</div>';
   }
   box.innerHTML = h;
 }
@@ -1425,6 +1448,13 @@ $("eh-graded").addEventListener("click", e => {
 });
 
 function remark(S,E){
+  if(S.kind==="poly" && S.ok && S.V.map(g=>g.join(".")).sort().join(" ")===QUAD_KEY)
+    return 'This is the reason the button is here. Its ungraded Ehrhart data is unremarkable and ' +
+      'Ehrhart&ndash;Macdonald holds, but the <b>graded</b> series &mdash; rational, with denominator ' +
+      '(1 &minus; t)(1 &minus; q<sup>4</sup>t)<sup>2</sup> &mdash; is <b>not</b> reciprocal. Run the ' +
+      'search below and see. Both numerators are exact integer polynomials, every Hilbert function ' +
+      'behind them was recomputed over a second prime, and the failure has been reproduced in ' +
+      'Macaulay2 independently of this page.';
   if(S.kind==="poly")
     return 'Every lattice polygon has i(m) = Am<sup>2</sup> + (b/2)m + 1 with A its area and b its ' +
       'boundary points, so h* = (1, A + b/2 &minus; 2, A &minus; b/2 + 1) and the last entry is the ' +
@@ -1456,8 +1486,13 @@ const CS = {
 const PRESETS = {
   triangle:[[0,0],[4,0],[1,4]],
   square:  [[1,1],[5,1],[5,5],[1,5]],
-  hex:     [[2,1],[4,1],[5,3],[4,5],[2,5],[1,3]]
+  hex:     [[2,1],[4,1],[5,3],[4,5],[2,5],[1,3]],
+  /* The one polygon here chosen for what it does rather than for its shape: its
+     graded series is rational, E(q,t) = N / (1-t)(1-q^4 t)^2, and q-reciprocity
+     fails on it.  Confirmed in Macaulay2.  remark() says so when it is loaded. */
+  quad:    [[0,0],[0,1],[2,4],[4,1]]
 };
+const QUAD_KEY = PRESETS.quad.map(g=>g.join(".")).sort().join(" ");
 const state = { shape:"poly", ci:{s3:5, s4:7}, M:2, yaw:1.18, pitch:0.56,
                 gens:PRESETS.hex.slice(), grid:6, cur:[0,0], undo:[] };
 
@@ -1542,7 +1577,14 @@ $("eh-undo").addEventListener("click", ()=>{
 });
 Array.prototype.forEach.call(document.querySelectorAll("#eh-drawbar button[data-preset]"), b => {
   b.addEventListener("click", ()=>{ push();
-    state.gens = PRESETS[b.getAttribute("data-preset")].slice().filter(g=>g[0]<=state.grid && g[1]<=state.grid);
+    /* Grow the grid to fit rather than clipping the preset.  Dropping the vertices
+       that do not fit used to hand back a different polygon under the same name --
+       and for the non-reciprocal quadrilateral a clipped copy is not the example. */
+    const g = PRESETS[b.getAttribute("data-preset")];
+    const need = g.reduce((mx,v)=>Math.max(mx, v[0], v[1]), 0);
+    if(need > state.grid) state.grid = Math.min(10, need);
+    state.gens = g.slice().filter(v=>v[0]<=state.grid && v[1]<=state.grid);
+    $("eh-grid").value = state.grid; $("eh-gridv").textContent = state.grid;
     draw(); });
 });
 
