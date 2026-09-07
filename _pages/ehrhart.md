@@ -1219,9 +1219,9 @@ function readouts(S, counts){
     :
     '<span class="swatch" style="background:var(--accent)"></span>boundary points &middot; ' +
     '<span class="swatch" style="background:var(--int)"></span>interior points &middot; ' +
-    (poly ? 'click a grey grid point to add or drop a vertex, or focus the picture and use the arrow ' +
-            'keys and Enter. The polygon keeps its size and the lattice gets finer as m grows, which ' +
-            'is the same picture as dilating it.'
+    (poly ? 'click a grey grid point to add or drop a vertex, drag a ringed one to move it, or focus ' +
+            'the picture and use the arrow keys and Enter. The polygon keeps its size and the lattice ' +
+            'gets finer as m grows, which is the same picture as dilating it.'
           : (S.dim===3 ? 'the solid is drawn at a fixed size, so dilating shows up as a finer lattice ' +
                          'rather than a bigger polytope. Drag to rotate, or focus it and use the arrow keys.'
                        : 'the polygon is drawn at a fixed size, so dilating shows up as a finer lattice.'));
@@ -1669,24 +1669,74 @@ $("eh-spin").addEventListener("click", function(){
   if(spinning) spinReq = requestAnimationFrame(tick); else cancelAnimationFrame(spinReq);
 });
 
-/* drag to turn in 3D; click to edit in polygon mode */
+/* Drag to turn in 3D; in polygon mode, click to add or drop a vertex and drag an
+   existing one to move it.
+   The slop matters.  Nothing is redrawn until the pointer has travelled past it, so
+   a plain click never rebuilds the SVG between its own mousedown and mouseup -- which
+   is exactly how the swallowed-click bug worked, and re-introducing it here would be
+   easy.  Below the slop this is still a click; above it, it is a drag, and `moved`
+   makes the click handler stand down. */
+const DRAG_SLOP = 4;
 let dragging=false, moved=false, lx=0, ly=0;
+let dragIdx=-1, dragPushed=false, downX=0, downY=0;
+
+/* The lattice point under a pointer event, or null if the picture is not a grid. */
+function gridAt(e){
+  if(state.shape!=="poly") return null;
+  const svg = stage.querySelector("svg"); if(!svg) return null;
+  const box = svg.getBoundingClientRect(), u = W/box.width, F = gridFit(state.grid);
+  return [Math.round(((e.clientX-box.left)*u - F.ox)/F.S),
+          Math.round((F.oy - (e.clientY-box.top)*u)/F.S)];
+}
+const genAt = (gx,gy) => state.gens.findIndex(g => g[0]===gx && g[1]===gy);
+
 stage.addEventListener("pointerdown", e => {
-  moved=false;
-  if(shape().dim!==3) return;
-  dragging=true; lx=e.clientX; ly=e.clientY; stage.setPointerCapture(e.pointerId);
+  moved=false; dragIdx=-1; dragPushed=false;
+  downX=e.clientX; downY=e.clientY;
+  if(shape().dim===3){
+    dragging=true; lx=e.clientX; ly=e.clientY; stage.setPointerCapture(e.pointerId);
+    return;
+  }
+  const g = gridAt(e);
+  if(!g) return;
+  const i = genAt(g[0], g[1]);
+  if(i>=0){ dragIdx=i; stage.setPointerCapture(e.pointerId); }
 });
 stage.addEventListener("pointermove", e => {
-  if(!dragging) return;
+  if(dragging){
+    moved=true;
+    state.yaw += (e.clientX-lx)*0.008;
+    state.pitch = Math.max(-1.45, Math.min(1.45, state.pitch + (e.clientY-ly)*0.008));
+    lx=e.clientX; ly=e.clientY;
+    draw(false);
+    return;
+  }
+  if(dragIdx<0){
+    /* not dragging: just say whether there is something here to grab */
+    if(state.shape==="poly"){
+      const g = gridAt(e);
+      stage.style.cursor = (g && genAt(g[0],g[1])>=0) ? "grab" : "";
+    }
+    return;
+  }
+  if(Math.abs(e.clientX-downX) < DRAG_SLOP && Math.abs(e.clientY-downY) < DRAG_SLOP) return;
   moved=true;
-  state.yaw += (e.clientX-lx)*0.008;
-  state.pitch = Math.max(-1.45, Math.min(1.45, state.pitch + (e.clientY-ly)*0.008));
-  lx=e.clientX; ly=e.clientY;
+  stage.style.cursor = "grabbing";
+  const g = gridAt(e);
+  if(!g) return;
+  const gx = Math.max(0, Math.min(state.grid, g[0])), gy = Math.max(0, Math.min(state.grid, g[1]));
+  const cur = state.gens[dragIdx];
+  if(!cur || (cur[0]===gx && cur[1]===gy)) return;
+  const other = genAt(gx,gy);
+  if(other>=0 && other!==dragIdx) return;        /* refuse to stack two picks */
+  if(!dragPushed){ push(); dragPushed=true; }    /* one undo step for the whole drag */
+  state.gens[dragIdx] = [gx,gy];
   draw(false);
 });
 ["pointerup","pointercancel"].forEach(t => stage.addEventListener(t, e => {
-  if(dragging && moved) draw();
-  dragging=false;
+  if((dragging || dragIdx>=0) && moved) draw();
+  dragging=false; dragIdx=-1;
+  stage.style.cursor = "";
   if(stage.hasPointerCapture && stage.hasPointerCapture(e.pointerId)) stage.releasePointerCapture(e.pointerId);
 }));
 function toggleAt(gx,gy){
@@ -1698,10 +1748,8 @@ function toggleAt(gx,gy){
 }
 stage.addEventListener("click", e => {
   if(state.shape!=="poly" || moved) return;
-  const svg = stage.querySelector("svg"); if(!svg) return;
-  const box = svg.getBoundingClientRect(), u = W/box.width, F = gridFit(state.grid);
-  state.cur = [Math.round(((e.clientX-box.left)*u - F.ox)/F.S),
-               Math.round((F.oy - (e.clientY-box.top)*u)/F.S)];
+  const g = gridAt(e); if(!g) return;
+  state.cur = g;
   toggleAt(state.cur[0], state.cur[1]);
 });
 stage.addEventListener("keydown", e => {
