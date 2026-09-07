@@ -24,6 +24,19 @@ nav: false
   --edge:color-mix(in srgb, var(--ink) 55%, var(--bg));
   --facefill:color-mix(in srgb, var(--ink) 7%, var(--bg));
   --ghost:color-mix(in srgb, var(--ink) 22%, var(--bg));
+  /* Eight steps from the boundary colour to the interior colour, for shading the
+     lattice points by their degree in the orbit-harmonics grading.  They are custom
+     properties and not a color-mix computed per dot so that (a) the theme still
+     drives them with no redraw and (b) the SVG export, which resolves var(--name)
+     against a probe, can substitute them like every other colour. */
+  --dg0:var(--accent);
+  --dg1:color-mix(in srgb, var(--int) 14%, var(--accent));
+  --dg2:color-mix(in srgb, var(--int) 29%, var(--accent));
+  --dg3:color-mix(in srgb, var(--int) 43%, var(--accent));
+  --dg4:color-mix(in srgb, var(--int) 57%, var(--accent));
+  --dg5:color-mix(in srgb, var(--int) 71%, var(--accent));
+  --dg6:color-mix(in srgb, var(--int) 86%, var(--accent));
+  --dg7:var(--int);
 }
 #eh-app *{box-sizing:border-box;}
 #eh-app{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -63,6 +76,8 @@ nav: false
 #eh-app .stage:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:var(--radius);}
 #eh-app .stage:not(:focus) .kbcur{display:none;}
 #eh-app .caption{font-size:.82rem; color:var(--muted); margin:.4rem 0;}
+#eh-app .ramp{display:inline-block; vertical-align:-2px; width:76px; height:9px; border-radius:5px;
+  margin:0 .3rem; background:linear-gradient(to right, var(--dg0), var(--dg2), var(--dg4), var(--dg7));}
 #eh-app .head{font-size:.78rem; letter-spacing:.05em; font-weight:600; color:var(--muted);
   margin:0 0 .45rem;}
 #eh-app .mono{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.85rem;}
@@ -152,7 +167,9 @@ nav: false
   <button class="small" data-preset="triangle">triangle</button>
   <button class="small" data-preset="square">square</button>
   <button class="small" data-preset="hex">hexagon</button>
+  <button class="small" data-preset="anti" title="its lattice points are an order ideal, so shading by degree works and the Hilbert function is free">anti-blocking</button>
   <button class="small" data-preset="quad" title="rational, but its q-Ehrhart series is not reciprocal">non-reciprocal</button>
+  <button class="small" id="eh-degs" aria-pressed="false" title="colour each lattice point by its degree in the orbit-harmonics grading">shade by degree</button>
   <button class="small" id="eh-undo">undo</button>
   <button class="small" id="eh-clear">clear</button>
 </div>
@@ -654,8 +671,14 @@ const gradedAt = (S,k) => { const row=[];
 const HP1 = 1000003, HP2 = 999983, HPF = 1000003, HCHUNK = 4096;
 const SYM8 = [[1,0,0,1],[-1,0,0,1],[1,0,0,-1],[-1,0,0,-1],[0,1,1,0],[0,-1,1,0],[0,1,-1,0],[0,-1,-1,0]];
 
-function downClosedHilb(Z){
-  if(!Z.length) return [];
+/* Returns null unless some lattice symmetry plus a translation makes Z an order
+   ideal, and otherwise { h, deg } -- the Hilbert function, and the degree of every
+   point of Z in the same order Z came in.  The degree is what the shading draws, so
+   it has to be per point and not only aggregated; deg[i] is the coordinate sum of
+   Z[i] after the transform, which is exactly its degree in the associated graded
+   ring when the point set is down-closed. */
+function downClosed(Z){
+  if(!Z.length) return { h:[], deg:[] };
   for(const [a,b,c,d] of SYM8){
     let mnx=Infinity, mny=Infinity;
     const W = Z.map(q=>{ const u=a*q[0]+b*q[1], v=c*q[0]+d*q[1];
@@ -668,13 +691,13 @@ function downClosedHilb(Z){
       if((i>0 && !S.has((i-1)+","+j)) || (j>0 && !S.has(i+","+(j-1)))){ ok=false; break; }
     }
     if(!ok) continue;
-    const h=[];
-    for(const key of S){ const pr=key.split(","), e=(+pr[0])+(+pr[1]);
-      while(h.length<=e) h.push(0n); h[e]+=1n; }
-    return h;
+    const h=[], deg=W.map(q => (q[0]-mnx)+(q[1]-mny));
+    for(const e of deg){ while(h.length<=e) h.push(0n); h[e]+=1n; }
+    return { h, deg };
   }
   return null;
 }
+function downClosedHilb(Z){ const r = downClosed(Z); return r && r.h; }
 function hilbRank(Z, p){
   const N=Z.length; if(!N) return [];
   const x=new Float64Array(N), y=new Float64Array(N);
@@ -1020,17 +1043,35 @@ function render2d(S){
 
   let nB=0, nI=0, dots="";
   const r = Math.max(1.0, Math.min(5, 0.14*step));
-  S.lattice(M).forEach(x => {
+  const Z = S.lattice(M);
+
+  /* Shading by degree is offered only where the degree is a fact about the point
+     rather than a choice: when the points form an order ideal, the degree is the
+     coordinate sum and nothing else.  Off that path the grading is still perfectly
+     well defined, but it is a property of the whole ideal and no single degree
+     belongs to any one point, so there is nothing honest to colour. */
+  const dc = (poly && S.ok) ? downClosed(Z) : null;
+  const shade = !!(dc && state.byDeg);
+  const degMax = dc ? dc.deg.reduce((a,b)=>Math.max(a,b), 0) : 0;
+
+  Z.forEach((x,i) => {
     const p = S.placeD(x,M), inte = S.isInt(x,M);
     if(inte) nI++; else nB++;
-    dots += circle(sx(p[0]), sy(p[1]), r, inte?"var(--int)":"var(--accent)");
+    const cx = sx(p[0]), cy = sy(p[1]);
+    if(shade){
+      const e = dc.deg[i], bucket = degMax ? Math.round(7*e/degMax) : 0;
+      dots += '<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+r.toFixed(2)+
+              '" fill="var(--dg'+bucket+')"><title>degree '+e+'</title></circle>';
+    } else {
+      dots += circle(cx, cy, r, inte?"var(--int)":"var(--accent)");
+    }
   });
 
   return { svg:
     '<polygon points="'+outline.join(" ")+'" fill="var(--facefill)" stroke="var(--edge)" '+
       'stroke-width="1.7" stroke-linejoin="round"/>'+
     ghosts + dots + picks,
-    nB, nI, total:nB+nI };
+    nB, nI, total:nB+nI, canShade:!!dc, shading:shade, degMax };
 }
 /* The keyboard cursor for the drawing grid.  It is always drawn and hidden by CSS
    unless the stage has focus -- NOT redrawn on focus.  Rebuilding the SVG from a
@@ -1162,8 +1203,20 @@ function readouts(S, counts){
     ' The same statement is the second fraction above: its numerator is h* written backwards.';
 
   gradedReadout(S);
+  const degs = $("eh-degs");
+  degs.disabled = !counts.canShade;
+  degs.setAttribute("aria-pressed", counts.shading ? "true" : "false");
+  degs.title = counts.canShade
+    ? "colour each lattice point by its degree in the orbit-harmonics grading"
+    : "only for an anti-blocking polygon, where a point's degree is its coordinate sum; "
+      + "this one is not one, up to a lattice symmetry";
   $("eh-remark").innerHTML = remark(S,E);
-  $("eh-legend").innerHTML =
+  $("eh-legend").innerHTML = counts.shading
+    ? 'degree 0 <span class="ramp"></span> ' + counts.degMax + ' &middot; each point is coloured by its ' +
+      'coordinate sum once P is moved into the corner of the positive quadrant, which is its degree ' +
+      'in the orbit-harmonics grading. Hover a point to read it. Those counts, by degree, are the ' +
+      'Hilbert function printed below.'
+    :
     '<span class="swatch" style="background:var(--accent)"></span>boundary points &middot; ' +
     '<span class="swatch" style="background:var(--int)"></span>interior points &middot; ' +
     (poly ? 'click a grey grid point to add or drop a vertex, or focus the picture and use the arrow ' +
@@ -1490,10 +1543,16 @@ const PRESETS = {
   /* The one polygon here chosen for what it does rather than for its shape: its
      graded series is rational, E(q,t) = N / (1-t)(1-q^4 t)^2, and q-reciprocity
      fails on it.  Confirmed in Macaulay2.  remark() says so when it is loaded. */
-  quad:    [[0,0],[0,1],[2,4],[4,1]]
+  quad:    [[0,0],[0,1],[2,4],[4,1]],
+  /* Anti-blocking: in the first quadrant, containing the origin, and every facet off
+     the axes has a non-negative normal -- so the lattice points are an order ideal,
+     the Hilbert function is the point count by coordinate sum at any size, and
+     "shade by degree" has something honest to colour.  The default hexagon is not
+     one, so without this button the shading is a feature you have to guess at. */
+  anti:    [[0,0],[5,0],[4,2],[2,4],[0,5]]
 };
 const QUAD_KEY = PRESETS.quad.map(g=>g.join(".")).sort().join(" ");
-const state = { shape:"poly", ci:{s3:5, s4:7}, M:2, yaw:1.18, pitch:0.56,
+const state = { shape:"poly", ci:{s3:5, s4:7}, M:2, yaw:1.18, pitch:0.56, byDeg:false,
                 gens:PRESETS.hex.slice(), grid:6, cur:[0,0], undo:[] };
 
 let cache = { sig:null, S:null };
@@ -1530,6 +1589,7 @@ function syncChrome(){
   const three = (state.shape==="s4");
   const poly  = state.shape==="poly";
   $("eh-clab").hidden = !(S3||S4);
+  $("eh-degs").setAttribute("aria-pressed", state.byDeg ? "true" : "false");
   $("eh-spin").hidden = !three;
   $("eh-reset").hidden = !three;
   $("eh-drawbar").classList.toggle("hidden", !poly);
@@ -1549,6 +1609,7 @@ $("eh-shape").addEventListener("change", e => {
   syncChrome(); draw();
 });
 $("eh-c").addEventListener("input", e => { state.ci[state.shape]=+e.target.value; syncChrome(); draw(); });
+$("eh-degs").addEventListener("click", ()=>{ state.byDeg = !state.byDeg; draw(); });
 $("eh-m").addEventListener("input", e => setM(+e.target.value));
 function setM(m){
   state.M = Math.max(1, Math.min(MMAX, m));
@@ -1714,14 +1775,27 @@ function resolvedVars(names){
   probe.setAttribute("style","display:none");
   $("eh-app").appendChild(probe);
   const out={};
-  names.forEach(n=>{ probe.style.color = "var("+n+")"; out[n]=getComputedStyle(probe).color; });
+  names.forEach(n=>{ probe.style.color = "var("+n+")"; out[n]=srgbToRgb(getComputedStyle(probe).color); });
   probe.parentNode.removeChild(probe);
   return out;
+}
+/* Anything built with color-mix() computes to CSS Color 4 syntax -- Chromium hands
+   back "color(srgb 0.38 0.42 0.49)".  That is correct in a browser and unreadable to
+   Inkscape and Illustrator, which is where a saved figure actually goes, so the
+   export writes plain rgb().  Any other form is passed through untouched. */
+function srgbToRgb(c){
+  const m = /^color\(srgb\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s+([\d.eE+-]+)\s*(?:\/\s*([\d.eE+-]+)\s*)?\)$/.exec(c||"");
+  if(!m) return c;
+  const ch = i => Math.max(0, Math.min(255, Math.round(parseFloat(m[i])*255)));
+  const a = m[4]===undefined ? 1 : parseFloat(m[4]);
+  return a>=1 ? "rgb("+ch(1)+","+ch(2)+","+ch(3)+")"
+              : "rgba("+ch(1)+","+ch(2)+","+ch(3)+","+(Math.round(a*1000)/1000)+")";
 }
 $("eh-svg").addEventListener("click", ()=>{
   const src = stage.querySelector("svg");
   if(!src) return;
-  const names = ["--accent","--int","--edge","--facefill","--ghost","--surface","--muted","--bg"];
+  const names = ["--accent","--int","--edge","--facefill","--ghost","--surface","--muted","--bg",
+                 "--dg0","--dg1","--dg2","--dg3","--dg4","--dg5","--dg6","--dg7"];
   const c = resolvedVars(names);
   let s = src.outerHTML;
   names.forEach(n => { s = s.split("var("+n+")").join(c[n]); });
