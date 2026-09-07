@@ -101,6 +101,13 @@ nav: false
 #eh-app table.wide td{padding:3px 8px; vertical-align:top;}
 #eh-app table.wide tr:nth-child(even) td{background:var(--panel);}
 #eh-app .scroll{overflow-x:auto;}
+/* the two verdict notes sit side by side and match heights, so the strip reads as
+   one band rather than two ragged boxes */
+#eh-app .band{display:flex; gap:1.4rem; align-items:stretch; flex-wrap:wrap; margin-top:1rem;}
+/* the column stretches, the note fills it -- but the note must NOT itself be a flex
+   container or its inline content (superscripts, spans) stops flowing as text */
+#eh-app .bandcol{flex:1 1 300px; min-width:0; display:flex;}
+#eh-app .bandcol > .note{margin:0; flex:1;}
 #eh-app .ok{color:var(--accent); font-weight:600;}
 #eh-app .bad{color:var(--global-highlight-color,#b71c1c); font-weight:600;}
 @media print{ #eh-app .toolbar{display:none !important;} #eh-app .panel{border:none; padding:0;} }
@@ -154,6 +161,7 @@ nav: false
     <div class="stage panel" id="eh-stage" tabindex="0" role="img"
          aria-label="A lattice polytope with the lattice points of its dilation."></div>
     <p class="caption" id="eh-legend"></p>
+    <div class="note" id="eh-remark" style="margin-top:.7rem"></div>
   </div>
 
   <div class="col side">
@@ -169,17 +177,18 @@ nav: false
         <hr class="sep">
         <div class="head">Ehrhart series</div>
         <div class="mono" id="eh-series" style="line-height:1.6"></div>
-        <div class="caption" id="eh-vol" style="margin-top:.5rem"></div>
-        <div class="note plain" id="eh-gor"></div>
+        <div class="caption" id="eh-vol" style="margin-top:.5rem; margin-bottom:0"></div>
       </div>
-      <div class="note quiet" id="eh-recip"></div>
     </div>
   </div>
 </div>
 
-<div class="panel" id="eh-graded" style="margin-top:1rem"></div>
+<div class="band" id="eh-algebra">
+  <div class="bandcol"><div class="note plain" id="eh-gor" style="margin:0"></div></div>
+  <div class="bandcol"><div class="note quiet" id="eh-recip" style="margin:0"></div></div>
+</div>
 
-<div class="note" id="eh-remark"></div>
+<div class="panel" id="eh-graded" style="margin-top:1rem"></div>
 
 <p class="caption" style="margin-top:1.2rem;border-top:1px solid var(--line);padding-top:.6rem">
   Companion to <i>Graded Ehrhart theory for hypersimplices</i>,
@@ -1035,10 +1044,11 @@ function readouts(S, counts){
   if(poly && !S.ok){
     const n = state.gens.length;
     $("eh-num").hidden = true;
+    $("eh-algebra").hidden = true;
     $("eh-count").innerHTML = "&mdash;";
     $("eh-split").innerHTML = n===0 ? "no vertices picked yet"
       : n + " vertex" + (n===1?"":"es") + " picked, no polygon yet";
-    $("eh-recip").innerHTML = "Pick three points that are not collinear and everything here fills in.";
+    $("eh-recip").innerHTML = "";
     $("eh-remark").innerHTML = "A lattice polygon is the convex hull of finitely many points of " +
       "Z<sup>2</sup>. Click the grid, or focus the picture and use the arrow keys and Enter.";
     $("eh-legend").innerHTML = "Click a grey grid point to place a vertex.";
@@ -1046,6 +1056,7 @@ function readouts(S, counts){
     return;
   }
   $("eh-num").hidden = false;
+  $("eh-algebra").hidden = false;
 
   const E = ehrhart(S), d = E.d;
   $("eh-count").innerHTML = counts.total.toLocaleString();
@@ -1288,8 +1299,18 @@ function gradedPolyReadout(S, box){
   } else if(G.err){
     h += '<div class="note plain" style="margin-bottom:0">' + G.err + '</div>';
   } else if(G.fail){
-    h += '<div class="note plain" style="margin-bottom:0">' + G.fail + '. That is a budget, not a ' +
-         'verdict &mdash; a bigger search or more dilations may still find one.</div>';
+    const more = Math.max(0, cost(S,HARD_KMAX) - cost(S,G.Kver));
+    h += '<div class="note plain">' + G.fail + '. That is a budget, not a verdict: every polygon ' +
+         'tried so far that looked like a non-fit turned out to need a wider search, not to lack a ' +
+         'closed form.</div>' +
+         (G.Kver < HARD_KMAX || (G.Bmax||0) < 12
+           ? '<button id="eh-gp-more">search harder</button>' +
+             '<span class="caption" style="margin-left:.6rem">deg&thinsp;q up to 72 and ' +
+             'deg&thinsp;z up to 12, out to ' + (HARD_KMAX+1) + ' dilations, reusing what is ' +
+             'already computed' + (more > 2000 ? '; perhaps another ' + Math.round(more/1000) +
+             ' seconds' : '') + '.</span>'
+           : '<div class="caption" style="margin:0">That was the widest search available here. ' +
+             'The same method with numpy behind it goes further offline.</div>');
   } else {
     const d2 = den2HTML(G.factors);
     h += '<div class="mono" style="line-height:1.7">E(q,z) = ' + rfrac('N(q,z)', d2) +
@@ -1318,16 +1339,16 @@ function gradedPolyReadout(S, box){
   box.innerHTML = h;
 }
 /* One dilation per tick.  The individual ranks are bounded by the plan, so the page
-   keeps painting and can say how far along it is instead of locking up. */
-$("eh-graded").addEventListener("click", e => {
-  if(!e.target || e.target.id !== "eh-gp-run") return;
-  const S = shape(), plan = planFor(S);
+   keeps painting and can say how far along it is instead of locking up.  The same
+   runner serves the first attempt and the deeper retry; the retry resumes from the
+   dilations already computed rather than starting over. */
+const HARD_KMAX = 16;
+function runGraded(S, E, Eb, target0, hardMax, Amax, Bmax, btn){
   const bar = document.createElement("div");
   bar.className = "caption"; bar.id = "eh-gp-prog"; bar.style.marginTop = ".4rem";
-  e.target.disabled = true; e.target.textContent = "computing…";
-  e.target.parentNode.insertBefore(bar, e.target.nextSibling);
-  const E=[], Eb=[];
-  let k=0, target=plan.K0;
+  btn.disabled = true; btn.textContent = "computing…";
+  btn.parentNode.insertBefore(bar, btn.nextSibling);
+  let k = E.length, target = target0;
   const say = t => { bar.innerHTML = t; };
   const finish = out => { S._gp = out; draw(); };
   const step = () => {
@@ -1341,11 +1362,11 @@ $("eh-graded").addEventListener("click", e => {
         setTimeout(step, 0);
         return;
       }
-      say("fitting the denominator…");
+      say("fitting the denominator&hellip;");
       setTimeout(()=>{
         let out = null;
         for(let Kfit=4; Kfit<=target-1; Kfit++){
-          const fit = fitPolyDen(E, Eb, Kfit, target, 40, 8);
+          const fit = fitPolyDen(E, Eb, Kfit, target, Amax, Bmax);
           if(!fit) continue;
           const N=mulSeriesZ(fit.D,E,target).slice(0,fit.D.length);
           const Nb=mulSeriesZ(fit.D,Eb,target).slice(0,fit.D.length);
@@ -1354,18 +1375,18 @@ $("eh-graded").addEventListener("click", e => {
           break;
         }
         if(!out){
-          if(target < plan.Kmax){                 /* go deeper, keeping what we have */
-            target = Math.min(plan.Kmax, target+2);
-            say("no fit yet &mdash; going out to " + (target+1) + " dilations…");
+          if(target < hardMax){                   /* go deeper, keeping what we have */
+            target = Math.min(hardMax, target+2);
+            say("no fit yet &mdash; going out to " + (target+1) + " dilations&hellip;");
             setTimeout(step, 0);
             return;
           }
-          finish({ E, Eb, Kver:target,
-                   fail:"no denominator with deg&thinsp;z &le; 8 is consistent with the first "+
-                        (target-1)+" dilations, which is as far as this polygon's size allows here" });
+          finish({ E, Eb, Kver:target, Amax, Bmax,
+                   fail:"no denominator with deg&thinsp;q &le; "+Amax+" and deg&thinsp;z &le; "+Bmax+
+                        " is consistent with the first "+(target-1)+" dilations" });
           return;
         }
-        say("confirming over a second prime…");
+        say("confirming over a second prime&hellip;");
         setTimeout(()=>{
           try { out.confirmed = confirmSeries(S, target); }
           catch(err){ out.confirmed = false; }
@@ -1375,6 +1396,20 @@ $("eh-graded").addEventListener("click", e => {
     } catch(err){ finish({ err: err.message }); }
   };
   setTimeout(step, 0);
+}
+$("eh-graded").addEventListener("click", e => {
+  if(!e.target) return;
+  const S = shape();
+  if(e.target.id === "eh-gp-run"){
+    const pl = planFor(S);
+    runGraded(S, [], [], pl.K0, pl.Kmax, 40, 8, e.target);
+  } else if(e.target.id === "eh-gp-more"){
+    const G = S._gp;
+    if(!G || !G.E) return;
+    /* resume where the first attempt stopped: retry the same depth with a wider
+       (deg q, deg z) first, then keep deepening */
+    runGraded(S, G.E, G.Eb, G.Kver, HARD_KMAX, 72, 12, e.target);
+  }
 });
 
 function remark(S,E){
