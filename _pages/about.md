@@ -28,7 +28,7 @@ When I'm not doing math, I cook, play [chess](https://www.chess.com/member/atrop
 <div class="demos-section">
 <h2><a href="{{ '/demos/' | relative_url }}" style="color: inherit">demos</a></h2>
 
-<p>Each of my papers has an interactive companion that runs its construction on an example you choose, and one more for the lattice-point counting they all sit on.</p>
+<p>Each of my papers has an interactive companion that runs its construction on an example you choose.</p>
 
 <div class="demo-strip">
   <a class="demo-card" href="{{ '/graph-demos/' | relative_url }}">
