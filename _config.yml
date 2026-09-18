@@ -8,7 +8,7 @@ middle_name: A.
 last_name: Miller
 email: w3miller@ucsd.edu
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
-    I am a third year mathematics PhD student at the University of California, San Diego. My research interests include the intersections of algebra with other subjects (algebraic combinatorics, algebraic geometry, algebraic topology).
+    I am a third year mathematics PhD student at the University of California, San Diego. I have done research in graded Ehrhart theory and representation-theoretic aspects of Coxeter-Catalan theory.
 footer_text: >
   Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
