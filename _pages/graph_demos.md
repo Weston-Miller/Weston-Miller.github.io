@@ -1149,8 +1149,9 @@ def basis_view(edges, l, m, n):
   }
 
   // ---- main-thread fallback (used only if Worker/Blob is unavailable) ----
-  function loadScript(src){
+  function loadScript(src, integrity){
     return new Promise((res, rej)=>{ const s=document.createElement('script'); s.src=src; s.async=true;
+      if(integrity){ s.integrity=integrity; s.crossOrigin='anonymous'; }
       s.onload=()=>res(); s.onerror=()=>rej(new Error('could not load the math engine from '+src+' (network / ad-blocker?)'));
       document.head.appendChild(s); });
   }
@@ -1911,7 +1912,8 @@ def basis_view(edges, l, m, n):
   function loadMathJax(){
     if(mjPromise) return mjPromise;
     window.MathJax={ tex:{displayMath:[['\\[','\\]']], inlineMath:[['\\(','\\)'],['$','$']]}, options:{enableMenu:false} };
-    mjPromise=loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js')
+    mjPromise=loadScript('https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js',
+                         'sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY=')
       .catch(()=>{ mjPromise=null; throw new Error('typesetting unavailable'); });
     return mjPromise;
   }
