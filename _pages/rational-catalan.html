@@ -3,6 +3,8 @@ layout: page
 permalink: /rational-catalan/
 title: "Rational Catalan numbers for complex reflection groups"
 nav: false
+description: "Interactive companion to Rational Catalan numbers for complex reflection groups. Compute the canonical symmetrizing trace and the rational Catalan number for any complex reflection group, with rational Dyck paths in type A."
+hide_description: true # the page has its own intro; this is for search and link previews
 ---
 
 <!-- Interactive companion to Miller, "Rational Catalan numbers for complex
@@ -78,6 +80,9 @@ html[data-theme="dark"]{
 .rc .rc-links{margin:14px 0 0;font-size:.875rem;display:flex;gap:18px;flex-wrap:wrap}
 .rc a{color:var(--accent);text-decoration:none}
 .rc a:hover{color:var(--accent);text-decoration:underline}
+.rc .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--accent);cursor:pointer}
+.rc .linkbtn:hover{text-decoration:underline}
+.rc .linkmsg{color:var(--muted)}
 
 /* ---------- control bar ---------- */
 .rc .controls{position:sticky;top:var(--rc-sticky,56px);z-index:20;background:var(--paper);
@@ -309,6 +314,8 @@ html[data-theme="dark"]{
     <a href="https://doi.org/10.1016/j.jalgebra.2025.01.027">Journal of Algebra 435 (2025)</a>
     <a href="https://doi.org/10.48550/arXiv.2310.12354">arXiv:2310.12354</a>
     <a href="#sources">Sources</a>
+    <button type="button" class="linkbtn" id="copyLink" title="copy a link to this group, parameter and tab">Copy link</button>
+    <span class="linkmsg" id="copyLinkMsg" aria-live="polite"></span>
   </p>
 </div>
 
@@ -507,8 +514,8 @@ html[data-theme="dark"]{
     &middot; Feg<sub><em>&chi;</em></sub>(&zeta;<sub><em>h</em></sub><sup><em>p</em></sup>)</span><span class="den"><em>S<sub>&chi;</sub></em>(<em>q</em>)</span></span></p>
 
   <div class="controls-inner" style="margin:0 0 14px;gap:14px">
-    <label class="tlab">group</label><select id="tGroup" class="tsel"></select>
-    <label class="tlab">p</label><select id="tP" class="tsel"></select>
+    <label class="tlab" for="tGroup">group</label><select id="tGroup" class="tsel"></select>
+    <label class="tlab" for="tP">p</label><select id="tP" class="tsel"></select>
   </div>
   <details class="deriv" style="margin-top:0;border-top:0;padding-top:0">
     <summary>Why <em>p</em> stops below <em>h</em></summary>
@@ -591,8 +598,8 @@ html[data-theme="dark"]{
     Irr(<em>W</em>) becomes <em>n</em>+1 terms with alternating signs.</p>
 
   <div class="controls-inner" style="margin:0 0 14px;gap:14px">
-    <label class="tlab">group</label><select id="fGroup" class="tsel"></select>
-    <label class="tlab">p</label><select id="fP" class="tsel"></select>
+    <label class="tlab" for="fGroup">group</label><select id="fGroup" class="tsel"></select>
+    <label class="tlab" for="fP">p</label><select id="fP" class="tsel"></select>
   </div>
   <div class="band" id="band-f"></div>
 
@@ -1657,6 +1664,15 @@ function readHash(){
   return true;
 }
 addEventListener("hashchange", readHash);
+
+$("copyLink").addEventListener("click", () => {
+  writeHash();
+  const url = location.href, msg = $("copyLinkMsg");
+  const say = t => { msg.textContent = t; setTimeout(() => { msg.textContent = ""; }, 2600); };
+  if(navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(url).then(() => say("link copied"), () => say(url));
+  else say(url);
+});
 
 /* ---------- the three expressions, side by side ---------- */
 // Cat_p(W;q) = prod [p + (p m_i mod h)]_q / prod [d_i]_q, as a product of cyclotomic

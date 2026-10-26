@@ -3,6 +3,7 @@ layout: default
 title: Ehrhart theory — interactive companion
 permalink: /ehrhart/
 nav: false
+description: "Draw a lattice polygon or pick a slice of the cube, and get its Ehrhart polynomial, h*-vector, Ehrhart series, a reciprocity check, and the graded q-refinement."
 ---
 
 {% raw %}

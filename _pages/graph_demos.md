@@ -1,8 +1,9 @@
 ---
 layout: default
-title: Interactive graph demos
+title: Hypersimplex harmonics — interactive companion
 permalink: /graph-demos/
 nav: false
+description: "Interactive companion to Graded Ehrhart theory for hypersimplices. Draw a loopless multigraph and factor it in the harmonic algebra, or compute the q-Ehrhart series of any slice of the cube."
 ---
 
 {% raw %}
@@ -119,6 +120,7 @@ nav: false
 #gd #out-ehrhart mjx-container{max-width:100%; overflow-x:auto; overflow-y:hidden;}
 #gd #out-ehrhart mjx-container[display="true"]{margin:.7rem 0;}
 #gd .toolbar button{transition:background .12s ease;}
+@media (prefers-reduced-motion: reduce){ #gd *{transition:none !important; animation:none !important;} }
 #gd .lmn{display:inline-flex; align-items:center; gap:7px; flex:0 0 auto; white-space:nowrap;}
 #gd .blist{max-height:440px; overflow:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); margin-top:.3rem;}
 #gd .brow{display:flex; align-items:center; gap:12px; padding:5px 12px; flex-wrap:wrap;}
@@ -147,9 +149,10 @@ nav: false
 
 <div id="gd">
 <div class="wrap">
-  <h1>Hypersimplex harmonics — interactive demos</h1>
+  <h1>Hypersimplex harmonics &mdash; interactive companion</h1>
   <p class="lede">
-    Companion to <em>Graded Ehrhart Theory for Hypersimplices</em>. Draw a loopless multigraph
+    Companion to <em>Graded Ehrhart theory for hypersimplices</em>
+    (<a href="https://arxiv.org/abs/2608.27438">arXiv, 2026</a>). Draw a loopless multigraph
     <em>G</em> below. Each tab runs a different construction from the paper on it. Click empty
     space to add a vertex, click two vertices to connect (click a pair again for a parallel edge);
     switch the mode button to delete. You can also type the edge list directly.
@@ -170,9 +173,9 @@ nav: false
     <button id="overlay" title="colour vertices by block and print the deficit m - deg(v) above each">Blocks: off</button>
     <span class="spacer"></span>
     <span class="lmn">
-      <label>&#8467;</label><input id="lval" type="number" min="1" value="4">
-      <label>m</label><input id="mval" type="number" min="1" value="3">
-      <label>n</label><input id="nval" type="number" min="1" value="8">
+      <label for="lval">&#8467;</label><input id="lval" type="number" min="1" value="4">
+      <label for="mval">m</label><input id="mval" type="number" min="1" value="3">
+      <label for="nval">n</label><input id="nval" type="number" min="1" value="8">
     </span>
   </div>
   <svg id="cv" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet"

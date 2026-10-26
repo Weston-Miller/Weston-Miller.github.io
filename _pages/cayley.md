@@ -3,6 +3,7 @@ layout: default
 title: Cayley's formula — interactive companion
 permalink: /cayley/
 nav: false
+description: "Interactive companion to An elaborate new proof of Cayley's formula. Pick a labelled tree and see its cyclic embedding, its cyclic factorization, and the maximal distinguished subword it corresponds to."
 ---
 
 {% raw %}
@@ -89,6 +90,8 @@ nav: false
   padding:1rem 1.1rem 1.3rem;}
 #cayley-app .panel.hidden{display:none;}
 #cayley-app .panel-box{border:1px solid var(--line); border-radius:10px; padding:.9rem 1rem; background:var(--bg);}
+/* boxes nest two deep, so on a phone their padding alone ate ~70px of a 375px screen */
+@media (max-width:575.98px){ #cayley-app .panel{padding:.75rem .55rem 1rem;} #cayley-app .panel-box{padding:.7rem .65rem;} }
 #cayley-app .panel .desc{font-size:.86rem; color:var(--muted); margin:0 0 .8rem;}
 #cayley-app .head{font-size:.92rem; margin-bottom:.5rem; font-weight:600;}
 /* .row and .col are also Bootstrap grid classes, which al-folio loads globally.  My
@@ -134,6 +137,8 @@ nav: false
 /* walk readout */
 #cayley-app .prog{height:5px; background:var(--panel); border-radius:3px; overflow:hidden; margin-bottom:.4rem;}
 #cayley-app .prog span{display:block; height:100%; width:0; background:var(--green); transition:width .18s linear;}
+/* The play button is opt-in, so it stays; only the incidental motion goes. */
+@media (prefers-reduced-motion: reduce){ #cayley-app *{transition:none !important; animation:none !important;} }
 #cayley-app .now{font-size:.86rem; min-height:1.5em; color:var(--muted);}
 #cayley-app .now .big{font-family:ui-monospace,Menlo,monospace; font-size:1.05rem; font-weight:700; color:var(--green);}
 #cayley-app .now .vtx{display:inline-block; min-width:1.7em; text-align:center; border:1.6px solid var(--accent);
@@ -155,17 +160,18 @@ nav: false
 <div class="wrap">
   <h1>Cayley's formula &mdash; interactive companion</h1>
   <p class="lede">
-    Companion to <em>An elaborate new proof of Cayley's formula</em>. Pick a vertex-labelled tree on
+    Companion to <em>An elaborate new proof of Cayley's formula</em>
+    (<a href="https://doi.org/10.5802/alco.429">Algebraic Combinatorics, 2025</a>). Pick a vertex-labelled tree on
     <em>n</em> vertices. The app draws its cyclic embedding, reads off the cyclic factorization of
     &lambda;<sub>n</sub> by walking clockwise from vertex <em>n</em>, and shows the maximal distinguished
     subword of <b>&lambda;</b><sub>n</sub> corresponding to it.
     Email me if you find any errors or want some specific function added.
   </p>
 
-<div class="tabs" id="tabstrip"></div>
+<div class="tabs" id="tabstrip" role="tablist" aria-label="Views"></div>
 
 <!-- ============ 1. tree <-> subword, with the factorization between ============ -->
-<div class="panel" data-panel="explore">
+<div class="panel" data-panel="explore" id="panel-explore" role="tabpanel" aria-labelledby="tab-explore">
   <p style="margin-top:0">
     Pick a vertex-labelled tree on <i>n</i> vertices. The app draws its <b>cyclic embedding</b>
     (Definition 4.6), reads off the corresponding <b>cyclic factorization</b> of the translation
@@ -176,22 +182,22 @@ nav: false
   </p>
   <div class="toolbar">
     <label>n = <input type="range" id="ex-n" min="2" max="30" value="6"></label>
-    <input type="number" id="ex-nbox" min="2" max="30" value="6" style="width:4.2em">
+    <input type="number" id="ex-nbox" aria-label="n" min="2" max="30" value="6" style="width:4.2em">
     <button class="primary" id="ex-rand">random tree</button>
     <button id="ex-ex10">paper's n=10 example</button>
     <button id="ex-link" title="copy a link that reproduces this tree">Copy link</button>
-    <span class="desc" id="ex-linkmsg"></span>
+    <span class="desc" id="ex-linkmsg" aria-live="polite"></span>
   </div>
   <div class="toolbar">
     <label for="ex-pruf">Pr&uuml;fer code
       <input type="text" id="ex-pruf" size="34" class="mono" autocomplete="off" spellcheck="false"></label>
-    <span class="desc" id="ex-prufmsg"></span>
+    <span class="desc" id="ex-prufmsg" aria-live="polite"></span>
   </div>
   <div class="toolbar">
     <label for="ex-edgein">or edges
       <input type="text" id="ex-edgein" size="42" class="mono" autocomplete="off" spellcheck="false"
              placeholder="1-2 2-3 3-4 &hellip;"></label>
-    <span class="desc" id="ex-edgemsg"></span>
+    <span class="desc" id="ex-edgemsg" aria-live="polite"></span>
   </div>
   <div class="toolbar">
     <label>corner labels
@@ -258,7 +264,7 @@ nav: false
 </div>
 
 <!-- ================= 4. gallery ================= -->
-<div class="panel hidden" data-panel="gallery">
+<div class="panel hidden" data-panel="gallery" id="panel-gallery" role="tabpanel" aria-labelledby="tab-gallery">
   <p style="margin-top:0">
     Every vertex-labelled tree on <i>n</i> vertices in its cyclic embedding, together with its cyclic
     factorization. The n = 4 page reproduces Figure 3 of the paper. Click a tree to open it in the
@@ -673,7 +679,7 @@ function renderTree(n, edges, opts){
   const vs = opts.vs || walk(n, emb.order);
   const corner = opts.cornerLabels || null;    // one entry per visit vs[0..2n-2]
 
-  let out = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;display:block;margin:0 auto">`;
+  let out = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="labelled tree on ${n} vertices" width="100%" style="max-width:${W}px;display:block;margin:0 auto">`;
   const uid = 'ca'+(renderTree.seq=(renderTree.seq||0)+1);
   out += `<defs>`
        + `<marker id="${uid}e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--edge)"/></marker>`
@@ -794,10 +800,10 @@ const $ = id => document.getElementById(id);
 /* -------------------------------- tabs -------------------------------- */
 const TABS=[['explore','tree ⟷ subword'],['gallery','gallery']];
 $('tabstrip').innerHTML = TABS.map(([k,l],i)=>
-  `<button class="tab-btn${i===0?' active':''}" data-t="${k}">${l}</button>`).join('');
+  `<button class="tab-btn${i===0?' active':''}" data-t="${k}" role="tab" id="tab-${k}" aria-controls="panel-${k}" aria-selected="${i===0}">${l}</button>`).join('');
 $('tabstrip').addEventListener('click', e=>{
   const b = e.target.closest('.tab-btn'); if(!b) return;
-  document.querySelectorAll('#cayley-app .tab-btn').forEach(x=>x.classList.toggle('active', x===b));
+  document.querySelectorAll('#cayley-app .tab-btn').forEach(x=>{ x.classList.toggle('active', x===b); x.setAttribute('aria-selected', x===b); });
   document.querySelectorAll('#cayley-app [data-panel]').forEach(p=>
     p.classList.toggle('hidden', p.dataset.panel!==b.dataset.t));
 });
@@ -1111,7 +1117,8 @@ $('ga-out').addEventListener('click', e=>{
   exSet(S.ga.n, slice[idx]);
   document.querySelector('#cayley-app .tab-btn[data-t="explore"]').click();
   const host=document.getElementById('cayley-app');
-  if(host.scrollIntoView) host.scrollIntoView({behavior:'smooth', block:'start'});
+  const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(host.scrollIntoView) host.scrollIntoView({behavior: still ? 'auto' : 'smooth', block:'start'});
 });
 
 /* ============================== rotation =============================== */
