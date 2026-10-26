@@ -22,3 +22,6 @@
 # Format all the code using prettier.io. (#2048, #2062)
 beb6f27d596e753014cb9bff1939e5f78d66431c
 2d34024961c3a3d27d6fd18ce06a551657983234
+
+# Prettier pass so the CI check goes green (Oct 2026).
+1a1446409adc8902d91ed10503f57a7f9f4da285
