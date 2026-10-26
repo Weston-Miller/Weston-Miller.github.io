@@ -459,6 +459,29 @@ footer.fixed-bottom {
   }
 }
 
+// On a phone the fixed footer is a permanent ~55px band over a ~700px viewport,
+// and on the demo pages it sits on top of the drawing canvases. Let it scroll
+// with the page there instead.
+@media (max-width: 767.98px) {
+  footer.fixed-bottom {
+    position: static;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+}
+
+// iOS Safari zooms the whole page when a field under 16px takes focus, and the
+// demo pages set their inputs at 13-14px. Touch devices get 16px.
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 footer.sticky-bottom {
   border-top: 1px solid var(--global-divider-color);
   padding-top: 40px;
