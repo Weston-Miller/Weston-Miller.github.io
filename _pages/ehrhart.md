@@ -6,6 +6,7 @@ nav: false
 ---
 
 {% raw %}
+
 <div id="eh-app">
 <style>
 /* Variable scheme, font stack and panel chrome mirror /cayley/ and /graph-demos/:

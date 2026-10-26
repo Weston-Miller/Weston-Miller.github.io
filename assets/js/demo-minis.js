@@ -36,8 +36,7 @@
     return list;
   }
 
-  const still = () =>
-    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const still = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------------- shared tree machinery (from the Cayley demo) ---------------- */
 
@@ -146,7 +145,8 @@
 
   // stays weakly above the line b*y = a*x
   function isDyck(w, a, b) {
-    let x = 0, y = 0;
+    let x = 0,
+      y = 0;
     for (const ch of w) {
       if (ch === "N") y++;
       else if (b * y < a * ++x) return false;
@@ -155,34 +155,47 @@
   }
 
   function drawPath(svg, word, a, b) {
-    const cell = 30, pad = 10;
-    const w = cell * b, h = cell * a;
+    const cell = 30,
+      pad = 10;
+    const w = cell * b,
+      h = cell * a;
     svg.setAttribute("viewBox", [0, 0, w + 2 * pad, h + 2 * pad].join(" "));
     svg.textContent = "";
     const X = (i) => pad + i * cell;
     const Y = (j) => pad + h - j * cell;
 
     for (let i = 0; i <= b; i++)
-      el("line", { x1: X(i), y1: Y(0), x2: X(i), y2: Y(a),
-        stroke: "var(--global-divider-color)", "stroke-width": 1 }, svg);
+      el("line", { x1: X(i), y1: Y(0), x2: X(i), y2: Y(a), stroke: "var(--global-divider-color)", "stroke-width": 1 }, svg);
     for (let j = 0; j <= a; j++)
-      el("line", { x1: X(0), y1: Y(j), x2: X(b), y2: Y(j),
-        stroke: "var(--global-divider-color)", "stroke-width": 1 }, svg);
-    el("line", { x1: X(0), y1: Y(0), x2: X(b), y2: Y(a),
-      stroke: "var(--global-text-color)", "stroke-width": 1.5, opacity: 0.45,
-      "stroke-dasharray": "4 4" }, svg);
+      el("line", { x1: X(0), y1: Y(j), x2: X(b), y2: Y(j), stroke: "var(--global-divider-color)", "stroke-width": 1 }, svg);
+    el(
+      "line",
+      { x1: X(0), y1: Y(0), x2: X(b), y2: Y(a), stroke: "var(--global-text-color)", "stroke-width": 1.5, opacity: 0.45, "stroke-dasharray": "4 4" },
+      svg
+    );
 
-    let d = "M " + X(0) + " " + Y(0), x = 0, y = 0;
+    let d = "M " + X(0) + " " + Y(0),
+      x = 0,
+      y = 0;
     for (const ch of word) {
       if (ch === "N") y++;
       else x++;
       d += " L " + X(x) + " " + Y(y);
     }
     const good = isDyck(word, a, b);
-    el("path", { d, fill: "none", "stroke-width": 3, "stroke-linejoin": "round",
-      "stroke-linecap": "round",
-      stroke: good ? "currentColor" : "var(--global-text-color)",
-      opacity: good ? 1 : 0.4 }, svg);
+    el(
+      "path",
+      {
+        d,
+        fill: "none",
+        "stroke-width": 3,
+        "stroke-linejoin": "round",
+        "stroke-linecap": "round",
+        stroke: good ? "currentColor" : "var(--global-text-color)",
+        opacity: good ? 1 : 0.4,
+      },
+      svg
+    );
   }
 
   function cycleMini(host, svg) {
@@ -193,7 +206,7 @@
 
     let target = 0;
     while (target < n && !isDyck(rot(word, target), a, b)) target++;
-    if (target >= n) return null;                  // gcd(a,b) > 1: no unique frame
+    if (target >= n) return null; // gcd(a,b) > 1: no unique frame
 
     // Rest state is the answer: a figure that never gets played still shows
     // the Dyck path. Playing from there runs a full loop back to it.
@@ -201,7 +214,7 @@
     drawPath(svg, rot(word, frame), a, b);
 
     return function play(finish) {
-      const extra = ((target - frame) % n + n) % n;
+      const extra = (((target - frame) % n) + n) % n;
       let left = n + extra;
       (function step() {
         frame = (frame + 1) % n;
@@ -228,15 +241,22 @@
 
     function render() {
       const pos = layout(n, emb);
-      const W = 220, H = 150, pad = 20;
+      const W = 220,
+        H = 150,
+        pad = 20;
       svg.setAttribute("viewBox", "0 0 " + W + " " + H);
       svg.textContent = "";
-      const xs = [], ys = [];
-      for (let v = 1; v <= n; v++) { xs.push(pos[v].x); ys.push(pos[v].y); }
-      const minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
-      const minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
-      const scale = Math.min((W - 2 * pad) / Math.max(maxX - minX, 0.001),
-                             (H - 2 * pad) / Math.max(maxY - minY, 0.001));
+      const xs = [],
+        ys = [];
+      for (let v = 1; v <= n; v++) {
+        xs.push(pos[v].x);
+        ys.push(pos[v].y);
+      }
+      const minX = Math.min.apply(null, xs),
+        maxX = Math.max.apply(null, xs);
+      const minY = Math.min.apply(null, ys),
+        maxY = Math.max.apply(null, ys);
+      const scale = Math.min((W - 2 * pad) / Math.max(maxX - minX, 0.001), (H - 2 * pad) / Math.max(maxY - minY, 0.001));
       const ox = (W - (maxX - minX) * scale) / 2 - minX * scale;
       const oy = (H - (maxY - minY) * scale) / 2 - minY * scale;
       const X = (v) => pos[v].x * scale + ox;
@@ -244,16 +264,21 @@
 
       let d = "";
       for (const e of edges) d += " M " + X(e[0]) + " " + Y(e[0]) + " L " + X(e[1]) + " " + Y(e[1]);
-      el("path", { class: "draw", pathLength: 100, d: d.trim(), fill: "none",
-        stroke: "currentColor", "stroke-width": 2.5, "stroke-linecap": "round" }, svg);
+      el(
+        "path",
+        { class: "draw", pathLength: 100, d: d.trim(), fill: "none", stroke: "currentColor", "stroke-width": 2.5, "stroke-linecap": "round" },
+        svg
+      );
       const nodes = el("g", { class: "nodes" }, svg);
       for (let v = 1; v <= n; v++) {
         el("circle", { cx: X(v), cy: Y(v), r: 11, fill: "currentColor" }, nodes);
         // 14 in a 220-unit viewBox, so the labels stay readable once the
         // figure is scaled down to its 180px column.
-        el("text", { x: X(v), y: Y(v), "text-anchor": "middle",
-          "dominant-baseline": "central", "font-size": 14,
-          fill: "var(--global-bg-color)" }, nodes).textContent = v;
+        el(
+          "text",
+          { x: X(v), y: Y(v), "text-anchor": "middle", "dominant-baseline": "central", "font-size": 14, fill: "var(--global-bg-color)" },
+          nodes
+        ).textContent = v;
       }
     }
 
@@ -288,8 +313,14 @@
   }
 
   function graphMini(host, svg) {
-    const W = 220, H = 150;
-    const pos = [[45, 35], [175, 35], [175, 115], [45, 115]];
+    const W = 220,
+      H = 150;
+    const pos = [
+      [45, 35],
+      [175, 35],
+      [175, 115],
+      [45, 115],
+    ];
     let g = randomMultigraph();
 
     function render(highlight) {
@@ -299,30 +330,38 @@
       function edge(a, b, cls) {
         const key = Math.min(a, b) + "-" + Math.max(a, b);
         const nth = (seen[key] = (seen[key] || 0) + 1);
-        const [x1, y1] = pos[a], [x2, y2] = pos[b];
+        const [x1, y1] = pos[a],
+          [x2, y2] = pos[b];
         const bow = nth === 1 ? 0 : 26 * (nth % 2 ? 1 : -1);
-        const mx = (x1 + x2) / 2 + (y2 - y1) / 8 * (bow / 26);
-        const my = (y1 + y2) / 2 - (x2 - x1) / 8 * (bow / 26);
-        const d = bow ? "M " + x1 + " " + y1 + " Q " + mx + " " + my + " " + x2 + " " + y2
-                      : "M " + x1 + " " + y1 + " L " + x2 + " " + y2;
+        const mx = (x1 + x2) / 2 + ((y2 - y1) / 8) * (bow / 26);
+        const my = (y1 + y2) / 2 - ((x2 - x1) / 8) * (bow / 26);
+        const d = bow ? "M " + x1 + " " + y1 + " Q " + mx + " " + my + " " + x2 + " " + y2 : "M " + x1 + " " + y1 + " L " + x2 + " " + y2;
         const lit = cls === "factor" && highlight;
         // pathLength normalises the dash units the draw animation works in;
         // without it stroke-dasharray:100 paints only the first 100 user units
         // of the edge and the stroke stops short of the vertex.
-        el("path", { class: lit ? "draw factor" : cls, d, fill: "none",
-          pathLength: 100, "stroke-width": cls === "factor" ? 3 : 2,
-          stroke: lit ? "currentColor" : "var(--global-text-color)",
-          opacity: lit ? 1 : 0.35,
-          "stroke-linecap": "round" }, svg);
+        el(
+          "path",
+          {
+            class: lit ? "draw factor" : cls,
+            d,
+            fill: "none",
+            pathLength: 100,
+            "stroke-width": cls === "factor" ? 3 : 2,
+            stroke: lit ? "currentColor" : "var(--global-text-color)",
+            opacity: lit ? 1 : 0.35,
+            "stroke-linecap": "round",
+          },
+          svg
+        );
       }
       for (const e of g.extra) edge(e[0], e[1], "extra");
       for (const e of g.factor) edge(e[0], e[1], "factor");
       const nodes = el("g", { class: "nodes" }, svg);
-      for (const p of pos)
-        el("circle", { cx: p[0], cy: p[1], r: 8, fill: "currentColor" }, nodes);
+      for (const p of pos) el("circle", { cx: p[0], cy: p[1], r: 8, fill: "currentColor" }, nodes);
     }
 
-    render(true);                                  // rest state: 2-factor already picked out
+    render(true); // rest state: 2-factor already picked out
     return function play(finish) {
       g = randomMultigraph();
       render(false);
@@ -338,24 +377,32 @@
   // The picture Ehrhart's theorem is about: one triangle, redrawn at m = 1, 2, 3
   // with the lattice points it contains. Three dilates is the ceiling -- 4P is
   // already 60-odd dots in a 180px column, and they stop reading as points.
-  const EH_VERTS = [[0, 0], [3, 0], [1, 2]];
+  const EH_VERTS = [
+    [0, 0],
+    [3, 0],
+    [1, 2],
+  ];
   const EH_MMAX = 3;
 
   // Convex and listed counter-clockwise, so "inside or on the boundary" is a
   // sign test on every edge. Boundary points count, which is the whole point.
   function inTriangle(a, b, v) {
     for (let i = 0; i < v.length; i++) {
-      const p = v[i], q = v[(i + 1) % v.length];
+      const p = v[i],
+        q = v[(i + 1) % v.length];
       if ((q[0] - p[0]) * (b - p[1]) - (q[1] - p[1]) * (a - p[0]) < 0) return false;
     }
     return true;
   }
 
   function latticeMini(host, svg) {
-    const W = 220, H = 150, pad = 12;
+    const W = 220,
+      H = 150,
+      pad = 12;
     // The frame is sized for the largest dilate and never moves, so what the eye
     // sees between frames is the triangle growing, not the picture rescaling.
-    const spanX = EH_MMAX * 3, spanY = EH_MMAX * 2;
+    const spanX = EH_MMAX * 3,
+      spanY = EH_MMAX * 2;
     const cell = Math.min((W - 2 * pad) / spanX, (H - 2 * pad) / spanY);
     const ox = (W - cell * spanX) / 2;
     const oy = (H + cell * spanY) / 2;
@@ -372,23 +419,22 @@
       // sit still while the counted points pop.
       const ghosts = el("g", { opacity: 0.28 }, svg);
       for (let a = 0; a <= spanX; a++)
-        for (let b = 0; b <= spanY; b++)
-          el("circle", { cx: X(a), cy: Y(b), r: 1.6,
-            fill: "var(--global-text-color)" }, ghosts);
+        for (let b = 0; b <= spanY; b++) el("circle", { cx: X(a), cy: Y(b), r: 1.6, fill: "var(--global-text-color)" }, ghosts);
 
       let d = "M " + X(v[0][0]) + " " + Y(v[0][1]);
       for (let i = 1; i < v.length; i++) d += " L " + X(v[i][0]) + " " + Y(v[i][1]);
-      el("path", { class: "draw", pathLength: 100, d: d + " Z", fill: "none",
-        stroke: "currentColor", "stroke-width": 2.5, "stroke-linejoin": "round" }, svg);
+      el(
+        "path",
+        { class: "draw", pathLength: 100, d: d + " Z", fill: "none", stroke: "currentColor", "stroke-width": 2.5, "stroke-linejoin": "round" },
+        svg
+      );
 
       const nodes = el("g", { class: "nodes" }, svg);
       for (let a = 0; a <= spanX; a++)
-        for (let b = 0; b <= spanY; b++)
-          if (inTriangle(a, b, v))
-            el("circle", { cx: X(a), cy: Y(b), r: 3.6, fill: "currentColor" }, nodes);
+        for (let b = 0; b <= spanY; b++) if (inTriangle(a, b, v)) el("circle", { cx: X(a), cy: Y(b), r: 3.6, fill: "currentColor" }, nodes);
     }
 
-    render();                                      // rest state: the largest dilate
+    render(); // rest state: the largest dilate
     return function play(finish) {
       m = 1;
       render();
@@ -446,16 +492,22 @@
 
     link.addEventListener("mouseenter", start);
 
-    if (!("IntersectionObserver" in window)) { start(); return; }
-    const io = new IntersectionObserver(function (entries) {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        io.disconnect();
-        // Staggered: on a tall screen all three are in view at once, and three
-        // figures moving together on arrival is a lot to land on.
-        setTimeout(start, 250 + 400 * (index || 0));
-      }
-    }, { threshold: 0.5 });
+    if (!("IntersectionObserver" in window)) {
+      start();
+      return;
+    }
+    const io = new IntersectionObserver(
+      function (entries) {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          io.disconnect();
+          // Staggered: on a tall screen all three are in view at once, and three
+          // figures moving together on arrival is a lot to land on.
+          setTimeout(start, 250 + 400 * (index || 0));
+        }
+      },
+      { threshold: 0.5 }
+    );
     io.observe(host);
   }
 

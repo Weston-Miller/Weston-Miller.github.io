@@ -21,8 +21,7 @@ body {
   // The radius appears three times per layer -- as the centre offset twice and
   // as the stop -- and all three have to agree or the dot clips at the tile
   // edge, which is why it is a variable rather than a literal.
-  background-image:
-    radial-gradient(ellipse 900px 400px at 50% 0, var(--global-vignette-color), transparent 70%),
+  background-image: radial-gradient(ellipse 900px 400px at 50% 0, var(--global-vignette-color), transparent 70%),
     radial-gradient(
       circle at var(--global-lattice-dot) var(--global-lattice-dot),
       var(--global-lattice-color) var(--global-lattice-dot),
