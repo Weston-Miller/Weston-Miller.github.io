@@ -36,8 +36,7 @@
   
 </title>
 <meta name="author" content="Weston A. Miller">
-<meta name="description" content="I am a third year mathematics PhD student at the University of California, San Diego. I have done research in graded Ehrhart theory and representation-theoretic aspects of Coxeter-Catalan theory.
-">
+<meta name="description" content="Interactive companion to Rational Catalan numbers for complex reflection groups. Compute the canonical symmetrizing trace and the rational Catalan number for any complex reflection group, with rational Dyck paths in type A.">
 
   <meta name="keywords" content="weston, miller, math, mathematics, ucsd">
 
@@ -51,8 +50,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Weston Miller | Rational Catalan numbers for complex reflection groups">
   <meta property="og:url" content="https://westonamiller.com/rational-catalan/">
-  <meta property="og:description" content="I am a third year mathematics PhD student at the University of California, San Diego. I have done research in graded Ehrhart theory and representation-theoretic aspects of Coxeter-Catalan theory.
-">
+  <meta property="og:description" content="Interactive companion to Rational Catalan numbers for complex reflection groups. Compute the canonical symmetrizing trace and the rational Catalan number for any complex reflection group, with rational Dyck paths in type A.">
   
     <meta property="og:image" content="https://westonamiller.com/assets/img/og-card.png">
   
@@ -61,8 +59,7 @@
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Rational Catalan numbers for complex reflection groups">
-  <meta name="twitter:description" content="I am a third year mathematics PhD student at the University of California, San Diego. I have done research in graded Ehrhart theory and representation-theoretic aspects of Coxeter-Catalan theory.
-">
+  <meta name="twitter:description" content="Interactive companion to Rational Catalan numbers for complex reflection groups. Compute the canonical symmetrizing trace and the rational Catalan number for any complex reflection group, with rational Dyck paths in type A.">
   
     <meta name="twitter:image" content="https://westonamiller.com/assets/img/og-card.png">
   
@@ -118,8 +115,7 @@
         },
         "url": "https://westonamiller.com/rational-catalan/",
         "@type": "WebSite",
-        "description": "I am a third year mathematics PhD student at the University of California, San Diego. I have done research in graded Ehrhart theory and representation-theoretic aspects of Coxeter-Catalan theory.
-",
+        "description": "Interactive companion to Rational Catalan numbers for complex reflection groups. Compute the canonical symmetrizing trace and the rational Catalan number for any complex reflection group, with rational Dyck paths in type A.",
         "headline": "Rational Catalan numbers for complex reflection groups",
         
         "sameAs": ["https://orcid.org/0009-0005-7698-3079", "https://scholar.google.com/citations?user=Ty5xv4UAAAAJ", "https://github.com/weston-miller", "https://www.linkedin.com/in/westonalanmiller"],
@@ -313,7 +309,7 @@
         <div class="post">
   <header class="post-header">
     <h1 class="post-title">Rational Catalan numbers for complex reflection groups</h1>
-    <p class="post-description"></p>
+    
   </header>
 
   <article>
@@ -390,6 +386,9 @@ html[data-theme="dark"]{
 .rc .rc-links{margin:14px 0 0;font-size:.875rem;display:flex;gap:18px;flex-wrap:wrap}
 .rc a{color:var(--accent);text-decoration:none}
 .rc a:hover{color:var(--accent);text-decoration:underline}
+.rc .linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--accent);cursor:pointer}
+.rc .linkbtn:hover{text-decoration:underline}
+.rc .linkmsg{color:var(--muted)}
 
 /* ---------- control bar ---------- */
 .rc .controls{position:sticky;top:var(--rc-sticky,56px);z-index:20;background:var(--paper);
@@ -621,6 +620,8 @@ html[data-theme="dark"]{
     <a href="https://doi.org/10.1016/j.jalgebra.2025.01.027" rel="external nofollow noopener" target="_blank">Journal of Algebra 435 (2025)</a>
     <a href="https://doi.org/10.48550/arXiv.2310.12354" rel="external nofollow noopener" target="_blank">arXiv:2310.12354</a>
     <a href="#sources">Sources</a>
+    <button type="button" class="linkbtn" id="copyLink" title="copy a link to this group, parameter and tab">Copy link</button>
+    <span class="linkmsg" id="copyLinkMsg" aria-live="polite"></span>
   </p>
 </div>
 
@@ -832,8 +833,8 @@ html[data-theme="dark"]{
     · Feg<sub><em>χ</em></sub>(ζ<sub><em>h</em></sub><sup><em>p</em></sup>)</span><span class="den"><em>S<sub>χ</sub></em>(<em>q</em>)</span></span></p>
 
   <div class="controls-inner" style="margin:0 0 14px;gap:14px">
-    <label class="tlab">group</label><select id="tGroup" class="tsel"></select>
-    <label class="tlab">p</label><select id="tP" class="tsel"></select>
+    <label class="tlab" for="tGroup">group</label><select id="tGroup" class="tsel"></select>
+    <label class="tlab" for="tP">p</label><select id="tP" class="tsel"></select>
   </div>
   <details class="deriv" style="margin-top:0;border-top:0;padding-top:0">
     <summary>Why <em>p</em> stops below <em>h</em></summary>
@@ -916,8 +917,8 @@ html[data-theme="dark"]{
     Irr(<em>W</em>) becomes <em>n</em>+1 terms with alternating signs.</p>
 
   <div class="controls-inner" style="margin:0 0 14px;gap:14px">
-    <label class="tlab">group</label><select id="fGroup" class="tsel"></select>
-    <label class="tlab">p</label><select id="fP" class="tsel"></select>
+    <label class="tlab" for="fGroup">group</label><select id="fGroup" class="tsel"></select>
+    <label class="tlab" for="fP">p</label><select id="fP" class="tsel"></select>
   </div>
   <div class="band" id="band-f"></div>
 
@@ -1991,6 +1992,15 @@ function readHash(){
 }
 addEventListener("hashchange", readHash);
 
+$("copyLink").addEventListener("click", () => {
+  writeHash();
+  const url = location.href, msg = $("copyLinkMsg");
+  const say = t => { msg.textContent = t; setTimeout(() => { msg.textContent = ""; }, 2600); };
+  if(navigator.clipboard && navigator.clipboard.writeText)
+    navigator.clipboard.writeText(url).then(() => say("link copied"), () => say(url));
+  else say(url);
+});
+
 /* ---------- the three expressions, side by side ---------- */
 // Cat_p(W;q) = prod [p + (p m_i mod h)]_q / prod [d_i]_q, as a product of cyclotomic
 // polynomials: [n]_q = prod_{d | n, d > 1} Phi_d, so the exponents just count divisibility.
@@ -2202,7 +2212,7 @@ readHash();
 
       
       
-        Last updated: <span data-local-date="1793034945">October 26, 2026</span>.
+        Last updated: <span data-local-date="1793041914">October 26, 2026</span>.
       
     </div>
   </footer>
