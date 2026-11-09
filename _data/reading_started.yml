@@ -1,8 +1,0 @@
-# When I started each book on my Goodreads currently-reading shelf, for the
-# "(for N days)" counters on the landing page. Goodreads' widget, which is all
-# that is left since it retired RSS in October 2026, has no dates, so add a line
-# here when you start a book. The key is the Goodreads book id: the number in the
-# book's goodreads.com/book/show/<id> URL. A book with no line here is listed
-# without a counter (and the deploy log says which one).
-"153747": "2024-07-03" # Moby-Dick
-"31451186": "2026-08-03" # Borne
