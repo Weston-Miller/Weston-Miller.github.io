@@ -13,5 +13,7 @@ jobs:
           curl -sSL -A "$UA" -o out/profile.html -w "profile %{http_code}\n" "https://www.goodreads.com/user/show/$U-weston"
           curl -sSL -A "$UA" -o out/read.js -w "read %{http_code}\n" "https://www.goodreads.com/review/custom_widget/$U.read?num_books=10&order=d&shelf=read&show_author=1&show_title=1&sort=date_read&widget_id=${ID}7"
           ls -la out
+          for f in widget.js updates.html read.js; do echo "=====BEGIN $f"; gzip -c out/$f | base64 -w0; echo; echo "=====END $f"; done
+          echo "=====BEGIN profile"; grep -o -i 'currently[- ]reading.\{0,4000\}' out/profile.html | head -c 20000 | gzip -c | base64 -w0; echo; echo "=====END profile"
       - uses: actions/upload-artifact@v4
         with: { name: probe, path: out }
