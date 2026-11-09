@@ -1,0 +1,17 @@
+name: Probe Goodreads widget (temporary)
+on: pull_request
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          mkdir out; U=109451240; ID=$RANDOM$RANDOM
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36"
+          curl -sSL -A "$UA" -o out/widget.js -w "widget %{http_code}\n" "https://www.goodreads.com/review/custom_widget/$U.currently-reading?cover_position=left&cover_size=small&num_books=20&order=d&shelf=currently-reading&show_author=1&show_cover=1&show_rating=0&show_review=0&show_tags=0&show_title=1&sort=date_added&widget_id=$ID"
+          curl -sSL -A "$UA" -o out/widget_plain.js -w "widget_plain %{http_code}\n" "https://www.goodreads.com/review/custom_widget/$U?shelf=currently-reading&widget_id=${ID}9"
+          curl -sSL -A "$UA" -o out/updates.html -w "updates %{http_code}\n" "https://www.goodreads.com/widgets/user_update_widget?height=400&num_updates=30&user=$U&width=250"
+          curl -sSL -A "$UA" -o out/profile.html -w "profile %{http_code}\n" "https://www.goodreads.com/user/show/$U-weston"
+          curl -sSL -A "$UA" -o out/read.js -w "read %{http_code}\n" "https://www.goodreads.com/review/custom_widget/$U.read?num_books=10&order=d&shelf=read&show_author=1&show_title=1&sort=date_read&widget_id=${ID}7"
+          ls -la out
+      - uses: actions/upload-artifact@v4
+        with: { name: probe, path: out }
